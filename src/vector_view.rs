@@ -1,4 +1,4 @@
-use crate::vector::traits::DotProduct;
+use crate::traits::DotProduct;
 use crate::vector::Vector;
 use conv::prelude::{ConvUtil, ValueFrom};
 use funty::{Floating, Integral, Numeric};

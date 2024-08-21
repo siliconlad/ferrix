@@ -8,7 +8,7 @@ use std::ops::{Index, IndexMut};
 
 use super::VectorView;
 use super::VectorViewMut;
-use crate::vector::traits::DotProduct;
+use crate::traits::DotProduct;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Vector<T: Numeric, const N: usize> {

@@ -1,6 +1,6 @@
-use crate::vector::vector_impl::Vector;
-use crate::vector::vector_view::VectorView;
-use crate::vector::vector_view_mut::VectorViewMut;
+use crate::vector::Vector;
+use crate::vector_view::VectorView;
+use crate::vector_view_mut::VectorViewMut;
 use funty::Numeric;
 use std::ops::Div;
 
