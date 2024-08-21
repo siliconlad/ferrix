@@ -25,7 +25,7 @@ macro_rules! impl_div_assign {
 //  Vector  //
 //////////////
 
-impl_div_assign!(Vector<T, N>);  // Scalar
+impl_div_assign!(Vector<T, N>); // Scalar
 impl_div_assign!(Vector<T, N>, Vector<T, N>);
 impl_div_assign!(Vector<T, N>, &Vector<T, N>);
 impl_div_assign!(Vector<T, N>, VectorView<'_, T, N>);
@@ -37,7 +37,7 @@ impl_div_assign!(Vector<T, N>, &VectorViewMut<'_, T, N>);
 //  VectorViewMut  //
 /////////////////////
 
-impl_div_assign!(VectorViewMut<'_, T, N>);  // Scalar
+impl_div_assign!(VectorViewMut<'_, T, N>); // Scalar
 impl_div_assign!(VectorViewMut<'_, T, N>, Vector<T, N>);
 impl_div_assign!(VectorViewMut<'_, T, N>, &Vector<T, N>);
 impl_div_assign!(VectorViewMut<'_, T, N>, VectorView<'_, T, N>);

@@ -3,6 +3,7 @@ use crate::vector::Vector;
 use conv::prelude::{ConvUtil, ValueFrom};
 use funty::{Floating, Integral, Numeric};
 use std::collections::HashMap;
+use std::fmt;
 use std::ops::Index;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -130,6 +131,23 @@ impl<'a, T: Numeric, const N: usize> IntoIterator for &VectorView<'a, T, N> {
         self.data.iter()
     }
 }
+
+impl<T: Numeric + fmt::Display, const N: usize> fmt::Display for VectorView<'_, T, N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "VectorView[")?;
+        for (i, item) in self.data.iter().enumerate() {
+            if i > 0 {
+                write!(f, " ")?;
+            }
+            write!(f, "{}", item)?;
+        }
+        write!(f, "]")
+    }
+}
+
+//////////////////
+//  Unit Tests  //
+//////////////////
 
 #[cfg(test)]
 mod tests {
@@ -275,5 +293,20 @@ mod tests {
         let v = Vector::<i32, 3>::new([1, 2, 3]);
         assert!(v.view::<3>(1).is_none());
         assert!(v.view::<0>(0).is_none());
+    }
+
+    #[test]
+    fn test_vector_view_display() {
+        let v = Vector::<i32, 5>::new([1, 2, 3, 4, 5]);
+        let view = v.view::<3>(1).unwrap();
+        assert_eq!(format!("{}", view), "VectorView[2 3 4]");
+
+        let v = Vector::<f64, 4>::new([1.1, 2.2, 3.3, 4.4]);
+        let view = v.view::<2>(2).unwrap();
+        assert_eq!(format!("{}", view), "VectorView[3.3 4.4]");
+
+        let v = Vector::<i32, 1>::new([42]);
+        let view = v.view::<1>(0).unwrap();
+        assert_eq!(format!("{}", view), "VectorView[42]");
     }
 }

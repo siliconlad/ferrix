@@ -3,6 +3,7 @@ use funty::{Floating, Integral, Numeric};
 use num_traits::Signed;
 use std::collections::HashMap;
 use std::default::Default;
+use std::fmt;
 use std::ops::{Index, IndexMut};
 
 use super::VectorView;
@@ -247,9 +248,22 @@ impl<T: Numeric> From<T> for Vector<T, 1> {
     }
 }
 
-/////////////////////////////
-//  Unit Tests for Vector  //
-/////////////////////////////
+impl<T: Numeric + fmt::Display, const N: usize> fmt::Display for Vector<T, N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Vector(")?;
+        for (i, item) in self.data.iter().enumerate() {
+            if i > 0 {
+                write!(f, ", ")?;
+            }
+            write!(f, "{}", item)?;
+        }
+        write!(f, ")")
+    }
+}
+
+//////////////////
+//  Unit Tests  //
+//////////////////
 
 #[cfg(test)]
 mod tests {
@@ -757,5 +771,20 @@ mod tests {
     fn test_from_scalar() {
         let v = Vector::<i32, 1>::from(5);
         assert_eq!(v[0], 5);
+    }
+
+    #[test]
+    fn test_display() {
+        let v = Vector::<i32, 3>::new([1, 2, 3]);
+        assert_eq!(format!("{}", v), "Vector(1, 2, 3)");
+
+        let v = Vector::<f64, 2>::new([1.5, 2.7]);
+        assert_eq!(format!("{}", v), "Vector(1.5, 2.7)");
+
+        let v = Vector::<i32, 1>::new([42]);
+        assert_eq!(format!("{}", v), "Vector(42)");
+
+        let v = Vector::<i32, 0>::new([]);
+        assert_eq!(format!("{}", v), "Vector()");
     }
 }

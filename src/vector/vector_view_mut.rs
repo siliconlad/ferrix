@@ -3,6 +3,7 @@ use crate::vector::vector_impl::Vector;
 use conv::prelude::{ConvUtil, ValueFrom};
 use funty::{Floating, Integral, Numeric};
 use std::collections::HashMap;
+use std::fmt;
 use std::ops::{Index, IndexMut};
 
 #[derive(Debug, PartialEq, Eq)]
@@ -162,6 +163,23 @@ impl<'a, T: Numeric, const N: usize> IntoIterator for &'a mut VectorViewMut<'a, 
         self.data.iter_mut()
     }
 }
+
+impl<T: Numeric + fmt::Display, const N: usize> fmt::Display for VectorViewMut<'_, T, N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "VectorViewMut{{")?;
+        for (i, item) in self.data.iter().enumerate() {
+            if i > 0 {
+                write!(f, "; ")?;
+            }
+            write!(f, "{}", item)?;
+        }
+        write!(f, "}}")
+    }
+}
+
+//////////////////
+//  Unit Tests  //
+//////////////////
 
 #[cfg(test)]
 mod tests {
@@ -361,5 +379,20 @@ mod tests {
             assert_eq!(iter.next(), Some(&mut 4));
             assert_eq!(iter.next(), None);
         }
+    }
+
+    #[test]
+    fn test_vector_view_mut_display() {
+        let mut v = Vector::<i32, 5>::new([1, 2, 3, 4, 5]);
+        let view_mut = v.view_mut::<3>(1).unwrap();
+        assert_eq!(format!("{}", view_mut), "VectorViewMut{2; 3; 4}");
+
+        let mut v = Vector::<f64, 4>::new([1.1, 2.2, 3.3, 4.4]);
+        let view_mut = v.view_mut::<2>(2).unwrap();
+        assert_eq!(format!("{}", view_mut), "VectorViewMut{3.3; 4.4}");
+
+        let mut v = Vector::<i32, 1>::new([42]);
+        let view_mut = v.view_mut::<1>(0).unwrap();
+        assert_eq!(format!("{}", view_mut), "VectorViewMut{42}");
     }
 }
