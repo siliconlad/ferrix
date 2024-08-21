@@ -1,0 +1,17 @@
+[package]
+name = "rustytensor"
+version = "0.1.0"
+edition = "2021"
+description = "A simple tensor library for Rust"
+license = "MIT"
+homepage = "https://github.com/siliconlad/rustytensor"
+repository = "https://github.com/siliconlad/rustytensor"
+
+[[example]]
+name = "fractal"
+path = "example/fractal.rs"
+
+[dependencies]
+conv = "0.3.3"
+funty = "2.0.0"
+num-traits = "0.2.19"
