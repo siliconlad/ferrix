@@ -7,7 +7,7 @@ use std::ops::{Index, IndexMut};
 
 use super::VectorView;
 use super::VectorViewMut;
-use crate::vector::traits::{DotProduct, VectorOps};
+use crate::vector::traits::DotProduct;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Vector<T: Numeric, const N: usize> {
@@ -74,8 +74,6 @@ impl<T: Numeric, const N: usize> Vector<T, N> {
         &mut self.data
     }
 }
-
-impl<T: Numeric, const N: usize> VectorOps<T, N> for Vector<T, N> {}
 
 impl<T: Numeric + From<u8>, const N: usize> Vector<T, N> {
     pub fn zeros() -> Self {

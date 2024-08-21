@@ -1,4 +1,4 @@
-use crate::vector::traits::{DotProduct, VectorOps};
+use crate::vector::traits::DotProduct;
 use crate::vector::vector_impl::Vector;
 use conv::prelude::{ConvUtil, ValueFrom};
 use funty::{Floating, Integral, Numeric};
@@ -44,8 +44,6 @@ impl<'a, T: Numeric, const N: usize> VectorViewMut<'a, T, N> {
         Vector::new(self.data.to_vec().try_into().unwrap())
     }
 }
-
-impl<'a, T: Numeric, const N: usize> VectorOps<T, N> for VectorViewMut<'a, T, N> {}
 
 impl<'a, T: Numeric + ValueFrom<usize>, const N: usize> VectorViewMut<'a, T, N> {
     pub fn mean(&self) -> T {

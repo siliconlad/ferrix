@@ -4,101 +4,50 @@ use crate::vector::vector_view_mut::VectorViewMut;
 use funty::Numeric;
 use std::ops::MulAssign;
 
+macro_rules! impl_mul_assign {
+    ($lhs:ty, $rhs:ty) => {
+        impl<T: Numeric, const N: usize> MulAssign<$rhs> for $lhs {
+            fn mul_assign(&mut self, other: $rhs) {
+                (0..N).for_each(|i| self[i] *= other[i]);
+            }
+        }
+    };
+    ($lhs:ty) => {
+        impl<T: Numeric, const N: usize> MulAssign<T> for $lhs {
+            fn mul_assign(&mut self, scalar: T) {
+                (0..N).for_each(|i| self[i] *= scalar);
+            }
+        }
+    };
+}
+
 //////////////
 //  Vector  //
 //////////////
 
-impl<T: Numeric, const N: usize> MulAssign<Vector<T, N>> for Vector<T, N> {
-    fn mul_assign(&mut self, other: Vector<T, N>) {
-        (0..N).for_each(|i| self[i] *= other[i]);
-    }
-}
-
-impl<T: Numeric, const N: usize> MulAssign<&Vector<T, N>> for Vector<T, N> {
-    fn mul_assign(&mut self, other: &Vector<T, N>) {
-        (0..N).for_each(|i| self[i] *= other[i]);
-    }
-}
-
-impl<T: Numeric, const N: usize> MulAssign<VectorView<'_, T, N>> for Vector<T, N> {
-    fn mul_assign(&mut self, other: VectorView<'_, T, N>) {
-        (0..N).for_each(|i| self[i] *= other[i]);
-    }
-}
-
-impl<T: Numeric, const N: usize> MulAssign<&VectorView<'_, T, N>> for Vector<T, N> {
-    fn mul_assign(&mut self, other: &VectorView<'_, T, N>) {
-        (0..N).for_each(|i| self[i] *= other[i]);
-    }
-}
-
-impl<T: Numeric, const N: usize> MulAssign<VectorViewMut<'_, T, N>> for Vector<T, N> {
-    fn mul_assign(&mut self, other: VectorViewMut<'_, T, N>) {
-        (0..N).for_each(|i| self[i] *= other[i]);
-    }
-}
-
-impl<T: Numeric, const N: usize> MulAssign<&VectorViewMut<'_, T, N>> for Vector<T, N> {
-    fn mul_assign(&mut self, other: &VectorViewMut<'_, T, N>) {
-        (0..N).for_each(|i| self[i] *= other[i]);
-    }
-}
-
-impl<T: Numeric, const N: usize> MulAssign<T> for Vector<T, N> {
-    fn mul_assign(&mut self, scalar: T) {
-        (0..N).for_each(|i| self[i] *= scalar);
-    }
-}
+impl_mul_assign!(Vector<T, N>); // Scalar
+impl_mul_assign!(Vector<T, N>, Vector<T, N>);
+impl_mul_assign!(Vector<T, N>, &Vector<T, N>);
+impl_mul_assign!(Vector<T, N>, VectorView<'_, T, N>);
+impl_mul_assign!(Vector<T, N>, &VectorView<'_, T, N>);
+impl_mul_assign!(Vector<T, N>, VectorViewMut<'_, T, N>);
+impl_mul_assign!(Vector<T, N>, &VectorViewMut<'_, T, N>);
 
 /////////////////////
 //  VectorViewMut  //
 /////////////////////
 
-impl<'a, T: Numeric, const N: usize> MulAssign<Vector<T, N>> for VectorViewMut<'a, T, N> {
-    fn mul_assign(&mut self, other: Vector<T, N>) {
-        (0..N).for_each(|i| self[i] *= other[i]);
-    }
-}
+impl_mul_assign!(VectorViewMut<'_, T, N>); // Scalar
+impl_mul_assign!(VectorViewMut<'_, T, N>, Vector<T, N>);
+impl_mul_assign!(VectorViewMut<'_, T, N>, &Vector<T, N>);
+impl_mul_assign!(VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
+impl_mul_assign!(VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
+impl_mul_assign!(VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_mul_assign!(VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
 
-impl<'a, T: Numeric, const N: usize> MulAssign<&Vector<T, N>> for VectorViewMut<'a, T, N> {
-    fn mul_assign(&mut self, other: &Vector<T, N>) {
-        (0..N).for_each(|i| self[i] *= other[i]);
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> MulAssign<VectorView<'_, T, N>> for VectorViewMut<'a, T, N> {
-    fn mul_assign(&mut self, other: VectorView<'_, T, N>) {
-        (0..N).for_each(|i| self[i] *= other[i]);
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> MulAssign<&VectorView<'_, T, N>> for VectorViewMut<'a, T, N> {
-    fn mul_assign(&mut self, other: &VectorView<'_, T, N>) {
-        (0..N).for_each(|i| self[i] *= other[i]);
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> MulAssign<VectorViewMut<'_, T, N>>
-    for VectorViewMut<'a, T, N>
-{
-    fn mul_assign(&mut self, other: VectorViewMut<'_, T, N>) {
-        (0..N).for_each(|i| self[i] *= other[i]);
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> MulAssign<&VectorViewMut<'_, T, N>>
-    for VectorViewMut<'a, T, N>
-{
-    fn mul_assign(&mut self, other: &VectorViewMut<'_, T, N>) {
-        (0..N).for_each(|i| self[i] *= other[i]);
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> MulAssign<T> for VectorViewMut<'a, T, N> {
-    fn mul_assign(&mut self, scalar: T) {
-        (0..N).for_each(|i| self[i] *= scalar);
-    }
-}
+//////////////////
+//  Unit Tests  //
+//////////////////
 
 #[cfg(test)]
 mod tests {

@@ -1,313 +1,81 @@
 use crate::vector::traits::DotProduct;
-use crate::vector::traits::VectorOps;
 use crate::vector::vector_impl::Vector;
 use crate::vector::vector_view::VectorView;
 use crate::vector::vector_view_mut::VectorViewMut;
 use funty::Numeric;
 
+macro_rules! impl_dot {
+    ($lhs:ty, $rhs:ty) => {
+        impl<T: Numeric, const N: usize> DotProduct<$rhs> for $lhs {
+            type Output = T;
+
+            fn dot(self, other: $rhs) -> Self::Output {
+                (0..N).map(|i| self[i] * other[i]).sum()
+            }
+        }
+    };
+}
+
 //////////////
 //  Vector  //
 //////////////
 
-fn dot<T: Numeric, const N: usize>(v1: &dyn VectorOps<T, N>, v2: &dyn VectorOps<T, N>) -> T {
-    (0..N).map(|i| v1[i] * v2[i]).sum()
-}
+impl_dot!(Vector<T, N>, Vector<T, N>);
+impl_dot!(Vector<T, N>, &Vector<T, N>);
+impl_dot!(&Vector<T, N>, Vector<T, N>);
+impl_dot!(&Vector<T, N>, &Vector<T, N>);
 
-impl<T: Numeric, const N: usize> DotProduct<Vector<T, N>> for Vector<T, N> {
-    type Output = T;
+impl_dot!(Vector<T, N>, VectorView<'_, T, N>);
+impl_dot!(Vector<T, N>, &VectorView<'_, T, N>);
+impl_dot!(&Vector<T, N>, VectorView<'_, T, N>);
+impl_dot!(&Vector<T, N>, &VectorView<'_, T, N>);
 
-    fn dot(self, other: Vector<T, N>) -> Self::Output {
-        dot(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&Vector<T, N>> for Vector<T, N> {
-    type Output = T;
-
-    fn dot(self, other: &Vector<T, N>) -> Self::Output {
-        dot(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<Vector<T, N>> for &Vector<T, N> {
-    type Output = T;
-
-    fn dot(self, other: Vector<T, N>) -> Self::Output {
-        dot(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&Vector<T, N>> for &Vector<T, N> {
-    type Output = T;
-
-    fn dot(self, other: &Vector<T, N>) -> Self::Output {
-        dot(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<VectorView<'_, T, N>> for Vector<T, N> {
-    type Output = T;
-
-    fn dot(self, other: VectorView<'_, T, N>) -> Self::Output {
-        dot(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&VectorView<'_, T, N>> for Vector<T, N> {
-    type Output = T;
-
-    fn dot(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        dot(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<VectorView<'_, T, N>> for &Vector<T, N> {
-    type Output = T;
-
-    fn dot(self, other: VectorView<'_, T, N>) -> Self::Output {
-        dot(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&VectorView<'_, T, N>> for &Vector<T, N> {
-    type Output = T;
-
-    fn dot(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        dot(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<VectorViewMut<'_, T, N>> for Vector<T, N> {
-    type Output = T;
-
-    fn dot(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        dot(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&VectorViewMut<'_, T, N>> for Vector<T, N> {
-    type Output = T;
-
-    fn dot(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        dot(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<VectorViewMut<'_, T, N>> for &Vector<T, N> {
-    type Output = T;
-
-    fn dot(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        dot(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&VectorViewMut<'_, T, N>> for &Vector<T, N> {
-    type Output = T;
-
-    fn dot(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        dot(self, other)
-    }
-}
+impl_dot!(Vector<T, N>, VectorViewMut<'_, T, N>);
+impl_dot!(Vector<T, N>, &VectorViewMut<'_, T, N>);
+impl_dot!(&Vector<T, N>, VectorViewMut<'_, T, N>);
+impl_dot!(&Vector<T, N>, &VectorViewMut<'_, T, N>);
 
 //////////////////
 //  VectorView  //
 //////////////////
 
-impl<T: Numeric, const N: usize> DotProduct<Vector<T, N>> for VectorView<'_, T, N> {
-    type Output = T;
+impl_dot!(VectorView<'_, T, N>, Vector<T, N>);
+impl_dot!(VectorView<'_, T, N>, &Vector<T, N>);
+impl_dot!(&VectorView<'_, T, N>, Vector<T, N>);
+impl_dot!(&VectorView<'_, T, N>, &Vector<T, N>);
 
-    fn dot(self, other: Vector<T, N>) -> Self::Output {
-        dot(&self, &other)
-    }
-}
+impl_dot!(VectorView<'_, T, N>, VectorView<'_, T, N>);
+impl_dot!(VectorView<'_, T, N>, &VectorView<'_, T, N>);
+impl_dot!(&VectorView<'_, T, N>, VectorView<'_, T, N>);
+impl_dot!(&VectorView<'_, T, N>, &VectorView<'_, T, N>);
 
-impl<T: Numeric, const N: usize> DotProduct<&Vector<T, N>> for VectorView<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: &Vector<T, N>) -> Self::Output {
-        dot(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<Vector<T, N>> for &VectorView<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: Vector<T, N>) -> Self::Output {
-        dot(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&Vector<T, N>> for &VectorView<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: &Vector<T, N>) -> Self::Output {
-        dot(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<VectorView<'_, T, N>> for VectorView<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: VectorView<'_, T, N>) -> Self::Output {
-        dot(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&VectorView<'_, T, N>> for VectorView<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        dot(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<VectorView<'_, T, N>> for &VectorView<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: VectorView<'_, T, N>) -> Self::Output {
-        dot(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&VectorView<'_, T, N>> for &VectorView<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        dot(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<VectorViewMut<'_, T, N>> for VectorView<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        dot(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&VectorViewMut<'_, T, N>> for VectorView<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        dot(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<VectorViewMut<'_, T, N>> for &VectorView<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        dot(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&VectorViewMut<'_, T, N>> for &VectorView<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        dot(self, other)
-    }
-}
+impl_dot!(VectorView<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_dot!(VectorView<'_, T, N>, &VectorViewMut<'_, T, N>);
+impl_dot!(&VectorView<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_dot!(&VectorView<'_, T, N>, &VectorViewMut<'_, T, N>);
 
 /////////////////////
 //  VectorViewMut  //
 /////////////////////
 
-impl<T: Numeric, const N: usize> DotProduct<Vector<T, N>> for VectorViewMut<'_, T, N> {
-    type Output = T;
+impl_dot!(VectorViewMut<'_, T, N>, Vector<T, N>);
+impl_dot!(VectorViewMut<'_, T, N>, &Vector<T, N>);
+impl_dot!(&VectorViewMut<'_, T, N>, Vector<T, N>);
+impl_dot!(&VectorViewMut<'_, T, N>, &Vector<T, N>);
 
-    fn dot(self, other: Vector<T, N>) -> Self::Output {
-        dot(&self, &other)
-    }
-}
+impl_dot!(VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
+impl_dot!(VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
+impl_dot!(&VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
+impl_dot!(&VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
 
-impl<T: Numeric, const N: usize> DotProduct<&Vector<T, N>> for VectorViewMut<'_, T, N> {
-    type Output = T;
+impl_dot!(VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_dot!(VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
+impl_dot!(&VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_dot!(&VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
 
-    fn dot(self, other: &Vector<T, N>) -> Self::Output {
-        dot(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<Vector<T, N>> for &VectorViewMut<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: Vector<T, N>) -> Self::Output {
-        dot(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&Vector<T, N>> for &VectorViewMut<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: &Vector<T, N>) -> Self::Output {
-        dot(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<VectorView<'_, T, N>> for VectorViewMut<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: VectorView<'_, T, N>) -> Self::Output {
-        dot(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&VectorView<'_, T, N>> for VectorViewMut<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        dot(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<VectorView<'_, T, N>> for &VectorViewMut<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: VectorView<'_, T, N>) -> Self::Output {
-        dot(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&VectorView<'_, T, N>> for &VectorViewMut<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        dot(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<VectorViewMut<'_, T, N>> for VectorViewMut<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        dot(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&VectorViewMut<'_, T, N>> for VectorViewMut<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        dot(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<VectorViewMut<'_, T, N>> for &VectorViewMut<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        dot(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> DotProduct<&VectorViewMut<'_, T, N>> for &VectorViewMut<'_, T, N> {
-    type Output = T;
-
-    fn dot(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        dot(self, other)
-    }
-}
+//////////////////
+//  Unit Tests  //
+//////////////////
 
 #[cfg(test)]
 mod tests {

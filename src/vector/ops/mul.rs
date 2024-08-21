@@ -1,368 +1,102 @@
-use crate::vector::traits::VectorOps;
 use crate::vector::vector_impl::Vector;
 use crate::vector::vector_view::VectorView;
 use crate::vector::vector_view_mut::VectorViewMut;
 use funty::Numeric;
 use std::ops::Mul;
 
-fn v_mul<T: Numeric, const N: usize>(
-    v1: &dyn VectorOps<T, N>,
-    v2: &dyn VectorOps<T, N>,
-) -> Vector<T, N> {
-    Vector::<T, N>::new(std::array::from_fn(|i| v1[i] * v2[i]))
-}
+macro_rules! impl_mul {
+    ($lhs:ty, $rhs:ty) => {
+        impl<T: Numeric, const N: usize> Mul<$rhs> for $lhs {
+            type Output = Vector<T, N>;
 
-fn v_mul_scalar<T: Numeric, const N: usize>(v: &dyn VectorOps<T, N>, scalar: T) -> Vector<T, N> {
-    Vector::<T, N>::new(std::array::from_fn(|i| v[i] * scalar))
+            fn mul(self, other: $rhs) -> Self::Output {
+                Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
+            }
+        }
+    };
+    ($lhs:ty) => {
+        impl<T: Numeric, const N: usize> Mul<T> for $lhs {
+            type Output = Vector<T, N>;
+
+            fn mul(self, scalar: T) -> Self::Output {
+                Vector::<T, N>::new(std::array::from_fn(|i| self[i] * scalar))
+            }
+        }
+    };
 }
 
 //////////////
 //  Vector  //
 //////////////
 
-impl<T: Numeric, const N: usize> Mul<Vector<T, N>> for Vector<T, N> {
-    type Output = Self;
+// Scalar
+impl_mul!(Vector<T, N>);
+impl_mul!(&Vector<T, N>);
 
-    fn mul(self, other: Vector<T, N>) -> Self::Output {
-        v_mul(&self, &other)
-    }
-}
+impl_mul!(Vector<T, N>, Vector<T, N>);
+impl_mul!(Vector<T, N>, &Vector<T, N>);
+impl_mul!(&Vector<T, N>, Vector<T, N>);
+impl_mul!(&Vector<T, N>, &Vector<T, N>);
 
-impl<T: Numeric, const N: usize> Mul<&Vector<T, N>> for Vector<T, N> {
-    type Output = Self;
+impl_mul!(Vector<T, N>, VectorView<'_, T, N>);
+impl_mul!(Vector<T, N>, &VectorView<'_, T, N>);
+impl_mul!(&Vector<T, N>, VectorView<'_, T, N>);
+impl_mul!(&Vector<T, N>, &VectorView<'_, T, N>);
 
-    fn mul(self, other: &Vector<T, N>) -> Self::Output {
-        v_mul(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Mul<Vector<T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: Vector<T, N>) -> Self::Output {
-        v_mul(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Mul<&Vector<T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &Vector<T, N>) -> Self::Output {
-        v_mul(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Mul<VectorView<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_mul(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Mul<&VectorView<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_mul(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Mul<VectorView<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_mul(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Mul<&VectorView<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_mul(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Mul<VectorViewMut<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_mul(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Mul<&VectorViewMut<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_mul(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Mul<VectorViewMut<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_mul(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Mul<&VectorViewMut<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_mul(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Mul<T> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, scalar: T) -> Self::Output {
-        v_mul_scalar(&self, scalar)
-    }
-}
-
-impl<T: Numeric, const N: usize> Mul<T> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, scalar: T) -> Self::Output {
-        v_mul_scalar(self, scalar)
-    }
-}
+impl_mul!(Vector<T, N>, VectorViewMut<'_, T, N>);
+impl_mul!(Vector<T, N>, &VectorViewMut<'_, T, N>);
+impl_mul!(&Vector<T, N>, VectorViewMut<'_, T, N>);
+impl_mul!(&Vector<T, N>, &VectorViewMut<'_, T, N>);
 
 //////////////////
 //  VectorView  //
-/////////////////
+//////////////////
 
-impl<'a, T: Numeric, const N: usize> Mul<Vector<T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
+// Scalar
+impl_mul!(VectorView<'_, T, N>);
+impl_mul!(&VectorView<'_, T, N>);
 
-    fn mul(self, other: Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
-    }
-}
+impl_mul!(VectorView<'_, T, N>, Vector<T, N>);
+impl_mul!(VectorView<'_, T, N>, &Vector<T, N>);
+impl_mul!(&VectorView<'_, T, N>, Vector<T, N>);
+impl_mul!(&VectorView<'_, T, N>, &Vector<T, N>);
 
-impl<'a, T: Numeric, const N: usize> Mul<Vector<T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
+impl_mul!(VectorView<'_, T, N>, VectorView<'_, T, N>);
+impl_mul!(VectorView<'_, T, N>, &VectorView<'_, T, N>);
+impl_mul!(&VectorView<'_, T, N>, VectorView<'_, T, N>);
+impl_mul!(&VectorView<'_, T, N>, &VectorView<'_, T, N>);
 
-    fn mul(self, other: Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<&Vector<T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<&Vector<T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<VectorView<'_, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: VectorView<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<VectorView<'_, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: VectorView<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<&VectorView<'_, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<&VectorView<'_, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<VectorViewMut<'_, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<VectorViewMut<'_, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<&VectorViewMut<'_, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<&VectorViewMut<'_, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<T> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, scalar: T) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * scalar))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<T> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, scalar: T) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] * scalar))
-    }
-}
+impl_mul!(VectorView<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_mul!(VectorView<'_, T, N>, &VectorViewMut<'_, T, N>);
+impl_mul!(&VectorView<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_mul!(&VectorView<'_, T, N>, &VectorViewMut<'_, T, N>);
 
 /////////////////////
 //  VectorViewMut  //
 /////////////////////
 
-impl<'a, T: Numeric, const N: usize> Mul<Vector<T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
+// Scalar
+impl_mul!(VectorViewMut<'_, T, N>);
+impl_mul!(&VectorViewMut<'_, T, N>);
 
-    fn mul(self, other: Vector<T, N>) -> Self::Output {
-        v_mul(&self, &other)
-    }
-}
+impl_mul!(VectorViewMut<'_, T, N>, Vector<T, N>);
+impl_mul!(VectorViewMut<'_, T, N>, &Vector<T, N>);
+impl_mul!(&VectorViewMut<'_, T, N>, Vector<T, N>);
+impl_mul!(&VectorViewMut<'_, T, N>, &Vector<T, N>);
 
-impl<'a, T: Numeric, const N: usize> Mul<&Vector<T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
+impl_mul!(VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
+impl_mul!(VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
+impl_mul!(&VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
+impl_mul!(&VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
 
-    fn mul(self, other: &Vector<T, N>) -> Self::Output {
-        v_mul(&self, other)
-    }
-}
+impl_mul!(VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_mul!(VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
+impl_mul!(&VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_mul!(&VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
 
-impl<'a, T: Numeric, const N: usize> Mul<Vector<T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: Vector<T, N>) -> Self::Output {
-        v_mul(self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<&Vector<T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &Vector<T, N>) -> Self::Output {
-        v_mul(self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<VectorView<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_mul(&self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<&VectorView<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_mul(&self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<VectorView<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_mul(self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<&VectorView<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_mul(self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<VectorViewMut<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_mul(&self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<&VectorViewMut<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_mul(&self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<VectorViewMut<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_mul(self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<&VectorViewMut<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_mul(self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<T> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, scalar: T) -> Self::Output {
-        v_mul_scalar(&self, scalar)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Mul<T> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn mul(self, scalar: T) -> Self::Output {
-        v_mul_scalar(self, scalar)
-    }
-}
+//////////////////
+//  Unit Tests  //
+//////////////////
 
 #[cfg(test)]
 mod tests {

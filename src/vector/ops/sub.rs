@@ -1,368 +1,102 @@
-use crate::vector::traits::VectorOps;
 use crate::vector::vector_impl::Vector;
 use crate::vector::vector_view::VectorView;
 use crate::vector::vector_view_mut::VectorViewMut;
 use funty::Numeric;
 use std::ops::Sub;
 
-fn v_sub<T: Numeric, const N: usize>(
-    v1: &dyn VectorOps<T, N>,
-    v2: &dyn VectorOps<T, N>,
-) -> Vector<T, N> {
-    Vector::<T, N>::new(std::array::from_fn(|i| v1[i] - v2[i]))
+macro_rules! impl_sub {
+    ($lhs:ty, $rhs:ty) => {
+        impl<T: Numeric, const N: usize> Sub<$rhs> for $lhs {
+            type Output = Vector<T, N>;
+
+            fn sub(self, other: $rhs) -> Self::Output {
+                Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
+            }
+        }
+    };
+    ($lhs:ty) => {
+        impl<T: Numeric, const N: usize> Sub<T> for $lhs {
+            type Output = Vector<T, N>;
+
+            fn sub(self, scalar: T) -> Self::Output {
+                Vector::<T, N>::new(std::array::from_fn(|i| self[i] - scalar))
+            }
+        }
+    };
 }
 
-fn v_sub_scalar<T: Numeric, const N: usize>(v: &dyn VectorOps<T, N>, scalar: T) -> Vector<T, N> {
-    Vector::<T, N>::new(std::array::from_fn(|i| v[i] - scalar))
-}
-
-impl<T: Numeric, const N: usize> Sub<Vector<T, N>> for Vector<T, N> {
-    type Output = Self;
-
-    fn sub(self, other: Vector<T, N>) -> Self::Output {
-        v_sub(&self, &other)
-    }
-}
-
-///////////////
+//////////////
 //  Vector  //
 //////////////
 
-impl<T: Numeric, const N: usize> Sub<&Vector<T, N>> for Vector<T, N> {
-    type Output = Self;
+// Scalar
+impl_sub!(Vector<T, N>);
+impl_sub!(&Vector<T, N>);
 
-    fn sub(self, other: &Vector<T, N>) -> Self::Output {
-        v_sub(&self, other)
-    }
-}
+impl_sub!(Vector<T, N>, Vector<T, N>);
+impl_sub!(Vector<T, N>, &Vector<T, N>);
+impl_sub!(&Vector<T, N>, Vector<T, N>);
+impl_sub!(&Vector<T, N>, &Vector<T, N>);
 
-impl<T: Numeric, const N: usize> Sub<Vector<T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
+impl_sub!(Vector<T, N>, VectorView<'_, T, N>);
+impl_sub!(Vector<T, N>, &VectorView<'_, T, N>);
+impl_sub!(&Vector<T, N>, VectorView<'_, T, N>);
+impl_sub!(&Vector<T, N>, &VectorView<'_, T, N>);
 
-    fn sub(self, other: Vector<T, N>) -> Self::Output {
-        v_sub(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Sub<&Vector<T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &Vector<T, N>) -> Self::Output {
-        v_sub(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Sub<VectorView<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_sub(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Sub<&VectorView<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_sub(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Sub<VectorView<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_sub(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Sub<&VectorView<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_sub(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Sub<VectorViewMut<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_sub(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Sub<&VectorViewMut<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_sub(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Sub<VectorViewMut<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_sub(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Sub<&VectorViewMut<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_sub(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Sub<T> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, scalar: T) -> Self::Output {
-        v_sub_scalar(&self, scalar)
-    }
-}
-
-impl<T: Numeric, const N: usize> Sub<T> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, scalar: T) -> Self::Output {
-        v_sub_scalar(self, scalar)
-    }
-}
+impl_sub!(Vector<T, N>, VectorViewMut<'_, T, N>);
+impl_sub!(Vector<T, N>, &VectorViewMut<'_, T, N>);
+impl_sub!(&Vector<T, N>, VectorViewMut<'_, T, N>);
+impl_sub!(&Vector<T, N>, &VectorViewMut<'_, T, N>);
 
 //////////////////
 //  VectorView  //
 //////////////////
 
-impl<'a, T: Numeric, const N: usize> Sub<Vector<T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
+// Scalar
+impl_sub!(VectorView<'_, T, N>);
+impl_sub!(&VectorView<'_, T, N>);
 
-    fn sub(self, other: Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
-    }
-}
+impl_sub!(VectorView<'_, T, N>, Vector<T, N>);
+impl_sub!(VectorView<'_, T, N>, &Vector<T, N>);
+impl_sub!(&VectorView<'_, T, N>, Vector<T, N>);
+impl_sub!(&VectorView<'_, T, N>, &Vector<T, N>);
 
-impl<'a, T: Numeric, const N: usize> Sub<Vector<T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
+impl_sub!(VectorView<'_, T, N>, VectorView<'_, T, N>);
+impl_sub!(VectorView<'_, T, N>, &VectorView<'_, T, N>);
+impl_sub!(&VectorView<'_, T, N>, VectorView<'_, T, N>);
+impl_sub!(&VectorView<'_, T, N>, &VectorView<'_, T, N>);
 
-    fn sub(self, other: Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<&Vector<T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<&Vector<T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
-    }
-}
-
-impl<'a, 'b, T: Numeric, const N: usize> Sub<VectorView<'b, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: VectorView<'b, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
-    }
-}
-
-impl<'a, 'b, T: Numeric, const N: usize> Sub<&VectorView<'b, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &VectorView<'b, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
-    }
-}
-
-impl<'a, 'b, T: Numeric, const N: usize> Sub<VectorView<'b, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: VectorView<'b, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
-    }
-}
-
-impl<'a, 'b, T: Numeric, const N: usize> Sub<&VectorView<'b, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &VectorView<'b, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
-    }
-}
-
-impl<'a, 'b, T: Numeric, const N: usize> Sub<VectorViewMut<'b, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: VectorViewMut<'b, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
-    }
-}
-
-impl<'a, 'b, T: Numeric, const N: usize> Sub<&VectorViewMut<'b, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &VectorViewMut<'b, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
-    }
-}
-
-impl<'a, 'b, T: Numeric, const N: usize> Sub<VectorViewMut<'b, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: VectorViewMut<'b, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
-    }
-}
-
-impl<'a, 'b, T: Numeric, const N: usize> Sub<&VectorViewMut<'b, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &VectorViewMut<'b, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<T> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, scalar: T) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - scalar))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<T> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, scalar: T) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] - scalar))
-    }
-}
+impl_sub!(VectorView<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_sub!(VectorView<'_, T, N>, &VectorViewMut<'_, T, N>);
+impl_sub!(&VectorView<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_sub!(&VectorView<'_, T, N>, &VectorViewMut<'_, T, N>);
 
 /////////////////////
 //  VectorViewMut  //
 /////////////////////
 
-impl<'a, T: Numeric, const N: usize> Sub<Vector<T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
+// Scalar
+impl_sub!(VectorViewMut<'_, T, N>);
+impl_sub!(&VectorViewMut<'_, T, N>);
 
-    fn sub(self, other: Vector<T, N>) -> Self::Output {
-        v_sub(&self, &other)
-    }
-}
+impl_sub!(VectorViewMut<'_, T, N>, Vector<T, N>);
+impl_sub!(VectorViewMut<'_, T, N>, &Vector<T, N>);
+impl_sub!(&VectorViewMut<'_, T, N>, Vector<T, N>);
+impl_sub!(&VectorViewMut<'_, T, N>, &Vector<T, N>);
 
-impl<'a, T: Numeric, const N: usize> Sub<&Vector<T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
+impl_sub!(VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
+impl_sub!(VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
+impl_sub!(&VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
+impl_sub!(&VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
 
-    fn sub(self, other: &Vector<T, N>) -> Self::Output {
-        v_sub(&self, other)
-    }
-}
+impl_sub!(VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_sub!(VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
+impl_sub!(&VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_sub!(&VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
 
-impl<'a, T: Numeric, const N: usize> Sub<Vector<T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: Vector<T, N>) -> Self::Output {
-        v_sub(self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<&Vector<T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &Vector<T, N>) -> Self::Output {
-        v_sub(self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<VectorView<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_sub(&self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<&VectorView<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_sub(&self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<VectorView<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_sub(self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<&VectorView<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_sub(self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<VectorViewMut<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_sub(&self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<&VectorViewMut<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_sub(&self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<VectorViewMut<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_sub(self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<&VectorViewMut<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_sub(self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<T> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, scalar: T) -> Self::Output {
-        v_sub_scalar(&self, scalar)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Sub<T> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn sub(self, scalar: T) -> Self::Output {
-        v_sub_scalar(self, scalar)
-    }
-}
+//////////////////
+//  Unit Tests  //
+//////////////////
 
 #[cfg(test)]
 mod tests {

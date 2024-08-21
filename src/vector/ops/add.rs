@@ -1,369 +1,102 @@
-use crate::vector::traits::VectorOps;
 use crate::vector::vector_impl::Vector;
 use crate::vector::vector_view::VectorView;
 use crate::vector::vector_view_mut::VectorViewMut;
 use funty::Numeric;
 use std::ops::Add;
-use std::borrow::Borrow;
 
-fn v_add<T: Numeric, const N: usize>(
-    lhs: &dyn VectorOps<T, N>,
-    rhs: &dyn VectorOps<T, N>,
-) -> Vector<T, N> {
-    Vector::<T, N>::new(std::array::from_fn(|i| lhs[i] + rhs[i]))
-}
+macro_rules! impl_add {
+    ($lhs:ty, $rhs:ty) => {
+        impl<T: Numeric, const N: usize> Add<$rhs> for $lhs {
+            type Output = Vector<T, N>;
 
-fn v_add_scalar<T: Numeric, const N: usize>(v: &dyn VectorOps<T, N>, scalar: T) -> Vector<T, N> {
-    Vector::<T, N>::new(std::array::from_fn(|i| v[i] + scalar))
+            fn add(self, other: $rhs) -> Self::Output {
+                Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
+            }
+        }
+    };
+    ($lhs:ty) => {
+        impl<T: Numeric, const N: usize> Add<T> for $lhs {
+            type Output = Vector<T, N>;
+
+            fn add(self, scalar: T) -> Self::Output {
+                Vector::<T, N>::new(std::array::from_fn(|i| self[i] + scalar))
+            }
+        }
+    };
 }
 
 //////////////
 //  Vector  //
 //////////////
 
-impl<T: Numeric, const N: usize> Add<Vector<T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
+// Scalar
+impl_add!(Vector<T, N>);
+impl_add!(&Vector<T, N>);
 
-    fn add(self, other: Vector<T, N>) -> Self::Output {
-        v_add(&self, &other)
-    }
-}
+impl_add!(Vector<T, N>, Vector<T, N>);
+impl_add!(Vector<T, N>, &Vector<T, N>);
+impl_add!(&Vector<T, N>, Vector<T, N>);
+impl_add!(&Vector<T, N>, &Vector<T, N>);
 
-impl<T: Numeric, const N: usize> Add<&Vector<T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
+impl_add!(Vector<T, N>, VectorView<'_, T, N>);
+impl_add!(Vector<T, N>, &VectorView<'_, T, N>);
+impl_add!(&Vector<T, N>, VectorView<'_, T, N>);
+impl_add!(&Vector<T, N>, &VectorView<'_, T, N>);
 
-    fn add(self, other: &Vector<T, N>) -> Self::Output {
-        v_add(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Add<Vector<T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: Vector<T, N>) -> Self::Output {
-        v_add(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Add<&Vector<T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &Vector<T, N>) -> Self::Output {
-        v_add(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Add<VectorView<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_add(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Add<VectorView<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_add(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Add<&VectorView<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_add(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Add<&VectorView<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_add(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Add<VectorViewMut<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_add(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Add<VectorViewMut<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_add(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Add<&VectorViewMut<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_add(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Add<&VectorViewMut<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_add(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Add<T> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, scalar: T) -> Self::Output {
-        v_add_scalar(&self, scalar)
-    }
-}
-
-impl<T: Numeric, const N: usize> Add<T> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, scalar: T) -> Self::Output {
-        v_add_scalar(self, scalar)
-    }
-}
+impl_add!(Vector<T, N>, VectorViewMut<'_, T, N>);
+impl_add!(Vector<T, N>, &VectorViewMut<'_, T, N>);
+impl_add!(&Vector<T, N>, VectorViewMut<'_, T, N>);
+impl_add!(&Vector<T, N>, &VectorViewMut<'_, T, N>);
 
 //////////////////
 //  VectorView  //
 //////////////////
 
-impl<'a, T: Numeric, const N: usize> Add<Vector<T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
+// Scalar
+impl_add!(VectorView<'_, T, N>);
+impl_add!(&VectorView<'_, T, N>);
 
-    fn add(self, other: Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
-    }
-}
+impl_add!(VectorView<'_, T, N>, Vector<T, N>);
+impl_add!(VectorView<'_, T, N>, &Vector<T, N>);
+impl_add!(&VectorView<'_, T, N>, Vector<T, N>);
+impl_add!(&VectorView<'_, T, N>, &Vector<T, N>);
 
-impl<'a, T: Numeric, const N: usize> Add<Vector<T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
+impl_add!(VectorView<'_, T, N>, VectorView<'_, T, N>);
+impl_add!(VectorView<'_, T, N>, &VectorView<'_, T, N>);
+impl_add!(&VectorView<'_, T, N>, VectorView<'_, T, N>);
+impl_add!(&VectorView<'_, T, N>, &VectorView<'_, T, N>);
 
-    fn add(self, other: Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<&Vector<T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<&Vector<T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<VectorView<'_, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: VectorView<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<VectorView<'_, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: VectorView<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<&VectorView<'_, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<&VectorView<'_, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<VectorViewMut<'_, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<VectorViewMut<'_, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<&VectorViewMut<'_, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<&VectorViewMut<'_, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<T> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, scalar: T) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + scalar))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<T> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, scalar: T) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] + scalar))
-    }
-}
+impl_add!(VectorView<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_add!(VectorView<'_, T, N>, &VectorViewMut<'_, T, N>);
+impl_add!(&VectorView<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_add!(&VectorView<'_, T, N>, &VectorViewMut<'_, T, N>);
 
 /////////////////////
 //  VectorViewMut  //
 /////////////////////
 
-impl<'a, T: Numeric, const N: usize> Add<Vector<T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
+// Scalar
+impl_add!(VectorViewMut<'_, T, N>);
+impl_add!(&VectorViewMut<'_, T, N>);
 
-    fn add(self, other: Vector<T, N>) -> Self::Output {
-        v_add(&self, &other)
-    }
-}
+impl_add!(VectorViewMut<'_, T, N>, Vector<T, N>);
+impl_add!(VectorViewMut<'_, T, N>, &Vector<T, N>);
+impl_add!(&VectorViewMut<'_, T, N>, Vector<T, N>);
+impl_add!(&VectorViewMut<'_, T, N>, &Vector<T, N>);
 
-impl<'a, T: Numeric, const N: usize> Add<&Vector<T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
+impl_add!(VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
+impl_add!(VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
+impl_add!(&VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
+impl_add!(&VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
 
-    fn add(self, other: &Vector<T, N>) -> Self::Output {
-        v_add(&self, other)
-    }
-}
+impl_add!(VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_add!(VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
+impl_add!(&VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_add!(&VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
 
-impl<'a, T: Numeric, const N: usize> Add<Vector<T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: Vector<T, N>) -> Self::Output {
-        v_add(self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<&Vector<T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &Vector<T, N>) -> Self::Output {
-        v_add(self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<VectorView<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_add(&self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<&VectorView<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_add(&self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<VectorView<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_add(self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<&VectorView<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_add(self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<VectorViewMut<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_add(&self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<&VectorViewMut<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_add(&self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<VectorViewMut<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_add(self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<&VectorViewMut<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_add(self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<T> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, scalar: T) -> Self::Output {
-        v_add_scalar(&self, scalar)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Add<T> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn add(self, scalar: T) -> Self::Output {
-        v_add_scalar(self, scalar)
-    }
-}
+//////////////////
+//  Unit Tests  //
+//////////////////
 
 #[cfg(test)]
 mod tests {

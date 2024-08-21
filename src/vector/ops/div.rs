@@ -1,368 +1,102 @@
-use crate::vector::traits::VectorOps;
 use crate::vector::vector_impl::Vector;
 use crate::vector::vector_view::VectorView;
 use crate::vector::vector_view_mut::VectorViewMut;
 use funty::Numeric;
 use std::ops::Div;
 
-fn v_div<T: Numeric, const N: usize>(
-    v1: &dyn VectorOps<T, N>,
-    v2: &dyn VectorOps<T, N>,
-) -> Vector<T, N> {
-    Vector::<T, N>::new(std::array::from_fn(|i| v1[i] / v2[i]))
+macro_rules! impl_div {
+    ($lhs:ty, $rhs:ty) => {
+        impl<T: Numeric, const N: usize> Div<$rhs> for $lhs {
+            type Output = Vector<T, N>;
+
+            fn div(self, other: $rhs) -> Self::Output {
+                Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
+            }
+        }
+    };
+    ($lhs:ty) => {
+        impl<T: Numeric, const N: usize> Div<T> for $lhs {
+            type Output = Vector<T, N>;
+
+            fn div(self, scalar: T) -> Self::Output {
+                Vector::<T, N>::new(std::array::from_fn(|i| self[i] / scalar))
+            }
+        }
+    };
 }
 
-fn v_div_scalar<T: Numeric, const N: usize>(v: &dyn VectorOps<T, N>, scalar: T) -> Vector<T, N> {
-    Vector::<T, N>::new(std::array::from_fn(|i| v[i] / scalar))
-}
-
-///////////////
+//////////////
 //  Vector  //
 //////////////
 
-impl<T: Numeric, const N: usize> Div<Vector<T, N>> for Vector<T, N> {
-    type Output = Self;
+// Scalar
+impl_div!(Vector<T, N>);
+impl_div!(&Vector<T, N>);
 
-    fn div(self, other: Vector<T, N>) -> Self::Output {
-        v_div(&self, &other)
-    }
-}
+impl_div!(Vector<T, N>, Vector<T, N>);
+impl_div!(Vector<T, N>, &Vector<T, N>);
+impl_div!(&Vector<T, N>, Vector<T, N>);
+impl_div!(&Vector<T, N>, &Vector<T, N>);
 
-impl<T: Numeric, const N: usize> Div<&Vector<T, N>> for Vector<T, N> {
-    type Output = Self;
+impl_div!(Vector<T, N>, VectorView<'_, T, N>);
+impl_div!(Vector<T, N>, &VectorView<'_, T, N>);
+impl_div!(&Vector<T, N>, VectorView<'_, T, N>);
+impl_div!(&Vector<T, N>, &VectorView<'_, T, N>);
 
-    fn div(self, other: &Vector<T, N>) -> Self::Output {
-        v_div(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Div<Vector<T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: Vector<T, N>) -> Self::Output {
-        v_div(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Div<&Vector<T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &Vector<T, N>) -> Self::Output {
-        v_div(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Div<VectorView<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_div(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Div<&VectorView<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_div(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Div<VectorView<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_div(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Div<&VectorView<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_div(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Div<VectorViewMut<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_div(&self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Div<&VectorViewMut<'_, T, N>> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_div(&self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Div<VectorViewMut<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_div(self, &other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Div<&VectorViewMut<'_, T, N>> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_div(self, other)
-    }
-}
-
-impl<T: Numeric, const N: usize> Div<T> for Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, scalar: T) -> Self::Output {
-        v_div_scalar(&self, scalar)
-    }
-}
-
-impl<T: Numeric, const N: usize> Div<T> for &Vector<T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, scalar: T) -> Self::Output {
-        v_div_scalar(self, scalar)
-    }
-}
+impl_div!(Vector<T, N>, VectorViewMut<'_, T, N>);
+impl_div!(Vector<T, N>, &VectorViewMut<'_, T, N>);
+impl_div!(&Vector<T, N>, VectorViewMut<'_, T, N>);
+impl_div!(&Vector<T, N>, &VectorViewMut<'_, T, N>);
 
 //////////////////
 //  VectorView  //
 //////////////////
 
-impl<'a, T: Numeric, const N: usize> Div<Vector<T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
+// Scalar
+impl_div!(VectorView<'_, T, N>);
+impl_div!(&VectorView<'_, T, N>);
 
-    fn div(self, other: Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
-    }
-}
+impl_div!(VectorView<'_, T, N>, Vector<T, N>);
+impl_div!(VectorView<'_, T, N>, &Vector<T, N>);
+impl_div!(&VectorView<'_, T, N>, Vector<T, N>);
+impl_div!(&VectorView<'_, T, N>, &Vector<T, N>);
 
-impl<'a, T: Numeric, const N: usize> Div<Vector<T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
+impl_div!(VectorView<'_, T, N>, VectorView<'_, T, N>);
+impl_div!(VectorView<'_, T, N>, &VectorView<'_, T, N>);
+impl_div!(&VectorView<'_, T, N>, VectorView<'_, T, N>);
+impl_div!(&VectorView<'_, T, N>, &VectorView<'_, T, N>);
 
-    fn div(self, other: Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<&Vector<T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<&Vector<T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &Vector<T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<VectorView<'_, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: VectorView<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<&VectorView<'_, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<VectorView<'_, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: VectorView<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<&VectorView<'_, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<VectorViewMut<'_, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<&VectorViewMut<'_, T, N>> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<VectorViewMut<'_, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<&VectorViewMut<'_, T, N>> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / other[i]))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<T> for VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, scalar: T) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / scalar))
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<T> for &VectorView<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, scalar: T) -> Self::Output {
-        Vector::<T, N>::new(std::array::from_fn(|i| self[i] / scalar))
-    }
-}
+impl_div!(VectorView<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_div!(VectorView<'_, T, N>, &VectorViewMut<'_, T, N>);
+impl_div!(&VectorView<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_div!(&VectorView<'_, T, N>, &VectorViewMut<'_, T, N>);
 
 /////////////////////
 //  VectorViewMut  //
 /////////////////////
 
-impl<'a, T: Numeric, const N: usize> Div<Vector<T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
+// Scalar
+impl_div!(VectorViewMut<'_, T, N>);
+impl_div!(&VectorViewMut<'_, T, N>);
 
-    fn div(self, other: Vector<T, N>) -> Self::Output {
-        v_div(&self, &other)
-    }
-}
+impl_div!(VectorViewMut<'_, T, N>, Vector<T, N>);
+impl_div!(VectorViewMut<'_, T, N>, &Vector<T, N>);
+impl_div!(&VectorViewMut<'_, T, N>, Vector<T, N>);
+impl_div!(&VectorViewMut<'_, T, N>, &Vector<T, N>);
 
-impl<'a, T: Numeric, const N: usize> Div<&Vector<T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
+impl_div!(VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
+impl_div!(VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
+impl_div!(&VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
+impl_div!(&VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
 
-    fn div(self, other: &Vector<T, N>) -> Self::Output {
-        v_div(&self, other)
-    }
-}
+impl_div!(VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_div!(VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
+impl_div!(&VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_div!(&VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
 
-impl<'a, T: Numeric, const N: usize> Div<Vector<T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: Vector<T, N>) -> Self::Output {
-        v_div(self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<&Vector<T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &Vector<T, N>) -> Self::Output {
-        v_div(self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<VectorView<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_div(&self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<&VectorView<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_div(&self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<VectorView<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: VectorView<'_, T, N>) -> Self::Output {
-        v_div(self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<&VectorView<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &VectorView<'_, T, N>) -> Self::Output {
-        v_div(self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<VectorViewMut<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_div(&self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<&VectorViewMut<'_, T, N>> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_div(&self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<VectorViewMut<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: VectorViewMut<'_, T, N>) -> Self::Output {
-        v_div(self, &other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<&VectorViewMut<'_, T, N>> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, other: &VectorViewMut<'_, T, N>) -> Self::Output {
-        v_div(self, other)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<T> for VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, scalar: T) -> Self::Output {
-        v_div_scalar(&self, scalar)
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> Div<T> for &VectorViewMut<'a, T, N> {
-    type Output = Vector<T, N>;
-
-    fn div(self, scalar: T) -> Self::Output {
-        v_div_scalar(self, scalar)
-    }
-}
+//////////////////
+//  Unit Tests  //
+//////////////////
 
 #[cfg(test)]
 mod tests {

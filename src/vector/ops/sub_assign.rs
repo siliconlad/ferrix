@@ -4,101 +4,50 @@ use crate::vector::vector_view_mut::VectorViewMut;
 use funty::Numeric;
 use std::ops::SubAssign;
 
+macro_rules! impl_sub_assign {
+    ($lhs:ty, $rhs:ty) => {
+        impl<T: Numeric, const N: usize> SubAssign<$rhs> for $lhs {
+            fn sub_assign(&mut self, other: $rhs) {
+                (0..N).for_each(|i| self[i] -= other[i]);
+            }
+        }
+    };
+    ($lhs:ty) => {
+        impl<T: Numeric, const N: usize> SubAssign<T> for $lhs {
+            fn sub_assign(&mut self, scalar: T) {
+                (0..N).for_each(|i| self[i] -= scalar);
+            }
+        }
+    };
+}
+
 //////////////
 //  Vector  //
 //////////////
 
-impl<T: Numeric, const N: usize> SubAssign<Vector<T, N>> for Vector<T, N> {
-    fn sub_assign(&mut self, other: Vector<T, N>) {
-        (0..N).for_each(|i| self[i] -= other[i]);
-    }
-}
-
-impl<T: Numeric, const N: usize> SubAssign<&Vector<T, N>> for Vector<T, N> {
-    fn sub_assign(&mut self, other: &Vector<T, N>) {
-        (0..N).for_each(|i| self[i] -= other[i]);
-    }
-}
-
-impl<T: Numeric, const N: usize> SubAssign<VectorView<'_, T, N>> for Vector<T, N> {
-    fn sub_assign(&mut self, other: VectorView<'_, T, N>) {
-        (0..N).for_each(|i| self[i] -= other[i]);
-    }
-}
-
-impl<T: Numeric, const N: usize> SubAssign<&VectorView<'_, T, N>> for Vector<T, N> {
-    fn sub_assign(&mut self, other: &VectorView<'_, T, N>) {
-        (0..N).for_each(|i| self[i] -= other[i]);
-    }
-}
-
-impl<T: Numeric, const N: usize> SubAssign<VectorViewMut<'_, T, N>> for Vector<T, N> {
-    fn sub_assign(&mut self, other: VectorViewMut<'_, T, N>) {
-        (0..N).for_each(|i| self[i] -= other[i]);
-    }
-}
-
-impl<T: Numeric, const N: usize> SubAssign<&VectorViewMut<'_, T, N>> for Vector<T, N> {
-    fn sub_assign(&mut self, other: &VectorViewMut<'_, T, N>) {
-        (0..N).for_each(|i| self[i] -= other[i]);
-    }
-}
-
-impl<T: Numeric, const N: usize> SubAssign<T> for Vector<T, N> {
-    fn sub_assign(&mut self, scalar: T) {
-        (0..N).for_each(|i| self[i] -= scalar);
-    }
-}
+impl_sub_assign!(Vector<T, N>); // Scalar
+impl_sub_assign!(Vector<T, N>, Vector<T, N>);
+impl_sub_assign!(Vector<T, N>, &Vector<T, N>);
+impl_sub_assign!(Vector<T, N>, VectorView<'_, T, N>);
+impl_sub_assign!(Vector<T, N>, &VectorView<'_, T, N>);
+impl_sub_assign!(Vector<T, N>, VectorViewMut<'_, T, N>);
+impl_sub_assign!(Vector<T, N>, &VectorViewMut<'_, T, N>);
 
 /////////////////////
 //  VectorViewMut  //
 /////////////////////
 
-impl<'a, T: Numeric, const N: usize> SubAssign<Vector<T, N>> for VectorViewMut<'a, T, N> {
-    fn sub_assign(&mut self, other: Vector<T, N>) {
-        (0..N).for_each(|i| self[i] -= other[i]);
-    }
-}
+impl_sub_assign!(VectorViewMut<'_, T, N>); // Scalar
+impl_sub_assign!(VectorViewMut<'_, T, N>, Vector<T, N>);
+impl_sub_assign!(VectorViewMut<'_, T, N>, &Vector<T, N>);
+impl_sub_assign!(VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
+impl_sub_assign!(VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
+impl_sub_assign!(VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
+impl_sub_assign!(VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
 
-impl<'a, T: Numeric, const N: usize> SubAssign<&Vector<T, N>> for VectorViewMut<'a, T, N> {
-    fn sub_assign(&mut self, other: &Vector<T, N>) {
-        (0..N).for_each(|i| self[i] -= other[i]);
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> SubAssign<VectorView<'_, T, N>> for VectorViewMut<'a, T, N> {
-    fn sub_assign(&mut self, other: VectorView<'_, T, N>) {
-        (0..N).for_each(|i| self[i] -= other[i]);
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> SubAssign<&VectorView<'_, T, N>> for VectorViewMut<'a, T, N> {
-    fn sub_assign(&mut self, other: &VectorView<'_, T, N>) {
-        (0..N).for_each(|i| self[i] -= other[i]);
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> SubAssign<VectorViewMut<'_, T, N>>
-    for VectorViewMut<'a, T, N>
-{
-    fn sub_assign(&mut self, other: VectorViewMut<'_, T, N>) {
-        (0..N).for_each(|i| self[i] -= other[i]);
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> SubAssign<&VectorViewMut<'_, T, N>>
-    for VectorViewMut<'a, T, N>
-{
-    fn sub_assign(&mut self, other: &VectorViewMut<'_, T, N>) {
-        (0..N).for_each(|i| self[i] -= other[i]);
-    }
-}
-
-impl<'a, T: Numeric, const N: usize> SubAssign<T> for VectorViewMut<'a, T, N> {
-    fn sub_assign(&mut self, scalar: T) {
-        (0..N).for_each(|i| self[i] -= scalar);
-    }
-}
+//////////////////
+//  Unit Tests  //
+//////////////////
 
 #[cfg(test)]
 mod tests {
