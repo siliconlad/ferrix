@@ -84,6 +84,29 @@ macro_rules! impl_mm_add_view {
     };
 }
 
+macro_rules! impl_mm_add_view_view {
+    ($lhs:ty, $rhs:ty) => {
+        impl<
+                T: Numeric + From<u8>,
+                const A: usize,
+                const B: usize,
+                const C: usize,
+                const D: usize,
+                const M: usize,
+                const N: usize,
+            > Add<$rhs> for $lhs
+        {
+            type Output = Matrix<T, M, N>;
+
+            fn add(self, other: $rhs) -> Self::Output {
+                Matrix::<T, M, N>::new(std::array::from_fn(|i| {
+                    std::array::from_fn(|j| self[(i, j)] + other[(i, j)])
+                }))
+            }
+        }
+    };
+}
+
 //////////////
 //  Vector  //
 //////////////
@@ -199,69 +222,69 @@ impl_mm_add_view!(MatrixView<'_, T, A, B, M, N>, &Matrix<T, M, N>);
 impl_mm_add_view!(&MatrixView<'_, T, A, B, M, N>, Matrix<T, M, N>);
 impl_mm_add_view!(&MatrixView<'_, T, A, B, M, N>, &Matrix<T, M, N>);
 
-impl_mm_add_view!(MatrixView<'_, T, A, B, M, N>, MatrixView<'_, T, A, B, M, N>);
-impl_mm_add_view!(
+impl_mm_add_view_view!(MatrixView<'_, T, A, B, M, N>, MatrixView<'_, T, C, D, M, N>);
+impl_mm_add_view_view!(
     MatrixView<'_, T, A, B, M, N>,
-    &MatrixView<'_, T, A, B, M, N>
+    &MatrixView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixView<'_, T, A, B, M, N>,
-    MatrixView<'_, T, A, B, M, N>
+    MatrixView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixView<'_, T, A, B, M, N>,
-    &MatrixView<'_, T, A, B, M, N>
+    &MatrixView<'_, T, C, D, M, N>
 );
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixView<'_, T, A, B, M, N>,
-    MatrixViewMut<'_, T, A, B, M, N>
+    MatrixViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixView<'_, T, A, B, M, N>,
-    &MatrixViewMut<'_, T, A, B, M, N>
+    &MatrixViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixView<'_, T, A, B, M, N>,
-    MatrixViewMut<'_, T, A, B, M, N>
+    MatrixViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixView<'_, T, A, B, M, N>,
-    &MatrixViewMut<'_, T, A, B, M, N>
+    &MatrixViewMut<'_, T, C, D, M, N>
 );
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixView<'_, T, A, B, M, N>,
-    MatrixTransposeView<'_, T, A, B, M, N>
+    MatrixTransposeView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixView<'_, T, A, B, M, N>,
-    &MatrixTransposeView<'_, T, A, B, M, N>
+    &MatrixTransposeView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixView<'_, T, A, B, M, N>,
-    MatrixTransposeView<'_, T, A, B, M, N>
+    MatrixTransposeView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixView<'_, T, A, B, M, N>,
-    &MatrixTransposeView<'_, T, A, B, M, N>
+    &MatrixTransposeView<'_, T, C, D, M, N>
 );
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixView<'_, T, A, B, M, N>,
-    MatrixTransposeViewMut<'_, T, A, B, M, N>
+    MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixView<'_, T, A, B, M, N>,
-    &MatrixTransposeViewMut<'_, T, A, B, M, N>
+    &MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixView<'_, T, A, B, M, N>,
-    MatrixTransposeViewMut<'_, T, A, B, M, N>
+    MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixView<'_, T, A, B, M, N>,
-    &MatrixTransposeViewMut<'_, T, A, B, M, N>
+    &MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
 
 /////////////////////
@@ -277,72 +300,72 @@ impl_mm_add_view!(MatrixViewMut<'_, T, A, B, M, N>, &Matrix<T, M, N>);
 impl_mm_add_view!(&MatrixViewMut<'_, T, A, B, M, N>, Matrix<T, M, N>);
 impl_mm_add_view!(&MatrixViewMut<'_, T, A, B, M, N>, &Matrix<T, M, N>);
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixViewMut<'_, T, A, B, M, N>,
-    MatrixView<'_, T, A, B, M, N>
+    MatrixView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixViewMut<'_, T, A, B, M, N>,
-    &MatrixView<'_, T, A, B, M, N>
+    &MatrixView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixViewMut<'_, T, A, B, M, N>,
-    MatrixView<'_, T, A, B, M, N>
+    MatrixView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixViewMut<'_, T, A, B, M, N>,
-    &MatrixView<'_, T, A, B, M, N>
+    &MatrixView<'_, T, C, D, M, N>
 );
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixViewMut<'_, T, A, B, M, N>,
-    MatrixViewMut<'_, T, A, B, M, N>
+    MatrixViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixViewMut<'_, T, A, B, M, N>,
-    &MatrixViewMut<'_, T, A, B, M, N>
+    &MatrixViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixViewMut<'_, T, A, B, M, N>,
-    MatrixViewMut<'_, T, A, B, M, N>
+    MatrixViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixViewMut<'_, T, A, B, M, N>,
-    &MatrixViewMut<'_, T, A, B, M, N>
+    &MatrixViewMut<'_, T, C, D, M, N>
 );
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixViewMut<'_, T, A, B, M, N>,
-    MatrixTransposeView<'_, T, A, B, M, N>
+    MatrixTransposeView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixViewMut<'_, T, A, B, M, N>,
-    &MatrixTransposeView<'_, T, A, B, M, N>
+    &MatrixTransposeView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixViewMut<'_, T, A, B, M, N>,
-    MatrixTransposeView<'_, T, A, B, M, N>
+    MatrixTransposeView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixViewMut<'_, T, A, B, M, N>,
-    &MatrixTransposeView<'_, T, A, B, M, N>
+    &MatrixTransposeView<'_, T, C, D, M, N>
 );
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixViewMut<'_, T, A, B, M, N>,
-    MatrixTransposeViewMut<'_, T, A, B, M, N>
+    MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixViewMut<'_, T, A, B, M, N>,
-    &MatrixTransposeViewMut<'_, T, A, B, M, N>
+    &MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixViewMut<'_, T, A, B, M, N>,
-    MatrixTransposeViewMut<'_, T, A, B, M, N>
+    MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixViewMut<'_, T, A, B, M, N>,
-    &MatrixTransposeViewMut<'_, T, A, B, M, N>
+    &MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
 
 ///////////////////////////
@@ -358,72 +381,72 @@ impl_mm_add_view!(MatrixTransposeView<'_, T, A, B, M, N>, &Matrix<T, M, N>);
 impl_mm_add_view!(&MatrixTransposeView<'_, T, A, B, M, N>, Matrix<T, M, N>);
 impl_mm_add_view!(&MatrixTransposeView<'_, T, A, B, M, N>, &Matrix<T, M, N>);
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeView<'_, T, A, B, M, N>,
-    MatrixView<'_, T, A, B, M, N>
+    MatrixView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeView<'_, T, A, B, M, N>,
-    &MatrixView<'_, T, A, B, M, N>
+    &MatrixView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeView<'_, T, A, B, M, N>,
-    MatrixView<'_, T, A, B, M, N>
+    MatrixView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeView<'_, T, A, B, M, N>,
-    &MatrixView<'_, T, A, B, M, N>
+    &MatrixView<'_, T, C, D, M, N>
 );
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeView<'_, T, A, B, M, N>,
-    MatrixViewMut<'_, T, A, B, M, N>
+    MatrixViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeView<'_, T, A, B, M, N>,
-    &MatrixViewMut<'_, T, A, B, M, N>
+    &MatrixViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeView<'_, T, A, B, M, N>,
-    MatrixViewMut<'_, T, A, B, M, N>
+    MatrixViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeView<'_, T, A, B, M, N>,
-    &MatrixViewMut<'_, T, A, B, M, N>
+    &MatrixViewMut<'_, T, C, D, M, N>
 );
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeView<'_, T, A, B, M, N>,
-    MatrixTransposeView<'_, T, A, B, M, N>
+    MatrixTransposeView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeView<'_, T, A, B, M, N>,
-    &MatrixTransposeView<'_, T, A, B, M, N>
+    &MatrixTransposeView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeView<'_, T, A, B, M, N>,
-    MatrixTransposeView<'_, T, A, B, M, N>
+    MatrixTransposeView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeView<'_, T, A, B, M, N>,
-    &MatrixTransposeView<'_, T, A, B, M, N>
+    &MatrixTransposeView<'_, T, C, D, M, N>
 );
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeView<'_, T, A, B, M, N>,
-    MatrixTransposeViewMut<'_, T, A, B, M, N>
+    MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeView<'_, T, A, B, M, N>,
-    &MatrixTransposeViewMut<'_, T, A, B, M, N>
+    &MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeView<'_, T, A, B, M, N>,
-    MatrixTransposeViewMut<'_, T, A, B, M, N>
+    MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeView<'_, T, A, B, M, N>,
-    &MatrixTransposeViewMut<'_, T, A, B, M, N>
+    &MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
 
 //////////////////////////////
@@ -439,72 +462,72 @@ impl_mm_add_view!(MatrixTransposeViewMut<'_, T, A, B, M, N>, &Matrix<T, M, N>);
 impl_mm_add_view!(&MatrixTransposeViewMut<'_, T, A, B, M, N>, Matrix<T, M, N>);
 impl_mm_add_view!(&MatrixTransposeViewMut<'_, T, A, B, M, N>, &Matrix<T, M, N>);
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    MatrixView<'_, T, A, B, M, N>
+    MatrixView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    &MatrixView<'_, T, A, B, M, N>
+    &MatrixView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    MatrixView<'_, T, A, B, M, N>
+    MatrixView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    &MatrixView<'_, T, A, B, M, N>
+    &MatrixView<'_, T, C, D, M, N>
 );
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    MatrixViewMut<'_, T, A, B, M, N>
+    MatrixViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    &MatrixViewMut<'_, T, A, B, M, N>
+    &MatrixViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    MatrixViewMut<'_, T, A, B, M, N>
+    MatrixViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    &MatrixViewMut<'_, T, A, B, M, N>
+    &MatrixViewMut<'_, T, C, D, M, N>
 );
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    MatrixTransposeView<'_, T, A, B, M, N>
+    MatrixTransposeView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    &MatrixTransposeView<'_, T, A, B, M, N>
+    &MatrixTransposeView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    MatrixTransposeView<'_, T, A, B, M, N>
+    MatrixTransposeView<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    &MatrixTransposeView<'_, T, A, B, M, N>
+    &MatrixTransposeView<'_, T, C, D, M, N>
 );
 
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    MatrixTransposeViewMut<'_, T, A, B, M, N>
+    MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    &MatrixTransposeViewMut<'_, T, A, B, M, N>
+    &MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    MatrixTransposeViewMut<'_, T, A, B, M, N>
+    MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
-impl_mm_add_view!(
+impl_mm_add_view_view!(
     &MatrixTransposeViewMut<'_, T, A, B, M, N>,
-    &MatrixTransposeViewMut<'_, T, A, B, M, N>
+    &MatrixTransposeViewMut<'_, T, C, D, M, N>
 );
 
 //////////////////
@@ -847,115 +870,115 @@ mod tests {
 
         // Matrix + MatrixView
         let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m2 = Matrix::<i32, 3, 3>::new([[5, 6, 0], [7, 8, 0], [0, 0, 0]]);
         let view = m2.view::<2, 2>((0, 0));
         let result = m1 + view;
         assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
 
         // Matrix + &MatrixView
         let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m2 = Matrix::<i32, 3, 3>::new([[5, 6, 0], [7, 8, 0], [0, 0, 0]]);
         let view = m2.view::<2, 2>((0, 0));
         let result = m1 + &view;
         assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
 
         // &Matrix + MatrixView
         let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m2 = Matrix::<i32, 3, 3>::new([[5, 6, 0], [7, 8, 0], [0, 0, 0]]);
         let view = m2.view::<2, 2>((0, 0));
         let result = &m1 + view;
         assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
 
         // &Matrix + &MatrixView
         let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m2 = Matrix::<i32, 3, 3>::new([[5, 6, 0], [7, 8, 0], [0, 0, 0]]);
         let view = m2.view::<2, 2>((0, 0));
         let result = &m1 + &view;
         assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
 
         // Matrix + MatrixViewMut
         let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m2 = Matrix::<i32, 3, 3>::new([[5, 6, 0], [7, 8, 0], [0, 0, 0]]);
         let view_mut = m2.view_mut::<2, 2>((0, 0));
         let result = m1 + view_mut;
         assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
 
         // Matrix + &MatrixViewMut
         let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m2 = Matrix::<i32, 3, 3>::new([[5, 6, 0], [7, 8, 0], [0, 0, 0]]);
         let view_mut = m2.view_mut::<2, 2>((0, 0));
         let result = m1 + &view_mut;
         assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
 
         // &Matrix + MatrixViewMut
         let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m2 = Matrix::<i32, 3, 3>::new([[5, 6, 0], [7, 8, 0], [0, 0, 0]]);
         let view_mut = m2.view_mut::<2, 2>((0, 0));
         let result = &m1 + view_mut;
         assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
 
         // &Matrix + &MatrixViewMut
         let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m2 = Matrix::<i32, 3, 3>::new([[5, 6, 0], [7, 8, 0], [0, 0, 0]]);
         let view_mut = m2.view_mut::<2, 2>((0, 0));
         let result = &m1 + &view_mut;
         assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
 
         // Matrix + MatrixTransposeView
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let t_view = m2.t();
         let result = m1 + t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 9], [9, 12]]));
+        assert_eq!(result, Matrix::<i32, 3, 2>::new([[6, 10], [9, 13], [12, 16]]));
 
         // Matrix + &MatrixTransposeView
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let t_view = m2.t();
         let result = m1 + &t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 9], [9, 12]]));
+        assert_eq!(result, Matrix::<i32, 3, 2>::new([[6, 10], [9, 13], [12, 16]]));
 
         // &Matrix + MatrixTransposeView
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let t_view = m2.t();
         let result = &m1 + t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 9], [9, 12]]));
+        assert_eq!(result, Matrix::<i32, 3, 2>::new([[6, 10], [9, 13], [12, 16]]));
 
         // &Matrix + &MatrixTransposeView
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let t_view = m2.t();
         let result = &m1 + &t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 9], [9, 12]]));
+        assert_eq!(result, Matrix::<i32, 3, 2>::new([[6, 10], [9, 13], [12, 16]]));
 
         // Matrix + MatrixTransposeViewMut
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
+        let mut m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let t_view_mut = m2.t_mut();
         let result = m1 + t_view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 9], [9, 12]]));
+        assert_eq!(result, Matrix::<i32, 3, 2>::new([[6, 10], [9, 13], [12, 16]]));
 
         // Matrix + &MatrixTransposeViewMut
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
+        let mut m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let t_view_mut = m2.t_mut();
         let result = m1 + &t_view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 9], [9, 12]]));
+        assert_eq!(result, Matrix::<i32, 3, 2>::new([[6, 10], [9, 13], [12, 16]]));
 
         // &Matrix + MatrixTransposeViewMut
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
+        let mut m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let t_view_mut = m2.t_mut();
         let result = &m1 + t_view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 9], [9, 12]]));
+        assert_eq!(result, Matrix::<i32, 3, 2>::new([[6, 10], [9, 13], [12, 16]]));
 
         // &Matrix + &MatrixTransposeViewMut
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
+        let mut m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let t_view_mut = m2.t_mut();
         let result = &m1 + &t_view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 9], [9, 12]]));
+        assert_eq!(result, Matrix::<i32, 3, 2>::new([[6, 10], [9, 13], [12, 16]]));
 
         // Matrix + Scalar
         let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
@@ -973,167 +996,167 @@ mod tests {
     #[test]
     fn test_matrix_view_add() {
         // MatrixView + Matrix
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view = m1.view::<2, 2>((0, 0));
         let result = view + m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // MatrixView + &Matrix
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
-        let view = m1.view::<2, 2>((0, 0));
+        let view = m1.view::<2, 2>((1, 1));
         let result = view + &m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[10, 12], [15, 17]]));
 
         // &MatrixView + Matrix
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
-        let view = m1.view::<2, 2>((0, 0));
+        let view = m1.view::<2, 2>((0, 1));
         let result = &view + m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[7, 9], [12, 14]]));
 
         // &MatrixView + &Matrix
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
-        let view = m1.view::<2, 2>((0, 0));
+        let view = m1.view::<2, 2>((1, 0));
         let result = &view + &m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[9, 11], [14, 16]]));
 
         // MatrixView + MatrixView
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [8, 9]]);
         let view1 = m1.view::<2, 2>((0, 0));
         let view2 = m2.view::<2, 2>((0, 0));
         let result = view1 + view2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [12, 14]]));
 
         // MatrixView + &MatrixView
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
-        let view1 = m1.view::<2, 2>((0, 0));
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [8, 9]]);
+        let view1 = m1.view::<2, 2>((1, 1));
         let view2 = m2.view::<2, 2>((0, 0));
         let result = view1 + &view2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[10, 12], [16, 18]]));
 
         // &MatrixView + MatrixView
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
-        let view1 = m1.view::<2, 2>((0, 0));
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [8, 9]]);
+        let view1 = m1.view::<2, 2>((0, 1));
         let view2 = m2.view::<2, 2>((0, 0));
         let result = &view1 + view2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[7, 9], [13, 15]]));
 
         // &MatrixView + &MatrixView
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
-        let view1 = m1.view::<2, 2>((0, 0));
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [8, 9]]);
+        let view1 = m1.view::<2, 2>((1, 0));
         let view2 = m2.view::<2, 2>((0, 0));
         let result = &view1 + &view2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[9, 11], [15, 17]]));
 
         // MatrixView + MatrixViewMut
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [8, 9]]);
         let view = m1.view::<2, 2>((0, 0));
         let view_mut = m2.view_mut::<2, 2>((0, 0));
         let result = view + view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [12, 14]]));
 
         // MatrixView + &MatrixViewMut
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
-        let view = m1.view::<2, 2>((0, 0));
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [8, 9]]);
+        let view = m1.view::<2, 2>((1, 1));
         let view_mut = m2.view_mut::<2, 2>((0, 0));
         let result = view + &view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[10, 12], [16, 18]]));
 
         // &MatrixView + MatrixViewMut
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
-        let view = m1.view::<2, 2>((0, 0));
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [8, 9]]);
+        let view = m1.view::<2, 2>((0, 1));
         let view_mut = m2.view_mut::<2, 2>((0, 0));
         let result = &view + view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[7, 9], [13, 15]]));
 
         // &MatrixView + &MatrixViewMut
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
-        let view = m1.view::<2, 2>((0, 0));
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [8, 9]]);
+        let view = m1.view::<2, 2>((1, 0));
         let view_mut = m2.view_mut::<2, 2>((0, 0));
         let result = &view + &view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[9, 11], [15, 17]]));
 
         // MatrixView + MatrixTransposeView
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view = m1.view::<2, 2>((0, 0));
         let t_view = m2.t();
         let result = view + t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 9], [10, 13]]));
 
         // MatrixView + &MatrixTransposeView
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view = m1.view::<2, 2>((0, 0));
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let view = m1.view::<2, 2>((1, 1));
         let t_view = m2.t();
         let result = view + &t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[10, 13], [14, 17]]));
 
         // &MatrixView + MatrixTransposeView
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view = m1.view::<2, 2>((0, 0));
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let view = m1.view::<2, 2>((0, 1));
         let t_view = m2.t();
         let result = &view + t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[7, 10], [11, 14]]));
 
         // &MatrixView + &MatrixTransposeView
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view = m1.view::<2, 2>((0, 0));
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let view = m1.view::<2, 2>((1, 0));
         let t_view = m2.t();
         let result = &view + &t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[9, 12], [13, 16]]));
 
         // MatrixView + MatrixTransposeViewMut
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view = m1.view::<2, 2>((0, 0));
         let t_view_mut = m2.t_mut();
         let result = view + t_view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 9], [10, 13]]));
 
         // MatrixView + &MatrixTransposeViewMut
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view = m1.view::<2, 2>((0, 0));
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let view = m1.view::<2, 2>((1, 1));
         let t_view_mut = m2.t_mut();
         let result = view + &t_view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[10, 13], [14, 17]]));
 
         // &MatrixView + MatrixTransposeViewMut
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view = m1.view::<2, 2>((0, 0));
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let view = m1.view::<2, 2>((0, 1));
         let t_view_mut = m2.t_mut();
         let result = &view + t_view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[7, 10], [11, 14]]));
 
         // &MatrixView + &MatrixTransposeViewMut
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view = m1.view::<2, 2>((0, 0));
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let view = m1.view::<2, 2>((1, 0));
         let t_view_mut = m2.t_mut();
         let result = &view + &t_view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[9, 12], [13, 16]]));
 
         // MatrixView + Scalar
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let view = m1.view::<2, 2>((0, 0));
         let scalar = 5;
         let result = view + scalar;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 7], [8, 9]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 7], [9, 10]]));
 
         // &MatrixView + Scalar
         let m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
@@ -1146,160 +1169,160 @@ mod tests {
     #[test]
     fn test_matrix_view_mut_add() {
         // MatrixViewMut + Matrix
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view_mut = m1.view_mut::<2, 2>((0, 0));
         let result = view_mut + m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // MatrixViewMut + &Matrix
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view_mut = m1.view_mut::<2, 2>((0, 0));
         let result = view_mut + &m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // &MatrixViewMut + Matrix
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view_mut = m1.view_mut::<2, 2>((0, 0));
         let result = &view_mut + m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // &MatrixViewMut + &Matrix
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view_mut = m1.view_mut::<2, 2>((0, 0));
         let result = &view_mut + &m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // MatrixViewMut + MatrixView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view_mut = m1.view_mut::<2, 2>((0, 0));
         let view = m2.view::<2, 2>((0, 0));
         let result = view_mut + view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // MatrixViewMut + &MatrixView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view_mut = m1.view_mut::<2, 2>((0, 0));
         let view = m2.view::<2, 2>((0, 0));
         let result = view_mut + &view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // &MatrixViewMut + MatrixView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view_mut = m1.view_mut::<2, 2>((0, 0));
         let view = m2.view::<2, 2>((0, 0));
         let result = &view_mut + view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // &MatrixViewMut + &MatrixView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view_mut = m1.view_mut::<2, 2>((0, 0));
         let view = m2.view::<2, 2>((0, 0));
         let result = &view_mut + &view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // MatrixViewMut + MatrixViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view_mut1 = m1.view_mut::<2, 2>((0, 0));
         let view_mut2 = m2.view_mut::<2, 2>((0, 0));
         let result = view_mut1 + view_mut2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // MatrixViewMut + &MatrixViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view_mut1 = m1.view_mut::<2, 2>((0, 0));
         let view_mut2 = m2.view_mut::<2, 2>((0, 0));
         let result = view_mut1 + &view_mut2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // &MatrixViewMut + MatrixViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view_mut1 = m1.view_mut::<2, 2>((0, 0));
         let view_mut2 = m2.view_mut::<2, 2>((0, 0));
         let result = &view_mut1 + view_mut2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // &MatrixViewMut + &MatrixViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let view_mut1 = m1.view_mut::<2, 2>((0, 0));
         let view_mut2 = m2.view_mut::<2, 2>((0, 0));
         let result = &view_mut1 + &view_mut2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // MatrixViewMut + MatrixTransposeView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view_mut = m1.view_mut::<2, 2>((0, 0));
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let m2 = Matrix::<i32, 3, 2>::new([[5, 7], [6, 8], [9, 10]]);
+        let view_mut = m1.view_mut::<2, 3>((0, 0));
         let t_view = m2.t();
         let result = view_mut + t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixViewMut + &MatrixTransposeView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view_mut = m1.view_mut::<2, 2>((0, 0));
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let m2 = Matrix::<i32, 3, 2>::new([[5, 7], [6, 8], [9, 10]]);
+        let view_mut = m1.view_mut::<2, 3>((0, 0));
         let t_view = m2.t();
         let result = view_mut + &t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixViewMut + MatrixTransposeView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view_mut = m1.view_mut::<2, 2>((0, 0));
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let m2 = Matrix::<i32, 3, 2>::new([[5, 7], [6, 8], [9, 10]]);
+        let view_mut = m1.view_mut::<2, 3>((0, 0));
         let t_view = m2.t();
         let result = &view_mut + t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixViewMut + &MatrixTransposeView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view_mut = m1.view_mut::<2, 2>((0, 0));
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let m2 = Matrix::<i32, 3, 2>::new([[5, 7], [6, 8], [9, 10]]);
+        let view_mut = m1.view_mut::<2, 3>((0, 0));
         let t_view = m2.t();
         let result = &view_mut + &t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixViewMut + MatrixTransposeViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view_mut = m1.view_mut::<2, 2>((0, 0));
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let mut m2 = Matrix::<i32, 3, 2>::new([[5, 7], [6, 8], [9, 10]]);
+        let view_mut = m1.view_mut::<2, 3>((0, 0));
         let t_view_mut = m2.t_mut();
         let result = view_mut + t_view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixViewMut + &MatrixTransposeViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view_mut = m1.view_mut::<2, 2>((0, 0));
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let mut m2 = Matrix::<i32, 3, 2>::new([[5, 7], [6, 8], [9, 10]]);
+        let view_mut = m1.view_mut::<2, 3>((0, 0));
         let t_view_mut = m2.t_mut();
         let result = view_mut + &t_view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixViewMut + MatrixTransposeViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view_mut = m1.view_mut::<2, 2>((0, 0));
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let mut m2 = Matrix::<i32, 3, 2>::new([[5, 7], [6, 8], [9, 10]]);
+        let view_mut = m1.view_mut::<2, 3>((0, 0));
         let t_view_mut = m2.t_mut();
         let result = &view_mut + t_view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixViewMut + &MatrixTransposeViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
-        let view_mut = m1.view_mut::<2, 2>((0, 0));
+        let mut m1 = Matrix::<i32, 3, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let mut m2 = Matrix::<i32, 3, 2>::new([[5, 7], [6, 8], [9, 10]]);
+        let view_mut = m1.view_mut::<2, 3>((0, 0));
         let t_view_mut = m2.t_mut();
         let result = &view_mut + &t_view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixViewMut + Scalar
         let mut m1 = Matrix::<i32, 2, 2>::new([[1, 2], [3, 4]]);
@@ -1319,96 +1342,96 @@ mod tests {
     #[test]
     fn test_matrix_transpose_view_add() {
         // MatrixTransposeView + Matrix
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 2, 3>::new([[1, 2, 3], [4, 5, 6]]);
+        let m2 = Matrix::<i32, 3, 2>::new([[5, 6], [7, 8], [9, 10]]);
         let t_view = m1.t();
         let result = t_view + m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 3, 2>::new([[6, 10], [9, 13], [12, 16]]));
 
         // MatrixTransposeView + &Matrix
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 2, 3>::new([[1, 2, 3], [4, 5, 6]]);
+        let m2 = Matrix::<i32, 3, 2>::new([[5, 6], [7, 8], [9, 10]]);
         let t_view = m1.t();
         let result = t_view + &m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 3, 2>::new([[6, 10], [9, 13], [12, 16]]));
 
         // &MatrixTransposeView + Matrix
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 2, 3>::new([[1, 2, 3], [4, 5, 6]]);
+        let m2 = Matrix::<i32, 3, 2>::new([[5, 6], [7, 8], [9, 10]]);
         let t_view = m1.t();
         let result = &t_view + m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 3, 2>::new([[6, 10], [9, 13], [12, 16]]));
 
         // &MatrixTransposeView + &Matrix
-        let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m1 = Matrix::<i32, 2, 3>::new([[1, 2, 3], [4, 5, 6]]);
+        let m2 = Matrix::<i32, 3, 2>::new([[5, 6], [7, 8], [9, 10]]);
         let t_view = m1.t();
         let result = &t_view + &m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 3, 2>::new([[6, 10], [9, 13], [12, 16]]));
 
         // MatrixTransposeView + MatrixView
         let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m2 = Matrix::<i32, 4, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13], [14, 15, 16]]);
         let t_view = m1.t();
         let view = m2.view::<2, 2>((0, 0));
         let result = t_view + view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // MatrixTransposeView + &MatrixView
         let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m2 = Matrix::<i32, 4, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13], [14, 15, 16]]);
         let t_view = m1.t();
         let view = m2.view::<2, 2>((0, 0));
         let result = t_view + &view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // &MatrixTransposeView + MatrixView
         let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m2 = Matrix::<i32, 4, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13], [14, 15, 16]]);
         let t_view = m1.t();
         let view = m2.view::<2, 2>((0, 0));
         let result = &t_view + view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // &MatrixTransposeView + &MatrixView
         let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let m2 = Matrix::<i32, 4, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13], [14, 15, 16]]);
         let t_view = m1.t();
         let view = m2.view::<2, 2>((0, 0));
         let result = &t_view + &view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // MatrixTransposeView + MatrixViewMut
         let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m2 = Matrix::<i32, 4, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13], [14, 15, 16]]);
         let t_view = m1.t();
         let view_mut = m2.view_mut::<2, 2>((0, 0));
         let result = t_view + view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // MatrixTransposeView + &MatrixViewMut
         let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m2 = Matrix::<i32, 4, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13], [14, 15, 16]]);
         let t_view = m1.t();
         let view_mut = m2.view_mut::<2, 2>((0, 0));
         let result = t_view + &view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // &MatrixTransposeView + MatrixViewMut
         let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m2 = Matrix::<i32, 4, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13], [14, 15, 16]]);
         let t_view = m1.t();
         let view_mut = m2.view_mut::<2, 2>((0, 0));
         let result = &t_view + view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // &MatrixTransposeView + &MatrixViewMut
         let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m2 = Matrix::<i32, 4, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13], [14, 15, 16]]);
         let t_view = m1.t();
         let view_mut = m2.view_mut::<2, 2>((0, 0));
         let result = &t_view + &view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [11, 13]]));
 
         // MatrixTransposeView + MatrixTransposeView
         let m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
@@ -1492,173 +1515,173 @@ mod tests {
     #[test]
     fn test_matrix_transpose_view_mut_add() {
         // MatrixTransposeViewMut + Matrix
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let t_view_mut = m1.t_mut();
         let result = t_view_mut + m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixTransposeViewMut + &Matrix
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let t_view_mut = m1.t_mut();
         let result = t_view_mut + &m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixTransposeViewMut + Matrix
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let t_view_mut = m1.t_mut();
         let result = &t_view_mut + m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixTransposeViewMut + &Matrix
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let t_view_mut = m1.t_mut();
         let result = &t_view_mut + &m2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixTransposeViewMut + MatrixView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 3, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13]]);
         let t_view_mut = m1.t_mut();
-        let view = m2.view::<2, 2>((0, 0));
+        let view = m2.view::<2, 3>((0, 0));
         let result = t_view_mut + view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixTransposeViewMut + &MatrixView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 3, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13]]);
         let t_view_mut = m1.t_mut();
-        let view = m2.view::<2, 2>((0, 0));
+        let view = m2.view::<2, 3>((0, 0));
         let result = t_view_mut + &view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixTransposeViewMut + MatrixView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 3, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13]]);
         let t_view_mut = m1.t_mut();
-        let view = m2.view::<2, 2>((0, 0));
+        let view = m2.view::<2, 3>((0, 0));
         let result = &t_view_mut + view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixTransposeViewMut + &MatrixView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 3, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13]]);
         let t_view_mut = m1.t_mut();
-        let view = m2.view::<2, 2>((0, 0));
+        let view = m2.view::<2, 3>((0, 0));
         let result = &t_view_mut + &view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixTransposeViewMut + MatrixViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let mut m2 = Matrix::<i32, 3, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13]]);
         let t_view_mut = m1.t_mut();
-        let view_mut = m2.view_mut::<2, 2>((0, 0));
+        let view_mut = m2.view_mut::<2, 3>((0, 0));
         let result = t_view_mut + view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixTransposeViewMut + &MatrixViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let mut m2 = Matrix::<i32, 3, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13]]);
         let t_view_mut = m1.t_mut();
-        let view_mut = m2.view_mut::<2, 2>((0, 0));
+        let view_mut = m2.view_mut::<2, 3>((0, 0));
         let result = t_view_mut + &view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixTransposeViewMut + MatrixViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let mut m2 = Matrix::<i32, 3, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13]]);
         let t_view_mut = m1.t_mut();
-        let view_mut = m2.view_mut::<2, 2>((0, 0));
+        let view_mut = m2.view_mut::<2, 3>((0, 0));
         let result = &t_view_mut + view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixTransposeViewMut + &MatrixViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let mut m2 = Matrix::<i32, 3, 3>::new([[5, 6, 7], [8, 9, 10], [11, 12, 13]]);
         let t_view_mut = m1.t_mut();
-        let view_mut = m2.view_mut::<2, 2>((0, 0));
+        let view_mut = m2.view_mut::<2, 3>((0, 0));
         let result = &t_view_mut + &view_mut;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixTransposeViewMut + MatrixTransposeView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 3, 2>::new([[5, 8], [6, 9], [7, 10]]);
         let t_view_mut = m1.t_mut();
         let t_view = m2.t();
         let result = t_view_mut + t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixTransposeViewMut + &MatrixTransposeView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 3, 2>::new([[5, 8], [6, 9], [7, 10]]);
         let t_view_mut = m1.t_mut();
         let t_view = m2.t();
         let result = t_view_mut + &t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixTransposeViewMut + MatrixTransposeView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 3, 2>::new([[5, 8], [6, 9], [7, 10]]);
         let t_view_mut = m1.t_mut();
         let t_view = m2.t();
         let result = &t_view_mut + t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixTransposeViewMut + &MatrixTransposeView
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let m2 = Matrix::<i32, 3, 2>::new([[5, 8], [6, 9], [7, 10]]);
         let t_view_mut = m1.t_mut();
         let t_view = m2.t();
         let result = &t_view_mut + &t_view;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixTransposeViewMut + MatrixTransposeViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let mut m2 = Matrix::<i32, 3, 2>::new([[5, 8], [6, 9], [7, 10]]);
         let t_view_mut1 = m1.t_mut();
         let t_view_mut2 = m2.t_mut();
         let result = t_view_mut1 + t_view_mut2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixTransposeViewMut + &MatrixTransposeViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let mut m2 = Matrix::<i32, 3, 2>::new([[5, 8], [6, 9], [7, 10]]);
         let t_view_mut1 = m1.t_mut();
         let t_view_mut2 = m2.t_mut();
         let result = t_view_mut1 + &t_view_mut2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixTransposeViewMut + MatrixTransposeViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let mut m2 = Matrix::<i32, 3, 2>::new([[5, 8], [6, 9], [7, 10]]);
         let t_view_mut1 = m1.t_mut();
         let t_view_mut2 = m2.t_mut();
         let result = &t_view_mut1 + t_view_mut2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // &MatrixTransposeViewMut + &MatrixTransposeViewMut
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
-        let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
+        let mut m2 = Matrix::<i32, 3, 2>::new([[5, 8], [6, 9], [7, 10]]);
         let t_view_mut1 = m1.t_mut();
         let t_view_mut2 = m2.t_mut();
         let result = &t_view_mut1 + &t_view_mut2;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 8], [10, 12]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
 
         // MatrixTransposeViewMut + Scalar
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
         let t_view_mut = m1.t_mut();
         let scalar = 5;
         let result = t_view_mut + scalar;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 7], [8, 9]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 7, 10], [8, 9, 11]]));
 
         // &MatrixTransposeViewMut + Scalar
-        let mut m1 = Matrix::<i32, 2, 2>::new([[1, 3], [2, 4]]);
+        let mut m1 = Matrix::<i32, 3, 2>::new([[1, 3], [2, 4], [5, 6]]);
         let t_view_mut = m1.t_mut();
         let scalar = 5;
         let result = &t_view_mut + scalar;
-        assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 7], [8, 9]]));
+        assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 7, 10], [8, 9, 11]]));
     }
 }
