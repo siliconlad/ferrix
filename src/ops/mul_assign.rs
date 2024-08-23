@@ -394,25 +394,37 @@ mod tests {
         let mut m1 = Matrix::<f64, 3, 2>::new([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]]);
         let m2 = Matrix::<f64, 2, 3>::new([[2.0, 1.0, 0.0], [0.0, 2.0, 1.0]]);
         m1 *= m2.t();
-        assert_eq!(m1, Matrix::<f64, 3, 2>::new([[2.0, 0.0], [3.0, 8.0], [0.0, 6.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 2>::new([[2.0, 0.0], [3.0, 8.0], [0.0, 6.0]])
+        );
 
         // Matrix *= &MatrixTransposeView
         let mut m1 = Matrix::<f64, 3, 2>::new([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]]);
         let m2 = Matrix::<f64, 2, 3>::new([[2.0, 1.0, 0.0], [0.0, 2.0, 1.0]]);
         m1 *= &m2.t();
-        assert_eq!(m1, Matrix::<f64, 3, 2>::new([[2.0, 0.0], [3.0, 8.0], [0.0, 6.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 2>::new([[2.0, 0.0], [3.0, 8.0], [0.0, 6.0]])
+        );
 
         // Matrix *= MatrixTransposeViewMut
         let mut m1 = Matrix::<f64, 3, 2>::new([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]]);
         let mut m2 = Matrix::<f64, 2, 3>::new([[2.0, 1.0, 0.0], [0.0, 2.0, 1.0]]);
         m1 *= m2.t_mut();
-        assert_eq!(m1, Matrix::<f64, 3, 2>::new([[2.0, 0.0], [3.0, 8.0], [0.0, 6.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 2>::new([[2.0, 0.0], [3.0, 8.0], [0.0, 6.0]])
+        );
 
         // Matrix *= &MatrixTransposeViewMut
         let mut m1 = Matrix::<f64, 3, 2>::new([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]]);
         let mut m2 = Matrix::<f64, 2, 3>::new([[2.0, 1.0, 0.0], [0.0, 2.0, 1.0]]);
         m1 *= &m2.t_mut();
-        assert_eq!(m1, Matrix::<f64, 3, 2>::new([[2.0, 0.0], [3.0, 8.0], [0.0, 6.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 2>::new([[2.0, 0.0], [3.0, 8.0], [0.0, 6.0]])
+        );
 
         // Matrix *= Scalar
         let mut m = Matrix::<f64, 2, 2>::new([[1.0, 2.0], [3.0, 4.0]]);
@@ -427,70 +439,100 @@ mod tests {
         let m2 = Matrix::<f64, 2, 2>::new([[2.0, 3.0], [4.0, 5.0]]);
         let mut view = m1.view_mut::<2, 2>((0, 0));
         view *= m2;
-        assert_eq!(m1, Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]])
+        );
 
         // MatrixViewMut *= &Matrix
         let mut m1 = Matrix::<f64, 3, 3>::new([[1.0, 2.0, 0.0], [3.0, 4.0, 0.0], [0.0, 0.0, 1.0]]);
         let m2 = Matrix::<f64, 2, 2>::new([[2.0, 3.0], [4.0, 5.0]]);
         let mut view = m1.view_mut::<2, 2>((0, 0));
         view *= &m2;
-        assert_eq!(m1, Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]])
+        );
 
         // MatrixViewMut *= MatrixView
         let mut m1 = Matrix::<f64, 3, 3>::new([[1.0, 2.0, 0.0], [3.0, 4.0, 0.0], [0.0, 0.0, 1.0]]);
         let m2 = Matrix::<f64, 2, 2>::new([[2.0, 3.0], [4.0, 5.0]]);
         let mut view = m1.view_mut::<2, 2>((0, 0));
         view *= m2.view::<2, 2>((0, 0));
-        assert_eq!(m1, Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]])
+        );
 
         // MatrixViewMut *= &MatrixView
         let mut m1 = Matrix::<f64, 3, 3>::new([[1.0, 2.0, 0.0], [3.0, 4.0, 0.0], [0.0, 0.0, 1.0]]);
         let m2 = Matrix::<f64, 2, 2>::new([[2.0, 3.0], [4.0, 5.0]]);
         let mut view = m1.view_mut::<2, 2>((0, 0));
         view *= &m2.view::<2, 2>((0, 0));
-        assert_eq!(m1, Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]])
+        );
 
         // MatrixViewMut *= MatrixViewMut
         let mut m1 = Matrix::<f64, 3, 3>::new([[1.0, 2.0, 0.0], [3.0, 4.0, 0.0], [0.0, 0.0, 1.0]]);
         let mut m2 = Matrix::<f64, 2, 2>::new([[2.0, 3.0], [4.0, 5.0]]);
         let mut view = m1.view_mut::<2, 2>((0, 0));
         view *= m2.view_mut::<2, 2>((0, 0));
-        assert_eq!(m1, Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]])
+        );
 
         // MatrixViewMut *= &MatrixViewMut
         let mut m1 = Matrix::<f64, 3, 3>::new([[1.0, 2.0, 0.0], [3.0, 4.0, 0.0], [0.0, 0.0, 1.0]]);
         let mut m2 = Matrix::<f64, 2, 2>::new([[2.0, 3.0], [4.0, 5.0]]);
         let mut view = m1.view_mut::<2, 2>((0, 0));
         view *= &m2.view_mut::<2, 2>((0, 0));
-        assert_eq!(m1, Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]])
+        );
 
         // MatrixViewMut *= MatrixTransposeView
         let mut m1 = Matrix::<f64, 3, 3>::new([[1.0, 2.0, 0.0], [3.0, 4.0, 0.0], [0.0, 0.0, 1.0]]);
         let m2 = Matrix::<f64, 2, 2>::new([[2.0, 4.0], [3.0, 5.0]]);
         let mut view = m1.view_mut::<2, 2>((0, 0));
         view *= m2.t();
-        assert_eq!(m1, Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]])
+        );
 
         // MatrixViewMut *= &MatrixTransposeView
         let mut m1 = Matrix::<f64, 3, 3>::new([[1.0, 2.0, 0.0], [3.0, 4.0, 0.0], [0.0, 0.0, 1.0]]);
         let m2 = Matrix::<f64, 2, 2>::new([[2.0, 4.0], [3.0, 5.0]]);
         let mut view = m1.view_mut::<2, 2>((0, 0));
         view *= &m2.t();
-        assert_eq!(m1, Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]])
+        );
 
         // MatrixViewMut *= MatrixTransposeViewMut
         let mut m1 = Matrix::<f64, 3, 3>::new([[1.0, 2.0, 0.0], [3.0, 4.0, 0.0], [0.0, 0.0, 1.0]]);
         let mut m2 = Matrix::<f64, 2, 2>::new([[2.0, 4.0], [3.0, 5.0]]);
         let mut view = m1.view_mut::<2, 2>((0, 0));
         view *= m2.t_mut();
-        assert_eq!(m1, Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]])
+        );
 
         // MatrixViewMut *= &MatrixTransposeViewMut
         let mut m1 = Matrix::<f64, 3, 3>::new([[1.0, 2.0, 0.0], [3.0, 4.0, 0.0], [0.0, 0.0, 1.0]]);
         let mut m2 = Matrix::<f64, 2, 2>::new([[2.0, 4.0], [3.0, 5.0]]);
         let mut view = m1.view_mut::<2, 2>((0, 0));
         view *= &m2.t_mut();
-        assert_eq!(m1, Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 3>::new([[2.0, 6.0, 0.0], [12.0, 20.0, 0.0], [0.0, 0.0, 1.0]])
+        );
 
         // MatrixViewMut *= Scalar
         let mut m = Matrix::<f64, 2, 2>::new([[1.0, 2.0], [3.0, 4.0]]);
@@ -506,42 +548,60 @@ mod tests {
         let m2 = Matrix::<f64, 2, 3>::new([[2.0, 4.0, 6.0], [5.0, 8.0, 9.0]]);
         let mut view = m1.t_mut();
         view *= m2;
-        assert_eq!(m1, Matrix::<f64, 3, 2>::new([[2.0, 15.0], [8.0, 32.0], [36.0, 81.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 2>::new([[2.0, 15.0], [8.0, 32.0], [36.0, 81.0]])
+        );
 
         // MatrixTransposeViewMut *= &Matrix
         let mut m1 = Matrix::<f64, 3, 2>::new([[1.0, 3.0], [2.0, 4.0], [6.0, 9.0]]);
         let m2 = Matrix::<f64, 2, 3>::new([[2.0, 4.0, 6.0], [5.0, 8.0, 9.0]]);
         let mut view = m1.t_mut();
         view *= &m2;
-        assert_eq!(m1, Matrix::<f64, 3, 2>::new([[2.0, 15.0], [8.0, 32.0], [36.0, 81.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 2>::new([[2.0, 15.0], [8.0, 32.0], [36.0, 81.0]])
+        );
 
         // MatrixTransposeViewMut *= MatrixView
         let mut m1 = Matrix::<f64, 3, 2>::new([[1.0, 3.0], [2.0, 4.0], [6.0, 9.0]]);
         let m2 = Matrix::<f64, 2, 3>::new([[2.0, 4.0, 6.0], [5.0, 8.0, 9.0]]);
         let mut view = m1.t_mut();
         view *= m2.view::<2, 3>((0, 0));
-        assert_eq!(m1, Matrix::<f64, 3, 2>::new([[2.0, 15.0], [8.0, 32.0], [36.0, 81.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 2>::new([[2.0, 15.0], [8.0, 32.0], [36.0, 81.0]])
+        );
 
         // MatrixTransposeViewMut *= &MatrixView
         let mut m1 = Matrix::<f64, 3, 2>::new([[1.0, 3.0], [2.0, 4.0], [6.0, 9.0]]);
         let m2 = Matrix::<f64, 2, 3>::new([[2.0, 4.0, 6.0], [5.0, 8.0, 9.0]]);
         let mut view = m1.t_mut();
         view *= &m2.view::<2, 3>((0, 0));
-        assert_eq!(m1, Matrix::<f64, 3, 2>::new([[2.0, 15.0], [8.0, 32.0], [36.0, 81.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 2>::new([[2.0, 15.0], [8.0, 32.0], [36.0, 81.0]])
+        );
 
         // MatrixTransposeViewMut *= MatrixViewMut
         let mut m1 = Matrix::<f64, 3, 2>::new([[1.0, 3.0], [2.0, 4.0], [6.0, 9.0]]);
         let mut m2 = Matrix::<f64, 2, 3>::new([[2.0, 4.0, 6.0], [5.0, 8.0, 9.0]]);
         let mut view = m1.t_mut();
         view *= m2.view_mut::<2, 3>((0, 0));
-        assert_eq!(m1, Matrix::<f64, 3, 2>::new([[2.0, 15.0], [8.0, 32.0], [36.0, 81.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 2>::new([[2.0, 15.0], [8.0, 32.0], [36.0, 81.0]])
+        );
 
         // MatrixTransposeViewMut *= &MatrixViewMut
         let mut m1 = Matrix::<f64, 3, 2>::new([[1.0, 3.0], [2.0, 4.0], [6.0, 9.0]]);
         let mut m2 = Matrix::<f64, 2, 3>::new([[2.0, 4.0, 6.0], [5.0, 8.0, 9.0]]);
         let mut view = m1.t_mut();
         view *= &m2.view_mut::<2, 3>((0, 0));
-        assert_eq!(m1, Matrix::<f64, 3, 2>::new([[2.0, 15.0], [8.0, 32.0], [36.0, 81.0]]));
+        assert_eq!(
+            m1,
+            Matrix::<f64, 3, 2>::new([[2.0, 15.0], [8.0, 32.0], [36.0, 81.0]])
+        );
 
         // MatrixTransposeViewMut *= MatrixTransposeView
         let mut m1 = Matrix::<f64, 2, 2>::new([[1.0, 3.0], [2.0, 4.0]]);
