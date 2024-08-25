@@ -2,6 +2,13 @@ use crate::traits::DotProduct;
 use crate::vector::Vector;
 use crate::vector_view::VectorView;
 use crate::vector_view_mut::VectorViewMut;
+use crate::vector_transpose_view::VectorTransposeView;
+use crate::vector_transpose_view_mut::VectorTransposeViewMut;
+use crate::matrix::RowVector;
+use crate::matrix_view::RowVectorView;
+use crate::matrix_view_mut::RowVectorViewMut;
+use crate::matrix_transpose_view::RowVectorTransposeView;
+use crate::matrix_transpose_view_mut::RowVectorTransposeViewMut;
 use funty::Numeric;
 
 macro_rules! impl_dot {
@@ -16,6 +23,30 @@ macro_rules! impl_dot {
     };
 }
 
+macro_rules! impl_dot_view {
+    ($lhs:ty, $rhs:ty) => {
+        impl<T: Numeric, const N: usize, const M: usize> DotProduct<$rhs> for $lhs {
+            type Output = T;
+
+            fn dot(self, other: $rhs) -> Self::Output {
+                (0..M).map(|i| self[i] * other[i]).sum()
+            }
+        }
+    };
+}
+
+macro_rules! impl_dot_view_view {
+    ($lhs:ty, $rhs:ty) => {
+        impl<T: Numeric, const A: usize, const N: usize, const M: usize> DotProduct<$rhs> for $lhs {
+            type Output = T;
+
+            fn dot(self, other: $rhs) -> Self::Output {
+                (0..M).map(|i| self[i] * other[i]).sum()
+            }
+        }
+    };
+}
+
 //////////////
 //  Vector  //
 //////////////
@@ -25,53 +56,286 @@ impl_dot!(Vector<T, N>, &Vector<T, N>);
 impl_dot!(&Vector<T, N>, Vector<T, N>);
 impl_dot!(&Vector<T, N>, &Vector<T, N>);
 
-impl_dot!(Vector<T, N>, VectorView<'_, T, N>);
-impl_dot!(Vector<T, N>, &VectorView<'_, T, N>);
-impl_dot!(&Vector<T, N>, VectorView<'_, T, N>);
-impl_dot!(&Vector<T, N>, &VectorView<'_, T, N>);
+impl_dot_view!(Vector<T, M>, VectorView<'_, T, N, M>);
+impl_dot_view!(Vector<T, M>, &VectorView<'_, T, N, M>);
+impl_dot_view!(&Vector<T, M>, VectorView<'_, T, N, M>);
+impl_dot_view!(&Vector<T, M>, &VectorView<'_, T, N, M>);
 
-impl_dot!(Vector<T, N>, VectorViewMut<'_, T, N>);
-impl_dot!(Vector<T, N>, &VectorViewMut<'_, T, N>);
-impl_dot!(&Vector<T, N>, VectorViewMut<'_, T, N>);
-impl_dot!(&Vector<T, N>, &VectorViewMut<'_, T, N>);
+impl_dot_view!(Vector<T, M>, VectorViewMut<'_, T, N, M>);
+impl_dot_view!(Vector<T, M>, &VectorViewMut<'_, T, N, M>);
+impl_dot_view!(&Vector<T, M>, VectorViewMut<'_, T, N, M>);
+impl_dot_view!(&Vector<T, M>, &VectorViewMut<'_, T, N, M>);
+
+impl_dot_view!(Vector<T, M>, RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view!(Vector<T, M>, &RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view!(&Vector<T, M>, RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view!(&Vector<T, M>, &RowVectorTransposeView<'_, T, N, M>);
+
+impl_dot_view!(Vector<T, M>, RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view!(Vector<T, M>, &RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view!(&Vector<T, M>, RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view!(&Vector<T, M>, &RowVectorTransposeViewMut<'_, T, N, M>);
 
 //////////////////
 //  VectorView  //
 //////////////////
 
-impl_dot!(VectorView<'_, T, N>, Vector<T, N>);
-impl_dot!(VectorView<'_, T, N>, &Vector<T, N>);
-impl_dot!(&VectorView<'_, T, N>, Vector<T, N>);
-impl_dot!(&VectorView<'_, T, N>, &Vector<T, N>);
+impl_dot_view!(VectorView<'_, T, N, M>, Vector<T, M>);
+impl_dot_view!(VectorView<'_, T, N, M>, &Vector<T, M>);
+impl_dot_view!(&VectorView<'_, T, N, M>, Vector<T, M>);
+impl_dot_view!(&VectorView<'_, T, N, M>, &Vector<T, M>);
 
-impl_dot!(VectorView<'_, T, N>, VectorView<'_, T, N>);
-impl_dot!(VectorView<'_, T, N>, &VectorView<'_, T, N>);
-impl_dot!(&VectorView<'_, T, N>, VectorView<'_, T, N>);
-impl_dot!(&VectorView<'_, T, N>, &VectorView<'_, T, N>);
+impl_dot_view_view!(VectorView<'_, T, A, M>, VectorView<'_, T, N, M>);
+impl_dot_view_view!(VectorView<'_, T, A, M>, &VectorView<'_, T, N, M>);
+impl_dot_view_view!(&VectorView<'_, T, A, M>, VectorView<'_, T, N, M>);
+impl_dot_view_view!(&VectorView<'_, T, A, M>, &VectorView<'_, T, N, M>);
 
-impl_dot!(VectorView<'_, T, N>, VectorViewMut<'_, T, N>);
-impl_dot!(VectorView<'_, T, N>, &VectorViewMut<'_, T, N>);
-impl_dot!(&VectorView<'_, T, N>, VectorViewMut<'_, T, N>);
-impl_dot!(&VectorView<'_, T, N>, &VectorViewMut<'_, T, N>);
+impl_dot_view_view!(VectorView<'_, T, A, M>, VectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(VectorView<'_, T, A, M>, &VectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorView<'_, T, A, M>, VectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorView<'_, T, A, M>, &VectorViewMut<'_, T, N, M>);
+
+impl_dot_view_view!(VectorView<'_, T, A, M>, RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(VectorView<'_, T, A, M>, &RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&VectorView<'_, T, A, M>, RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&VectorView<'_, T, A, M>, &RowVectorTransposeView<'_, T, N, M>);
+
+impl_dot_view_view!(VectorView<'_, T, A, M>, RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(VectorView<'_, T, A, M>, &RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorView<'_, T, A, M>, RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorView<'_, T, A, M>, &RowVectorTransposeViewMut<'_, T, N, M>);
 
 /////////////////////
 //  VectorViewMut  //
 /////////////////////
 
-impl_dot!(VectorViewMut<'_, T, N>, Vector<T, N>);
-impl_dot!(VectorViewMut<'_, T, N>, &Vector<T, N>);
-impl_dot!(&VectorViewMut<'_, T, N>, Vector<T, N>);
-impl_dot!(&VectorViewMut<'_, T, N>, &Vector<T, N>);
+impl_dot_view!(VectorViewMut<'_, T, N, M>, Vector<T, M>);
+impl_dot_view!(VectorViewMut<'_, T, N, M>, &Vector<T, M>);
+impl_dot_view!(&VectorViewMut<'_, T, N, M>, Vector<T, M>);
+impl_dot_view!(&VectorViewMut<'_, T, N, M>, &Vector<T, M>);
 
-impl_dot!(VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
-impl_dot!(VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
-impl_dot!(&VectorViewMut<'_, T, N>, VectorView<'_, T, N>);
-impl_dot!(&VectorViewMut<'_, T, N>, &VectorView<'_, T, N>);
+impl_dot_view_view!(VectorViewMut<'_, T, A, M>, VectorView<'_, T, N, M>);
+impl_dot_view_view!(VectorViewMut<'_, T, A, M>, &VectorView<'_, T, N, M>);
+impl_dot_view_view!(&VectorViewMut<'_, T, A, M>, VectorView<'_, T, N, M>);
+impl_dot_view_view!(&VectorViewMut<'_, T, A, M>, &VectorView<'_, T, N, M>);
 
-impl_dot!(VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
-impl_dot!(VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
-impl_dot!(&VectorViewMut<'_, T, N>, VectorViewMut<'_, T, N>);
-impl_dot!(&VectorViewMut<'_, T, N>, &VectorViewMut<'_, T, N>);
+impl_dot_view_view!(VectorViewMut<'_, T, A, M>, VectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(VectorViewMut<'_, T, A, M>, &VectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorViewMut<'_, T, A, M>, VectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorViewMut<'_, T, A, M>, &VectorViewMut<'_, T, N, M>);
+
+impl_dot_view_view!(VectorViewMut<'_, T, A, M>, RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(VectorViewMut<'_, T, A, M>, &RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&VectorViewMut<'_, T, A, M>, RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&VectorViewMut<'_, T, A, M>, &RowVectorTransposeView<'_, T, N, M>);
+
+impl_dot_view_view!(VectorViewMut<'_, T, A, M>, RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(VectorViewMut<'_, T, A, M>, &RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorViewMut<'_, T, A, M>, RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorViewMut<'_, T, A, M>, &RowVectorTransposeViewMut<'_, T, N, M>);
+
+///////////////////////////
+//  VectorTransposeView  //
+///////////////////////////
+
+impl_dot_view!(VectorTransposeView<'_, T, N, M>, RowVector<T, M>);
+impl_dot_view!(VectorTransposeView<'_, T, N, M>, &RowVector<T, M>);
+impl_dot_view!(&VectorTransposeView<'_, T, N, M>, RowVector<T, M>);
+impl_dot_view!(&VectorTransposeView<'_, T, N, M>, &RowVector<T, M>);
+
+impl_dot_view_view!(VectorTransposeView<'_, T, A, M>, RowVectorView<'_, T, N, M>);
+impl_dot_view_view!(VectorTransposeView<'_, T, A, M>, &RowVectorView<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeView<'_, T, A, M>, RowVectorView<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeView<'_, T, A, M>, &RowVectorView<'_, T, N, M>);
+
+impl_dot_view_view!(VectorTransposeView<'_, T, A, M>, RowVectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(VectorTransposeView<'_, T, A, M>, &RowVectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeView<'_, T, A, M>, RowVectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeView<'_, T, A, M>, &RowVectorViewMut<'_, T, N, M>);
+
+impl_dot_view_view!(VectorTransposeView<'_, T, A, M>, VectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(VectorTransposeView<'_, T, A, M>, &VectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeView<'_, T, A, M>, VectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeView<'_, T, A, M>, &VectorTransposeView<'_, T, N, M>);
+
+impl_dot_view_view!(VectorTransposeView<'_, T, A, M>, VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(VectorTransposeView<'_, T, A, M>, &VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeView<'_, T, A, M>, VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeView<'_, T, A, M>, &VectorTransposeViewMut<'_, T, N, M>);
+
+//////////////////////////////
+//  VectorTransposeViewMut  //
+//////////////////////////////
+
+impl_dot_view!(VectorTransposeViewMut<'_, T, N, M>, RowVector<T, M>);
+impl_dot_view!(VectorTransposeViewMut<'_, T, N, M>, &RowVector<T, M>);
+impl_dot_view!(&VectorTransposeViewMut<'_, T, N, M>, RowVector<T, M>);
+impl_dot_view!(&VectorTransposeViewMut<'_, T, N, M>, &RowVector<T, M>);
+
+impl_dot_view_view!(VectorTransposeViewMut<'_, T, A, M>, RowVectorView<'_, T, N, M>);
+impl_dot_view_view!(VectorTransposeViewMut<'_, T, A, M>, &RowVectorView<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeViewMut<'_, T, A, M>, RowVectorView<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeViewMut<'_, T, A, M>, &RowVectorView<'_, T, N, M>);
+
+impl_dot_view_view!(VectorTransposeViewMut<'_, T, A, M>, RowVectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(VectorTransposeViewMut<'_, T, A, M>, &RowVectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeViewMut<'_, T, A, M>, RowVectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeViewMut<'_, T, A, M>, &RowVectorViewMut<'_, T, N, M>);
+
+impl_dot_view_view!(VectorTransposeViewMut<'_, T, A, M>, VectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(VectorTransposeViewMut<'_, T, A, M>, &VectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeViewMut<'_, T, A, M>, VectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeViewMut<'_, T, A, M>, &VectorTransposeView<'_, T, N, M>);
+
+impl_dot_view_view!(VectorTransposeViewMut<'_, T, A, M>, VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(VectorTransposeViewMut<'_, T, A, M>, &VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeViewMut<'_, T, A, M>, VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&VectorTransposeViewMut<'_, T, A, M>, &VectorTransposeViewMut<'_, T, N, M>);
+
+/////////////////
+//  RowVector  //
+/////////////////
+
+impl_dot!(RowVector<T, N>, RowVector<T, N>);
+impl_dot!(RowVector<T, N>, &RowVector<T, N>);
+impl_dot!(&RowVector<T, N>, RowVector<T, N>);
+impl_dot!(&RowVector<T, N>, &RowVector<T, N>);
+
+impl_dot_view!(RowVector<T, M>, RowVectorView<'_, T, N, M>);
+impl_dot_view!(RowVector<T, M>, &RowVectorView<'_, T, N, M>);
+impl_dot_view!(&RowVector<T, M>, RowVectorView<'_, T, N, M>);
+impl_dot_view!(&RowVector<T, M>, &RowVectorView<'_, T, N, M>);
+
+impl_dot_view!(RowVector<T, M>, RowVectorViewMut<'_, T, N, M>);
+impl_dot_view!(RowVector<T, M>, &RowVectorViewMut<'_, T, N, M>);
+impl_dot_view!(&RowVector<T, M>, RowVectorViewMut<'_, T, N, M>);
+impl_dot_view!(&RowVector<T, M>, &RowVectorViewMut<'_, T, N, M>);
+
+impl_dot_view!(RowVector<T, M>, VectorTransposeView<'_, T, N, M>);
+impl_dot_view!(RowVector<T, M>, &VectorTransposeView<'_, T, N, M>);
+impl_dot_view!(&RowVector<T, M>, VectorTransposeView<'_, T, N, M>);
+impl_dot_view!(&RowVector<T, M>, &VectorTransposeView<'_, T, N, M>);
+
+impl_dot_view!(RowVector<T, M>, VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view!(RowVector<T, M>, &VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view!(&RowVector<T, M>, VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view!(&RowVector<T, M>, &VectorTransposeViewMut<'_, T, N, M>);
+
+/////////////////////
+//  RowVectorView  //
+/////////////////////
+
+impl_dot_view!(RowVectorView<'_, T, N, M>, RowVector<T, M>);
+impl_dot_view!(RowVectorView<'_, T, N, M>, &RowVector<T, M>);
+impl_dot_view!(&RowVectorView<'_, T, N, M>, RowVector<T, M>);
+impl_dot_view!(&RowVectorView<'_, T, N, M>, &RowVector<T, M>);
+
+impl_dot_view_view!(RowVectorView<'_, T, A, M>, RowVectorView<'_, T, N, M>);
+impl_dot_view_view!(RowVectorView<'_, T, A, M>, &RowVectorView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorView<'_, T, A, M>, RowVectorView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorView<'_, T, A, M>, &RowVectorView<'_, T, N, M>);
+
+impl_dot_view_view!(RowVectorView<'_, T, A, M>, RowVectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(RowVectorView<'_, T, A, M>, &RowVectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorView<'_, T, A, M>, RowVectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorView<'_, T, A, M>, &RowVectorViewMut<'_, T, N, M>);
+
+impl_dot_view_view!(RowVectorView<'_, T, A, M>, VectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(RowVectorView<'_, T, A, M>, &VectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorView<'_, T, A, M>, VectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorView<'_, T, A, M>, &VectorTransposeView<'_, T, N, M>);
+
+impl_dot_view_view!(RowVectorView<'_, T, A, M>, VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(RowVectorView<'_, T, A, M>, &VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorView<'_, T, A, M>, VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorView<'_, T, A, M>, &VectorTransposeViewMut<'_, T, N, M>);
+
+////////////////////////
+//  RowVectorViewMut  //
+////////////////////////
+
+impl_dot_view!(RowVectorViewMut<'_, T, N, M>, RowVector<T, M>);
+impl_dot_view!(RowVectorViewMut<'_, T, N, M>, &RowVector<T, M>);
+impl_dot_view!(&RowVectorViewMut<'_, T, N, M>, RowVector<T, M>);
+impl_dot_view!(&RowVectorViewMut<'_, T, N, M>, &RowVector<T, M>);
+
+impl_dot_view_view!(RowVectorViewMut<'_, T, A, M>, RowVectorView<'_, T, N, M>);
+impl_dot_view_view!(RowVectorViewMut<'_, T, A, M>, &RowVectorView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorViewMut<'_, T, A, M>, RowVectorView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorViewMut<'_, T, A, M>, &RowVectorView<'_, T, N, M>);
+
+impl_dot_view_view!(RowVectorViewMut<'_, T, A, M>, RowVectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(RowVectorViewMut<'_, T, A, M>, &RowVectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorViewMut<'_, T, A, M>, RowVectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorViewMut<'_, T, A, M>, &RowVectorViewMut<'_, T, N, M>);
+
+impl_dot_view_view!(RowVectorViewMut<'_, T, A, M>, VectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(RowVectorViewMut<'_, T, A, M>, &VectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorViewMut<'_, T, A, M>, VectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorViewMut<'_, T, A, M>, &VectorTransposeView<'_, T, N, M>);
+
+impl_dot_view_view!(RowVectorViewMut<'_, T, A, M>, VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(RowVectorViewMut<'_, T, A, M>, &VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorViewMut<'_, T, A, M>, VectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorViewMut<'_, T, A, M>, &VectorTransposeViewMut<'_, T, N, M>);
+
+//////////////////////////////
+//  RowVectorTransposeView  //
+//////////////////////////////
+
+impl_dot_view!(RowVectorTransposeView<'_, T, N, M>, Vector<T, M>);
+impl_dot_view!(RowVectorTransposeView<'_, T, N, M>, &Vector<T, M>);
+impl_dot_view!(&RowVectorTransposeView<'_, T, N, M>, Vector<T, M>);
+impl_dot_view!(&RowVectorTransposeView<'_, T, N, M>, &Vector<T, M>);
+
+impl_dot_view_view!(RowVectorTransposeView<'_, T, A, M>, VectorView<'_, T, N, M>);
+impl_dot_view_view!(RowVectorTransposeView<'_, T, A, M>, &VectorView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeView<'_, T, A, M>, VectorView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeView<'_, T, A, M>, &VectorView<'_, T, N, M>);
+
+impl_dot_view_view!(RowVectorTransposeView<'_, T, A, M>, VectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(RowVectorTransposeView<'_, T, A, M>, &VectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeView<'_, T, A, M>, VectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeView<'_, T, A, M>, &VectorViewMut<'_, T, N, M>);
+
+impl_dot_view_view!(RowVectorTransposeView<'_, T, A, M>, RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(RowVectorTransposeView<'_, T, A, M>, &RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeView<'_, T, A, M>, RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeView<'_, T, A, M>, &RowVectorTransposeView<'_, T, N, M>);
+
+impl_dot_view_view!(RowVectorTransposeView<'_, T, A, M>, RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(RowVectorTransposeView<'_, T, A, M>, &RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeView<'_, T, A, M>, RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeView<'_, T, A, M>, &RowVectorTransposeViewMut<'_, T, N, M>);
+
+/////////////////////////////////
+//  RowVectorTransposeViewMut  //
+/////////////////////////////////
+
+impl_dot_view!(RowVectorTransposeViewMut<'_, T, N, M>, Vector<T, M>);
+impl_dot_view!(RowVectorTransposeViewMut<'_, T, N, M>, &Vector<T, M>);
+impl_dot_view!(&RowVectorTransposeViewMut<'_, T, N, M>, Vector<T, M>);
+impl_dot_view!(&RowVectorTransposeViewMut<'_, T, N, M>, &Vector<T, M>);
+
+impl_dot_view_view!(RowVectorTransposeViewMut<'_, T, A, M>, VectorView<'_, T, N, M>);
+impl_dot_view_view!(RowVectorTransposeViewMut<'_, T, A, M>, &VectorView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeViewMut<'_, T, A, M>, VectorView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeViewMut<'_, T, A, M>, &VectorView<'_, T, N, M>);
+
+impl_dot_view_view!(RowVectorTransposeViewMut<'_, T, A, M>, VectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(RowVectorTransposeViewMut<'_, T, A, M>, &VectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeViewMut<'_, T, A, M>, VectorViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeViewMut<'_, T, A, M>, &VectorViewMut<'_, T, N, M>);
+
+impl_dot_view_view!(RowVectorTransposeViewMut<'_, T, A, M>, RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(RowVectorTransposeViewMut<'_, T, A, M>, &RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeViewMut<'_, T, A, M>, RowVectorTransposeView<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeViewMut<'_, T, A, M>, &RowVectorTransposeView<'_, T, N, M>);
+
+impl_dot_view_view!(RowVectorTransposeViewMut<'_, T, A, M>, RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(RowVectorTransposeViewMut<'_, T, A, M>, &RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeViewMut<'_, T, A, M>, RowVectorTransposeViewMut<'_, T, N, M>);
+impl_dot_view_view!(&RowVectorTransposeViewMut<'_, T, A, M>, &RowVectorTransposeViewMut<'_, T, N, M>);
 
 //////////////////
 //  Unit Tests  //
