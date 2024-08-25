@@ -1,9 +1,9 @@
 use crate::matrix::Matrix;
-use crate::matrix_transpose_view::MatrixTransposeView;
+use crate::matrix_view::MatrixView;
 use funty::Numeric;
 use std::ops::Index;
 
-pub struct MatrixView<
+pub struct MatrixTransposeView<
     'a,
     T: Numeric,
     const R: usize,
@@ -12,15 +12,16 @@ pub struct MatrixView<
     const V_C: usize,
 > {
     data: &'a Matrix<T, R, C>,
-    start: (usize, usize),
+    start: (usize, usize), // In terms of the transposed matrix
 }
-pub type RowVectorView<'a, T, const N: usize, const M: usize> = MatrixView<'a, T, 1, N, 1, M>;
+pub type RowVectorTransposeView<'a, T, const N: usize, const M: usize> =
+    MatrixTransposeView<'a, T, 1, N, M, 1>;
 
 impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
-    MatrixView<'a, T, R, C, V_R, V_C>
+    MatrixTransposeView<'a, T, R, C, V_R, V_C>
 {
     pub(super) fn new(data: &'a Matrix<T, R, C>, start: (usize, usize)) -> Self {
-        if start.0 + V_R > R || start.1 + V_C > C {
+        if start.0 + V_R > C || start.1 + V_C > R {
             panic!("View size out of bounds");
         }
         Self { data, start }
@@ -28,21 +29,26 @@ impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C
 }
 
 impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
-    MatrixView<'a, T, R, C, V_R, V_C>
+    MatrixTransposeView<'a, T, R, C, V_R, V_C>
 {
     #[inline]
     pub fn shape(&self) -> (usize, usize) {
         (V_R, V_C)
     }
 
-    pub fn t(&self) -> MatrixTransposeView<'a, T, R, C, V_C, V_R> {
-        MatrixTransposeView::new(self.data, (self.start.1, self.start.0))
+    pub fn t(&self) -> MatrixView<T, R, C, V_C, V_R> {
+        MatrixView::new(self.data, (self.start.1, self.start.0))
     }
 }
 
 impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
-    MatrixView<'a, T, R, C, V_R, V_C>
+    MatrixTransposeView<'a, T, R, C, V_R, V_C>
 {
+    #[inline]
+    fn flip(&self, index: (usize, usize)) -> (usize, usize) {
+        (index.1, index.0)
+    }
+
     #[inline]
     fn offset(&self, index: (usize, usize)) -> (usize, usize) {
         (index.0 + self.start.0, index.1 + self.start.1)
@@ -55,7 +61,7 @@ impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C
 }
 
 impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
-    Index<usize> for MatrixView<'_, T, R, C, V_R, V_C>
+    Index<usize> for MatrixTransposeView<'_, T, R, C, V_R, V_C>
 {
     type Output = T;
     fn index(&self, index: usize) -> &Self::Output {
@@ -65,18 +71,18 @@ impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: us
 
         let row_idx = index / V_C;
         let col_idx = index % V_C;
-        &self.data[self.offset((row_idx, col_idx))]
+        &self.data[self.flip(self.offset((row_idx, col_idx)))]
     }
 }
 
 impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
-    Index<(usize, usize)> for MatrixView<'_, T, R, C, V_R, V_C>
+    Index<(usize, usize)> for MatrixTransposeView<'_, T, R, C, V_R, V_C>
 {
     type Output = T;
     fn index(&self, index: (usize, usize)) -> &Self::Output {
         if !self.validate_index(index) {
             panic!("Index out of bounds");
         }
-        &self.data[self.offset(index)]
+        &self.data[self.flip(self.offset(index))]
     }
 }
