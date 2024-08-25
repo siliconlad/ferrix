@@ -1,11 +1,14 @@
 [package]
-name = "rustytensor"
+name = "ferrix"
 version = "0.1.0"
 edition = "2021"
-description = "A simple tensor library for Rust"
+description = "A simple typed matrix library for Rust"
 license = "MIT"
-homepage = "https://github.com/siliconlad/rustytensor"
-repository = "https://github.com/siliconlad/rustytensor"
+homepage = "https://github.com/siliconlad/ferrix"
+repository = "https://github.com/siliconlad/ferrix"
+readme = "README.md"
+categories = ["math", "linear-algebra"]
+keywords = ["vector", "matrix", "linear-algebra", "math"]
 
 [dependencies]
 conv = "0.3.3"
