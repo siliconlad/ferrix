@@ -19,6 +19,11 @@ impl<'a, T: Numeric, const N: usize, const M: usize> VectorTransposeView<'a, T, 
         M
     }
 
+    #[inline]
+    pub fn capacity(&self) -> usize {
+        M
+    }
+
     pub fn t(&self) -> VectorView<'a, T, N, M> {
         VectorView::new(self.data, self.start)
     }
@@ -35,5 +40,13 @@ impl<'a, T: Numeric, const N: usize, const M: usize> Index<usize> for VectorTran
 
     fn index(&self, index: usize) -> &Self::Output {
         &self.data[self.start + index]
+    }
+}
+
+impl<T: Numeric, const N: usize, const M: usize> Index<(usize, usize)> for VectorTransposeView<'_, T, N, M> {
+    type Output = T;
+
+    fn index(&self, index: (usize, usize)) -> &Self::Output {
+        &self.data[self.start + index.1]
     }
 }

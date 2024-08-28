@@ -1,3 +1,6 @@
+#[macro_use]
+mod macros;
+
 pub mod add;
 pub mod add_assign;
 pub mod div;

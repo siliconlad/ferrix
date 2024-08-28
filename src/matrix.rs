@@ -12,7 +12,6 @@ use crate::vector_transpose_view_mut::VectorTransposeViewMut;
 pub struct Matrix<T: Numeric, const R: usize, const C: usize> {
     data: [[T; C]; R],
 }
-pub type RowVector<T, const N: usize> = Matrix<T, 1, N>;
 
 impl<T: Numeric + Default, const R: usize, const C: usize> Default for Matrix<T, R, C> {
     fn default() -> Self {
@@ -60,6 +59,17 @@ impl<T: Numeric, const R: usize, const C: usize> Matrix<T, R, C> {
     #[inline]
     pub fn shape(&self) -> (usize, usize) {
         (R, C)
+    }
+
+    #[inline]
+    pub fn capacity(&self) -> usize {
+        R * C
+    }
+}
+
+impl<T: Numeric> Matrix<T, 1, 1> {
+    pub fn into(self) -> T {
+        self[(0, 0)]
     }
 }
 
@@ -146,6 +156,12 @@ impl<T: Numeric, const R: usize, const C: usize> IndexMut<(usize, usize)> for Ma
 //////////////////////////////////
 //  From Trait Implementations  //
 //////////////////////////////////
+
+impl<T: Numeric, const R: usize, const C: usize> From<[[T; C]; R]> for Matrix<T, R, C> {
+    fn from(data: [[T; C]; R]) -> Self {
+        Self { data }
+    }
+}
 
 impl<T: Numeric, const A: usize, const N: usize> From<VectorTransposeView<'_, T, A, N>> for Matrix<T, 1, N> {
     fn from(view: VectorTransposeView<'_, T, A, N>) -> Self {

@@ -21,6 +21,11 @@ impl<'a, T: Numeric, const N: usize, const M: usize> VectorViewMut<'a, T, N, M> 
         M
     }
 
+    #[inline]
+    pub fn capacity(&self) -> usize {
+        M
+    }
+
     pub fn t(&'a self) -> VectorTransposeView<'a, T, N, M> {
         VectorTransposeView::new(self.data, self.start)
     }
@@ -47,5 +52,19 @@ impl<'a, T: Numeric, const N: usize, const M: usize> Index<usize> for VectorView
 impl<'a, T: Numeric, const N: usize, const M: usize> IndexMut<usize> for VectorViewMut<'a, T, N, M> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.data[self.start + index]
+    }
+}
+
+impl<T: Numeric, const N: usize, const M: usize> Index<(usize, usize)> for VectorViewMut<'_, T, N, M> {
+    type Output = T;
+
+    fn index(&self, index: (usize, usize)) -> &Self::Output {
+        &self.data[self.start + index.0]
+    }
+}
+
+impl<T: Numeric, const N: usize, const M: usize> IndexMut<(usize, usize)> for VectorViewMut<'_, T, N, M> {
+    fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {
+        &mut self.data[self.start + index.0]
     }
 }

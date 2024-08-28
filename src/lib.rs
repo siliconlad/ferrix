@@ -20,12 +20,6 @@ pub use self::vector_view_mut::VectorViewMut;
 pub use self::vector_transpose_view::VectorTransposeView;
 pub use self::vector_transpose_view_mut::VectorTransposeViewMut;
 
-pub use self::matrix::RowVector;
-pub use self::matrix_view::RowVectorView;
-pub use self::matrix_view_mut::RowVectorViewMut;
-pub use self::matrix_transpose_view::RowVectorTransposeView;
-pub use self::matrix_transpose_view_mut::RowVectorTransposeViewMut;
-
 pub use self::matrix::Matrix;
 pub use self::matrix_view::MatrixView;
 pub use self::matrix_view_mut::MatrixViewMut;

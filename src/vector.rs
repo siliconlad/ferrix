@@ -61,6 +61,17 @@ impl<T: Numeric, const N: usize> Vector<T, N> {
     pub fn shape(&self) -> usize {
         N
     }
+
+    #[inline]
+    pub fn capacity(&self) -> usize {
+        N
+    }
+}
+
+impl<T: Numeric> Vector<T, 1> {
+    pub fn into(self) -> T {
+        self[0]
+    }
 }
 
 impl<T: Numeric, const N: usize> Vector<T, N> {
@@ -113,9 +124,35 @@ impl<T: Numeric, const N: usize> IndexMut<usize> for Vector<T, N> {
     }
 }
 
+impl<T: Numeric, const N: usize> Index<(usize, usize)> for Vector<T, N> {
+    type Output = T;
+
+    fn index(&self, index: (usize, usize)) -> &Self::Output {
+        &self.data[index.0]
+    }
+}
+
+impl<T: Numeric, const N: usize> IndexMut<(usize, usize)> for Vector<T, N> {
+    fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {
+        &mut self.data[index.0]
+    }
+}
+
 //////////////////////////////////
 //  From Trait Implementations  //
 //////////////////////////////////
+
+impl<T: Numeric, const N: usize> From<[T; N]> for Vector<T, N> {
+    fn from(data: [T; N]) -> Self {
+        Self { data }
+    }
+}
+
+impl<T: Numeric, const N: usize> From<[[T; 1]; N]> for Vector<T, N> {
+    fn from(data: [[T; 1]; N]) -> Self {
+        Self { data: std::array::from_fn(|i| data[i][0]) }
+    }
+}
 
 impl<T: Numeric, const A: usize, const N: usize> From<VectorView<'_, T, A, N>> for Vector<T, N> {
     fn from(vector: VectorView<'_, T, A, N>) -> Self {

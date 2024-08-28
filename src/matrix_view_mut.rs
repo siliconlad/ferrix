@@ -15,7 +15,6 @@ pub struct MatrixViewMut<
     data: &'a mut Matrix<T, R, C>,
     start: (usize, usize),
 }
-pub type RowVectorViewMut<'a, T, const N: usize, const M: usize> = MatrixViewMut<'a, T, 1, N, 1, M>;
 
 impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     MatrixViewMut<'a, T, R, C, V_R, V_C>
@@ -34,6 +33,11 @@ impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C
     #[inline]
     pub fn shape(&self) -> (usize, usize) {
         (V_R, V_C)
+    }
+
+    #[inline]
+    pub fn capacity(&self) -> usize {
+        V_R * V_C
     }
 
     pub fn t(&'a self) -> MatrixTransposeView<'a, T, R, C, V_C, V_R> {
