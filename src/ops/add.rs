@@ -1,5 +1,4 @@
 use std::ops::{Add, Index};
-use funty::Numeric;
 
 use crate::matrix::Matrix;
 use crate::matrix_view::MatrixView;

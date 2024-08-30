@@ -1,11 +1,10 @@
 use crate::matrix::Matrix;
 use crate::matrix_view::MatrixView;
-use funty::Numeric;
 use std::ops::Index;
 
 pub struct MatrixTransposeView<
     'a,
-    T: Numeric,
+    T,
     const R: usize,
     const C: usize,
     const V_R: usize,
@@ -15,7 +14,7 @@ pub struct MatrixTransposeView<
     start: (usize, usize), // In terms of the transposed matrix
 }
 
-impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     MatrixTransposeView<'a, T, R, C, V_R, V_C>
 {
     pub(super) fn new(data: &'a Matrix<T, R, C>, start: (usize, usize)) -> Self {
@@ -26,7 +25,7 @@ impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C
     }
 }
 
-impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     MatrixTransposeView<'a, T, R, C, V_R, V_C>
 {
     #[inline]
@@ -44,7 +43,7 @@ impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C
     }
 }
 
-impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     MatrixTransposeView<'a, T, R, C, V_R, V_C>
 {
     #[inline]
@@ -63,7 +62,7 @@ impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     Index<usize> for MatrixTransposeView<'_, T, R, C, V_R, V_C>
 {
     type Output = T;
@@ -78,7 +77,7 @@ impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: us
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     Index<(usize, usize)> for MatrixTransposeView<'_, T, R, C, V_R, V_C>
 {
     type Output = T;

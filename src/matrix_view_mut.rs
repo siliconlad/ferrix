@@ -1,12 +1,11 @@
 use crate::matrix::Matrix;
 use crate::matrix_transpose_view::MatrixTransposeView;
 use crate::matrix_transpose_view_mut::MatrixTransposeViewMut;
-use funty::Numeric;
 use std::ops::{Index, IndexMut};
 
 pub struct MatrixViewMut<
     'a,
-    T: Numeric,
+    T,
     const R: usize,
     const C: usize,
     const V_R: usize,
@@ -16,7 +15,7 @@ pub struct MatrixViewMut<
     start: (usize, usize),
 }
 
-impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     MatrixViewMut<'a, T, R, C, V_R, V_C>
 {
     pub(super) fn new(data: &'a mut Matrix<T, R, C>, start: (usize, usize)) -> Self {
@@ -27,7 +26,7 @@ impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C
     }
 }
 
-impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     MatrixViewMut<'a, T, R, C, V_R, V_C>
 {
     #[inline]
@@ -49,7 +48,7 @@ impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C
     }
 }
 
-impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     MatrixViewMut<'a, T, R, C, V_R, V_C>
 {
     #[inline]
@@ -63,7 +62,7 @@ impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     Index<usize> for MatrixViewMut<'_, T, R, C, V_R, V_C>
 {
     type Output = T;
@@ -78,7 +77,7 @@ impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: us
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     IndexMut<usize> for MatrixViewMut<'_, T, R, C, V_R, V_C>
 {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
@@ -93,7 +92,7 @@ impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: us
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     Index<(usize, usize)> for MatrixViewMut<'_, T, R, C, V_R, V_C>
 {
     type Output = T;
@@ -105,7 +104,7 @@ impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: us
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     IndexMut<(usize, usize)> for MatrixViewMut<'_, T, R, C, V_R, V_C>
 {
     fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {

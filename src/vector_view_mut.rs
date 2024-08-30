@@ -1,4 +1,4 @@
-use funty::{Floating, Numeric};
+use funty::Floating;
 use std::ops::{Index, IndexMut};
 use std::marker::PhantomData;
 
@@ -6,13 +6,13 @@ use crate::traits::DotProduct;
 use crate::row_vector_view::RowVectorView;
 use crate::row_vector_view_mut::RowVectorViewMut;
 
-pub struct VectorViewMut<'a, V, T: Numeric, const N: usize, const M: usize> {
+pub struct VectorViewMut<'a, V, T, const N: usize, const M: usize> {
     data: &'a mut V,
     start: usize,
     _phantom: PhantomData<T>,
 }
 
-impl<'a, V, T: Numeric, const N: usize, const M: usize> VectorViewMut<'a, V, T, N, M> {
+impl<'a, V, T, const N: usize, const M: usize> VectorViewMut<'a, V, T, N, M> {
     pub(super) fn new(data: &'a mut V, start: usize) -> Self {
         Self { data, start, _phantom: PhantomData }
     }
@@ -42,7 +42,7 @@ impl<'a, V: Index<usize, Output = T>, T: Floating, const N: usize, const M: usiz
     }
 }
 
-impl<'a, V: Index<usize, Output = T>, T: Numeric, const N: usize, const M: usize> Index<usize> for VectorViewMut<'a, V, T, N, M> {
+impl<'a, V: Index<usize, Output = T>, T, const N: usize, const M: usize> Index<usize> for VectorViewMut<'a, V, T, N, M> {
     type Output = T;
 
     fn index(&self, index: usize) -> &Self::Output {
@@ -50,13 +50,13 @@ impl<'a, V: Index<usize, Output = T>, T: Numeric, const N: usize, const M: usize
     }
 }
 
-impl<'a, V: IndexMut<usize, Output = T>, T: Numeric, const N: usize, const M: usize> IndexMut<usize> for VectorViewMut<'a, V, T, N, M> {
+impl<'a, V: IndexMut<usize, Output = T>, T, const N: usize, const M: usize> IndexMut<usize> for VectorViewMut<'a, V, T, N, M> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.data[self.start + index]
     }
 }
 
-impl<V: Index<usize, Output = T>, T: Numeric, const N: usize, const M: usize> Index<(usize, usize)> for VectorViewMut<'_, V, T, N, M> {
+impl<V: Index<usize, Output = T>, T, const N: usize, const M: usize> Index<(usize, usize)> for VectorViewMut<'_, V, T, N, M> {
     type Output = T;
 
     fn index(&self, index: (usize, usize)) -> &Self::Output {
@@ -67,7 +67,7 @@ impl<V: Index<usize, Output = T>, T: Numeric, const N: usize, const M: usize> In
     }
 }
 
-impl<V: IndexMut<usize, Output = T>, T: Numeric, const N: usize, const M: usize> IndexMut<(usize, usize)> for VectorViewMut<'_, V, T, N, M> {
+impl<V: IndexMut<usize, Output = T>, T, const N: usize, const M: usize> IndexMut<(usize, usize)> for VectorViewMut<'_, V, T, N, M> {
     fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {
         if index.1 != 0 {
             panic!("Index out of bounds");

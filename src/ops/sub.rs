@@ -1,5 +1,4 @@
 use std::ops::{Sub, Index};
-use funty::Numeric;
 
 use crate::matrix::Matrix;
 use crate::matrix_transpose_view::MatrixTransposeView;

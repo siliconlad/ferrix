@@ -2,7 +2,7 @@
 mod op_macros {
     macro_rules! impl_inner {
         (mat, $lhs:ty, $rhs:ty, $trait:tt, $method:tt, $op:tt, $output:ty, $($generics:tt)*) => {
-            impl<T: Numeric, $($generics)*> $trait<$rhs> for $lhs {
+            impl<T: Copy + $trait<T, Output=T>, $($generics)*> $trait<$rhs> for $lhs {
                 type Output = $output;
 
                 fn $method(self, other: $rhs) -> Self::Output {
@@ -11,7 +11,7 @@ mod op_macros {
             }
         };
         (mat, $lhs:ty, $trait:tt, $method:tt, $op:tt, $output:ty, $($generics:tt)*) => {
-            impl<T: Numeric, $($generics)*> $trait<T> for $lhs {
+            impl<T: Copy + $trait<T, Output=T>, $($generics)*> $trait<T> for $lhs {
                 type Output = $output;
 
                 fn $method(self, scalar: T) -> Self::Output {
@@ -20,7 +20,7 @@ mod op_macros {
             }
         };
         (vec, $lhs:ty, $rhs:ty, $trait:tt, $method:tt, $op:tt, $output:ty, $($generics:tt)*) => {
-            impl<T: Numeric, $($generics)*> $trait<$rhs> for $lhs {
+            impl<T: Copy + $trait<T, Output=T>, $($generics)*> $trait<$rhs> for $lhs {
                 type Output = $output;
 
                 fn $method(self, other: $rhs) -> Self::Output {
@@ -29,7 +29,7 @@ mod op_macros {
             }
         };
         (vec, $lhs:ty, $trait:tt, $method:tt, $op:tt, $output:ty, $($generics:tt)*) => {
-            impl<T: Numeric, $($generics)*> $trait<T> for $lhs {
+            impl<T: Copy + $trait<T, Output=T>, $($generics)*> $trait<T> for $lhs {
                 type Output = $output;
 
                 fn $method(self, scalar: T) -> Self::Output {
@@ -142,14 +142,14 @@ mod op_macros {
 mod op_assign_macros {
     macro_rules! impl_assign_inner {
         ($lhs:ty, $rhs:ty, $trait:tt, $method:tt, $op:tt, $output:ty, $($generics:tt)*) => {
-            impl<T: Numeric, $($generics)*> $trait<$rhs> for $lhs {
+            impl<T: Copy + $trait<T>, $($generics)*> $trait<$rhs> for $lhs {
                 fn $method(&mut self, other: $rhs) {
                     (0..self.capacity()).for_each(|i| self[i] $op other[i]);
                 }
             }
         };
         ($lhs:ty, $trait:tt, $method:tt, $op:tt, $output:ty, $($generics:tt)*) => {
-            impl<T: Numeric, $($generics)*> $trait<T> for $lhs {
+            impl<T: Copy + $trait<T>, $($generics)*> $trait<T> for $lhs {
                 fn $method(&mut self, scalar: T) {
                     (0..self.capacity()).for_each(|i| self[i] $op scalar);
                 }
@@ -230,7 +230,7 @@ mod op_assign_macros {
 mod dot_macros {
     macro_rules! impl_dot_inner {
         ($lhs:ty, $rhs:ty, $($generics:tt)*) => {
-            impl<T: Numeric, $($generics)*> DotProduct<$rhs> for $lhs {
+            impl<T: Copy + Mul<T, Output = T> + std::iter::Sum<T>, $($generics)*> DotProduct<$rhs> for $lhs {
                 type Output = T;
 
                 fn dot(self, other: $rhs) -> Self::Output {
@@ -276,21 +276,21 @@ mod dot_macros {
 mod matmul_macros {
     macro_rules! impl_matmul_inner {
         (scalar, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Numeric + From<u8>, $($generics)*> MatMul<$rhs> for $lhs
+            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> MatMul<$rhs> for $lhs
             {
                 type Output = $output;
 
                 fn matmul(self, other: $rhs) -> Self::Output {
                     let mut result = T::from(0);
                     for i in 0..M {
-                        result += self[i] * other[i];
+                        result = result + (self[i] * other[i]);
                     }
                     Self::Output::new([[result]])
                 }
             }
         };
         (vecvec, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Numeric + From<u8>, $($generics)*> MatMul<$rhs> for $lhs
+            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> MatMul<$rhs> for $lhs
             {
                 type Output = $output;
 
@@ -298,7 +298,7 @@ mod matmul_macros {
                     let mut result = Self::Output::zeros();
                     for i in 0..M {
                         for j in 0..N {
-                            result[(i, j)] += self[i] * other[j];
+                            result[(i, j)] = result[(i, j)] + (self[i] * other[j]);
                         }
                     }
                     result
@@ -307,7 +307,7 @@ mod matmul_macros {
         };
         (vecmat, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
 
-            impl<T: Numeric + From<u8>, $($generics)*> MatMul<$rhs> for $lhs
+            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> MatMul<$rhs> for $lhs
             {
                 type Output = $output;
 
@@ -315,7 +315,7 @@ mod matmul_macros {
                     let mut result = Self::Output::zeros();
                     for i in 0..M {
                         for j in 0..N {
-                            result[i] += self[j] * other[(j, i)];
+                            result[i] = result[i] + (self[j] * other[(j, i)]);
                         }
                     }
                     result
@@ -323,14 +323,14 @@ mod matmul_macros {
             }
         };
         (matvec, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Numeric + From<u8>, $($generics)*> MatMul<$rhs> for $lhs {
+            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> MatMul<$rhs> for $lhs {
                 type Output = $output;
 
                 fn matmul(self, other: $rhs) -> Self::Output {
                     let mut result = Self::Output::zeros();
                     for i in 0..M {
                         for j in 0..N {
-                            result[(i, 0)] += self[(i, j)] * other[j];
+                            result[(i, 0)] = result[(i, 0)] + (self[(i, j)] * other[j]);
                         }
                     }
                     result
@@ -338,7 +338,7 @@ mod matmul_macros {
             }
         };
         (matmat, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Numeric + From<u8>, $($generics)*> MatMul<$rhs> for $lhs {
+            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> MatMul<$rhs> for $lhs {
                 type Output = $output;
 
                 fn matmul(self, other: $rhs) -> Self::Output {
@@ -346,7 +346,7 @@ mod matmul_macros {
                     for i in 0..M {
                         for j in 0..P {
                             for k in 0..N {
-                                result[(i, j)] += self[(i, k)] * other[(k, j)];
+                                result[(i, j)] = result[(i, j)] + (self[(i, k)] * other[(k, j)]);
                             }
                         }
                     }

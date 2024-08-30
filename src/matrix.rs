@@ -1,4 +1,3 @@
-use funty::Numeric;
 use std::ops::{Index, IndexMut};
 
 use crate::matrix_transpose_view::MatrixTransposeView;
@@ -13,19 +12,41 @@ use crate::row_vector_view::RowVectorView;
 use crate::row_vector_view_mut::RowVectorViewMut;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Matrix<T: Numeric, const R: usize, const C: usize> {
+pub struct Matrix<T, const R: usize, const C: usize> {
     data: [[T; C]; R],
 }
 
-impl<T: Numeric + Default, const R: usize, const C: usize> Default for Matrix<T, R, C> {
+impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
+    pub fn new(data: [[T; C]; R]) -> Self {
+        Self { data }
+    }
+
+    #[inline]
+    pub fn shape(&self) -> (usize, usize) {
+        (R, C)
+    }
+
+    #[inline]
+    pub fn capacity(&self) -> usize {
+        R * C
+    }
+}
+
+impl<T: Copy> Matrix<T, 1, 1> {
+    pub fn into(self) -> T {
+        self[(0, 0)]
+    }
+}
+
+impl<T: Default, const R: usize, const C: usize> Default for Matrix<T, R, C> {
     fn default() -> Self {
         Self {
-            data: [[T::default(); C]; R],
+            data: std::array::from_fn(|_| std::array::from_fn(|_| T::default())),
         }
     }
 }
 
-impl<T: Numeric + From<u8>, const R: usize, const C: usize> Matrix<T, R, C> {
+impl<T: Copy + From<u8>, const R: usize, const C: usize> Matrix<T, R, C> {
     pub fn eye() -> Self {
         let mut data = [[T::from(0); C]; R];
         for (i, row) in data.iter_mut().enumerate() {
@@ -47,11 +68,7 @@ impl<T: Numeric + From<u8>, const R: usize, const C: usize> Matrix<T, R, C> {
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize> Matrix<T, R, C> {
-    pub fn new(data: [[T; C]; R]) -> Self {
-        Self { data }
-    }
-
+impl<T: Copy, const R: usize, const C: usize> Matrix<T, R, C> {
     pub fn fill(value: T) -> Self {
         Self {
             data: [[value; C]; R],
@@ -59,25 +76,7 @@ impl<T: Numeric, const R: usize, const C: usize> Matrix<T, R, C> {
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize> Matrix<T, R, C> {
-    #[inline]
-    pub fn shape(&self) -> (usize, usize) {
-        (R, C)
-    }
-
-    #[inline]
-    pub fn capacity(&self) -> usize {
-        R * C
-    }
-}
-
-impl<T: Numeric> Matrix<T, 1, 1> {
-    pub fn into(self) -> T {
-        self[(0, 0)]
-    }
-}
-
-impl<T: Numeric, const R: usize, const C: usize> Matrix<T, R, C> {
+impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
     pub fn t(&self) -> MatrixTransposeView<T, R, C, C, R> {
         MatrixTransposeView::new(self, (0, 0))
     }
@@ -87,7 +86,7 @@ impl<T: Numeric, const R: usize, const C: usize> Matrix<T, R, C> {
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize> Matrix<T, R, C> {
+impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
     pub fn view<const V_R: usize, const V_C: usize>(
         &self,
         start: (usize, usize),
@@ -113,7 +112,7 @@ impl<T: Numeric, const R: usize, const C: usize> Matrix<T, R, C> {
 //  Index Trait Implementations  //
 ///////////////////////////////////
 
-impl<T: Numeric, const R: usize, const C: usize> Index<usize> for Matrix<T, R, C> {
+impl<T, const R: usize, const C: usize> Index<usize> for Matrix<T, R, C> {
     type Output = T;
     fn index(&self, index: usize) -> &Self::Output {
         if index >= R * C {
@@ -126,7 +125,7 @@ impl<T: Numeric, const R: usize, const C: usize> Index<usize> for Matrix<T, R, C
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize> IndexMut<usize> for Matrix<T, R, C> {
+impl<T, const R: usize, const C: usize> IndexMut<usize> for Matrix<T, R, C> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         if index >= R * C {
             panic!("Index out of bounds");
@@ -138,7 +137,7 @@ impl<T: Numeric, const R: usize, const C: usize> IndexMut<usize> for Matrix<T, R
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize> Index<(usize, usize)> for Matrix<T, R, C> {
+impl<T, const R: usize, const C: usize> Index<(usize, usize)> for Matrix<T, R, C> {
     type Output = T;
     fn index(&self, index: (usize, usize)) -> &Self::Output {
         if index.0 >= R || index.1 >= C {
@@ -148,7 +147,7 @@ impl<T: Numeric, const R: usize, const C: usize> Index<(usize, usize)> for Matri
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize> IndexMut<(usize, usize)> for Matrix<T, R, C> {
+impl<T, const R: usize, const C: usize> IndexMut<(usize, usize)> for Matrix<T, R, C> {
     fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {
         if index.0 >= R || index.1 >= C {
             panic!("Index out of bounds");
@@ -161,13 +160,13 @@ impl<T: Numeric, const R: usize, const C: usize> IndexMut<(usize, usize)> for Ma
 //  From Trait Implementations  //
 //////////////////////////////////
 
-impl<T: Numeric, const R: usize, const C: usize> From<[[T; C]; R]> for Matrix<T, R, C> {
+impl<T, const R: usize, const C: usize> From<[[T; C]; R]> for Matrix<T, R, C> {
     fn from(data: [[T; C]; R]) -> Self {
         Self { data }
     }
 }
 
-impl<T: Numeric, const C: usize> From<Vector<T, C>> for Matrix<T, C, 1> {
+impl<T: Copy, const C: usize> From<Vector<T, C>> for Matrix<T, C, 1> {
     fn from(vector: Vector<T, C>) -> Self {
         Self {
             data: std::array::from_fn(|i| [vector[i]]),
@@ -175,7 +174,7 @@ impl<T: Numeric, const C: usize> From<Vector<T, C>> for Matrix<T, C, 1> {
     }
 }
 
-impl<T: Numeric, const C: usize> From<RowVector<T, C>> for Matrix<T, 1, C> {
+impl<T: Copy, const C: usize> From<RowVector<T, C>> for Matrix<T, 1, C> {
     fn from(vector: RowVector<T, C>) -> Self {
         Self {
             data: [std::array::from_fn(|i| vector[i])],
@@ -183,7 +182,7 @@ impl<T: Numeric, const C: usize> From<RowVector<T, C>> for Matrix<T, 1, C> {
     }
 }
 
-impl<V: Index<usize, Output = T>, T: Numeric, const A: usize, const N: usize> From<VectorView<'_, V, T, A, N>> for Matrix<T, N, 1> {
+impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<VectorView<'_, V, T, A, N>> for Matrix<T, N, 1> {
     fn from(view: VectorView<'_, V, T, A, N>) -> Self {
         Self {
             data: std::array::from_fn(|i| [view[i]]),
@@ -191,7 +190,7 @@ impl<V: Index<usize, Output = T>, T: Numeric, const A: usize, const N: usize> Fr
     }
 }
 
-impl<V: IndexMut<usize, Output = T>, T: Numeric, const A: usize, const N: usize> From<VectorViewMut<'_, V, T, A, N>> for Matrix<T, N, 1> {
+impl<V: IndexMut<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<VectorViewMut<'_, V, T, A, N>> for Matrix<T, N, 1> {
     fn from(view: VectorViewMut<'_, V, T, A, N>) -> Self {
         Self {
             data: std::array::from_fn(|i| [view[i]]),
@@ -199,7 +198,7 @@ impl<V: IndexMut<usize, Output = T>, T: Numeric, const A: usize, const N: usize>
     }
 }
 
-impl<V: Index<usize, Output = T>, T: Numeric, const A: usize, const N: usize> From<RowVectorView<'_, V, T, A, N>> for Matrix<T, 1, N> {
+impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<RowVectorView<'_, V, T, A, N>> for Matrix<T, 1, N> {
     fn from(view: RowVectorView<'_, V, T, A, N>) -> Self {
         Self {
             data: [std::array::from_fn(|i| view[i]); 1],
@@ -207,7 +206,7 @@ impl<V: Index<usize, Output = T>, T: Numeric, const A: usize, const N: usize> Fr
     }
 }
 
-impl<V: Index<usize, Output = T>, T: Numeric, const A: usize, const N: usize> From<RowVectorViewMut<'_, V, T, A, N>> for Matrix<T, 1, N> {
+impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<RowVectorViewMut<'_, V, T, A, N>> for Matrix<T, 1, N> {
     fn from(view: RowVectorViewMut<'_, V, T, A, N>) -> Self {
         Self {
             data: [std::array::from_fn(|i| view[i]); 1],
@@ -215,7 +214,7 @@ impl<V: Index<usize, Output = T>, T: Numeric, const A: usize, const N: usize> Fr
     }
 }
 
-impl<T: Numeric, const A: usize, const B: usize, const R: usize, const C: usize> From<MatrixView<'_, T, A, B, R, C>> for Matrix<T, R, C> {
+impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize> From<MatrixView<'_, T, A, B, R, C>> for Matrix<T, R, C> {
     fn from(view: MatrixView<'_, T, A, B, R, C>) -> Self {
         Self {
             data: std::array::from_fn(|i| std::array::from_fn(|j| view[(i, j)])),
@@ -223,7 +222,7 @@ impl<T: Numeric, const A: usize, const B: usize, const R: usize, const C: usize>
     }
 }
 
-impl<T: Numeric, const A: usize, const B: usize, const R: usize, const C: usize> From<MatrixViewMut<'_, T, A, B, R, C>> for Matrix<T, R, C> {
+impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize> From<MatrixViewMut<'_, T, A, B, R, C>> for Matrix<T, R, C> {
     fn from(view: MatrixViewMut<'_, T, A, B, R, C>) -> Self {
         Self {
             data: std::array::from_fn(|i| std::array::from_fn(|j| view[(i, j)])),
@@ -231,7 +230,7 @@ impl<T: Numeric, const A: usize, const B: usize, const R: usize, const C: usize>
     }
 }
 
-impl<T: Numeric, const A: usize, const B: usize, const R: usize, const C: usize> From<MatrixTransposeView<'_, T, A, B, R, C>> for Matrix<T, R, C> {
+impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize> From<MatrixTransposeView<'_, T, A, B, R, C>> for Matrix<T, R, C> {
     fn from(view: MatrixTransposeView<'_, T, A, B, R, C>) -> Self {
         Self {
             data: std::array::from_fn(|i| std::array::from_fn(|j| view[(i, j)])),
@@ -239,7 +238,7 @@ impl<T: Numeric, const A: usize, const B: usize, const R: usize, const C: usize>
     }
 }
 
-impl<T: Numeric, const A: usize, const B: usize, const R: usize, const C: usize> From<MatrixTransposeViewMut<'_, T, A, B, R, C>> for Matrix<T, R, C> {
+impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize> From<MatrixTransposeViewMut<'_, T, A, B, R, C>> for Matrix<T, R, C> {
     fn from(view: MatrixTransposeViewMut<'_, T, A, B, R, C>) -> Self {
         Self {
             data: std::array::from_fn(|i| std::array::from_fn(|j| view[(i, j)])),

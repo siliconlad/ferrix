@@ -1,4 +1,3 @@
-use funty::Numeric;
 use std::ops::{SubAssign, Index,IndexMut};
 
 use crate::matrix::Matrix;

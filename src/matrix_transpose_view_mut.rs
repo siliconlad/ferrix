@@ -1,12 +1,11 @@
 use crate::matrix::Matrix;
 use crate::matrix_view::MatrixView;
 use crate::matrix_view_mut::MatrixViewMut;
-use funty::Numeric;
 use std::ops::{Index, IndexMut};
 
 pub struct MatrixTransposeViewMut<
     'a,
-    T: Numeric,
+    T,
     const R: usize,
     const C: usize,
     const V_R: usize,
@@ -16,7 +15,7 @@ pub struct MatrixTransposeViewMut<
     start: (usize, usize), // In terms of the transposed matrix
 }
 
-impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     MatrixTransposeViewMut<'a, T, R, C, V_R, V_C>
 {
     pub(super) fn new(data: &'a mut Matrix<T, R, C>, start: (usize, usize)) -> Self {
@@ -27,7 +26,7 @@ impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C
     }
 }
 
-impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     MatrixTransposeViewMut<'a, T, R, C, V_R, V_C>
 {
     #[inline]
@@ -49,7 +48,7 @@ impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C
     }
 }
 
-impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     MatrixTransposeViewMut<'a, T, R, C, V_R, V_C>
 {
     #[inline]
@@ -68,7 +67,7 @@ impl<'a, T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     Index<usize> for MatrixTransposeViewMut<'_, T, R, C, V_R, V_C>
 {
     type Output = T;
@@ -83,7 +82,7 @@ impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: us
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     IndexMut<usize> for MatrixTransposeViewMut<'_, T, R, C, V_R, V_C>
 {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
@@ -98,7 +97,7 @@ impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: us
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     Index<(usize, usize)> for MatrixTransposeViewMut<'_, T, R, C, V_R, V_C>
 {
     type Output = T;
@@ -110,7 +109,7 @@ impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: us
     }
 }
 
-impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
+impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     IndexMut<(usize, usize)> for MatrixTransposeViewMut<'_, T, R, C, V_R, V_C>
 {
     fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {
@@ -121,133 +120,3 @@ impl<T: Numeric, const R: usize, const C: usize, const V_R: usize, const V_C: us
         &mut self.data[index]
     }
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn test_shape() {
-//         let mut matrix = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
-//         let view = MatrixTransposeViewMut::<i32, 3, 2, 2, 3>::new(&mut matrix, (0, 0));
-//         assert_eq!(view.shape(), (2, 3));
-//     }
-
-//     #[test]
-//     fn test_t() {
-//         let mut matrix = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
-//         let view = MatrixTransposeViewMut::<i32, 3, 2, 2, 3>::new(&mut matrix, (0, 0));
-//         let original = view.t();
-//         assert_eq!(original.shape(), (3, 2));
-//         assert_eq!(original[(0, 0)], 1);
-//         assert_eq!(original[(0, 1)], 2);
-//         assert_eq!(original[(1, 0)], 3);
-//         assert_eq!(original[(1, 1)], 4);
-//         assert_eq!(original[(2, 0)], 5);
-//         assert_eq!(original[(2, 1)], 6);
-//     }
-
-//     #[test]
-//     fn test_t_mut() {
-//         let mut matrix = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
-//         let mut view = MatrixTransposeViewMut::<i32, 3, 2, 2, 3>::new(&mut matrix, (0, 0));
-//         let mut original = view.t_mut();
-//         original[(1, 1)] = 100;
-//         assert_eq!(matrix[(0, 0)], 1);
-//         assert_eq!(matrix[(0, 1)], 2);
-//         assert_eq!(matrix[(1, 0)], 3);
-//         assert_eq!(matrix[(1, 1)], 100);
-//         assert_eq!(matrix[(2, 0)], 5);
-//         assert_eq!(matrix[(2, 1)], 6);
-//     }
-
-//     #[test]
-//     fn test_index() {
-//         let mut matrix = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
-//         let view = MatrixTransposeViewMut::<i32, 3, 2, 2, 3>::new(&mut matrix, (0, 0));
-//         assert_eq!(view[(0, 0)], 1);
-//         assert_eq!(view[(0, 1)], 3);
-//         assert_eq!(view[(0, 2)], 5);
-//         assert_eq!(view[(1, 0)], 2);
-//         assert_eq!(view[(1, 1)], 4);
-//         assert_eq!(view[(1, 2)], 6);
-//     }
-
-//     #[test]
-//     #[should_panic(expected = "Index out of bounds")]
-//     fn test_index_out_of_bounds() {
-//         let mut matrix = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
-//         let view = MatrixTransposeViewMut::<i32, 3, 2, 2, 3>::new(&mut matrix, (0, 0));
-//         let _ = view[(2, 0)];
-//     }
-
-//     #[test]
-//     fn test_index_mut() {
-//         let mut matrix = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
-//         let mut view = MatrixTransposeViewMut::<i32, 3, 2, 2, 3>::new(&mut matrix, (0, 0));
-//         view[(0, 2)] = 100;
-//         view[(1, 0)] = 200;
-//         assert_eq!(matrix[(0, 0)], 1);
-//         assert_eq!(matrix[(0, 1)], 200);
-//         assert_eq!(matrix[(1, 0)], 3);
-//         assert_eq!(matrix[(1, 1)], 4);
-//         assert_eq!(matrix[(2, 0)], 100);
-//         assert_eq!(matrix[(2, 1)], 6);
-//     }
-
-//     #[test]
-//     #[should_panic(expected = "Index out of bounds")]
-//     fn test_index_mut_out_of_bounds() {
-//         let mut matrix = Matrix::<i32, 3, 2>::new([[1, 2], [3, 4], [5, 6]]);
-//         let mut view = MatrixTransposeViewMut::<i32, 3, 2, 2, 3>::new(&mut matrix, (0, 0));
-//         view[(2, 0)] = 100;
-//     }
-
-//     #[test]
-//     fn test_index_with_offset() {
-//         let mut matrix = Matrix::<i32, 4, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]);
-//         let view = MatrixTransposeViewMut::<i32, 4, 3, 2, 3>::new(&mut matrix, (1, 1));
-//         assert_eq!(view[(0, 0)], 5);
-//         assert_eq!(view[(0, 1)], 8);
-//         assert_eq!(view[(0, 2)], 11);
-//         assert_eq!(view[(1, 0)], 6);
-//         assert_eq!(view[(1, 1)], 9);
-//         assert_eq!(view[(1, 2)], 12);
-//     }
-
-//     #[test]
-//     fn test_index_mut_with_offset() {
-//         let mut matrix = Matrix::<i32, 4, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]);
-//         let mut view = MatrixTransposeViewMut::<i32, 4, 3, 2, 3>::new(&mut matrix, (1, 1));
-//         view[(0, 1)] = 100;
-//         view[(1, 2)] = 200;
-//         assert_eq!(matrix[(0, 0)], 1);
-//         assert_eq!(matrix[(0, 1)], 2);
-//         assert_eq!(matrix[(0, 2)], 3);
-//         assert_eq!(matrix[(1, 0)], 4);
-//         assert_eq!(matrix[(1, 1)], 5);
-//         assert_eq!(matrix[(1, 2)], 6);
-//         assert_eq!(matrix[(2, 0)], 7);
-//         assert_eq!(matrix[(2, 1)], 100);
-//         assert_eq!(matrix[(2, 2)], 9);
-//         assert_eq!(matrix[(3, 0)], 10);
-//         assert_eq!(matrix[(3, 1)], 11);
-//         assert_eq!(matrix[(3, 2)], 200);
-//     }
-
-//     #[test]
-//     #[should_panic(expected = "Index out of bounds")]
-//     fn test_index_out_of_bounds_with_offset() {
-//         let mut matrix = Matrix::<i32, 4, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]);
-//         let view = MatrixTransposeViewMut::<i32, 4, 3, 2, 3>::new(&mut matrix, (1, 1));
-//         let _ = view[(2, 0)];
-//     }
-
-//     #[test]
-//     #[should_panic(expected = "Index out of bounds")]
-//     fn test_index_mut_out_of_bounds_with_offset() {
-//         let mut matrix = Matrix::<i32, 4, 3>::new([[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]);
-//         let mut view = MatrixTransposeViewMut::<i32, 4, 3, 2, 3>::new(&mut matrix, (1, 1));
-//         view[(0, 3)] = 100;
-//     }
-// }

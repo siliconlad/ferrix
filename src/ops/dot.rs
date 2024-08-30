@@ -5,8 +5,7 @@ use crate::vector_view_mut::VectorViewMut;
 use crate::row_vector::RowVector;
 use crate::row_vector_view::RowVectorView;
 use crate::row_vector_view_mut::RowVectorViewMut;
-use funty::Numeric;
-use std::ops::Index;
+use std::ops::{Index, Mul};
 
 // Generate macros
 generate_dot_macros!();
