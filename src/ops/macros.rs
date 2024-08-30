@@ -65,19 +65,46 @@ mod op_macros {
 
             macro_rules! impl_vv_op_view {
                 ($lhs:ty, $rhs:ty) => {
-                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, Vector<T, M>, const N: usize, const M: usize);
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, Vector<T, M>, V: Index<usize, Output = T>, const N: usize, const M: usize);
                 };
                 ($lhs:ty) => {
-                    impl_combinations!(vec,$lhs, $trait, $method, $op, Vector<T, M>, const N: usize, const M: usize);
+                    impl_combinations!(vec,$lhs, $trait, $method, $op, Vector<T, M>, V: Index<usize, Output = T>, const N: usize, const M: usize);
                 }
             }
 
             macro_rules! impl_vv_op_view_view {
                 ($lhs:ty, $rhs:ty) => {
-                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, Vector<T, M>, const A: usize, const N: usize, const M: usize);
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, Vector<T, M>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
                 };
                 ($lhs:ty) => {
-                    impl_combinations!(vec, $lhs, $trait, $method, $op, Vector<T, M>, const A: usize, const N: usize, const M: usize);
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, Vector<T, M>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
+                }
+            }
+
+            macro_rules! impl_vv_op_row {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, RowVector<T, N>, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, RowVector<T, N>, const N: usize);
+                }
+            }
+
+            macro_rules! impl_vv_op_view_row {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, RowVector<T, M>, V: Index<usize, Output = T>, const N: usize, const M: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(vec,$lhs, $trait, $method, $op, RowVector<T, M>, V: Index<usize, Output = T>, const N: usize, const M: usize);
+                }
+            }
+
+            macro_rules! impl_vv_op_view_view_row {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, RowVector<T, M>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, RowVector<T, M>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
                 }
             }
 
@@ -153,19 +180,19 @@ mod op_assign_macros {
 
             macro_rules! impl_vv_op_assign_view {
                 ($lhs:ty, $rhs:ty) => {
-                    impl_assign_combinations!($lhs, $rhs, $trait, $method, $op, Vector<T, M>, const N: usize, const M: usize);
+                    impl_assign_combinations!($lhs, $rhs, $trait, $method, $op, Vector<T, M>, V: IndexMut<usize, Output = T>, const N: usize, const M: usize);
                 };
                 ($lhs:ty) => {
-                    impl_assign_combinations!($lhs, $trait, $method, $op, Vector<T, M>, const N: usize, const M: usize);
+                    impl_assign_combinations!($lhs, $trait, $method, $op, Vector<T, M>, V: IndexMut<usize, Output = T>, const N: usize, const M: usize);
                 }
             }
 
             macro_rules! impl_vv_op_assign_view_view {
                 ($lhs:ty, $rhs:ty) => {
-                    impl_assign_combinations!($lhs, $rhs, $trait, $method, $op, Vector<T, M>, const A: usize, const N: usize, const M: usize);
+                    impl_assign_combinations!($lhs, $rhs, $trait, $method, $op, Vector<T, M>, V1: IndexMut<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
                 };
                 ($lhs:ty) => {
-                    impl_assign_combinations!($lhs, $trait, $method, $op, Vector<T, M>, const A: usize, const N: usize, const M: usize);
+                    impl_assign_combinations!($lhs, $trait, $method, $op, Vector<T, M>, V1: IndexMut<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
                 }
             }
 
@@ -232,13 +259,13 @@ mod dot_macros {
 
             macro_rules! impl_dot_view {
                 ($lhs:ty, $rhs:ty) => {
-                    impl_dot_combinations!($lhs, $rhs, const N: usize, const M: usize);
+                    impl_dot_combinations!($lhs, $rhs, V: Index<usize, Output = T>, const N: usize, const M: usize);
                 };
             }
 
             macro_rules! impl_dot_view_view {
                 ($lhs:ty, $rhs:ty) => {
-                    impl_dot_combinations!($lhs, $rhs, const A: usize, const N: usize, const M: usize);
+                    impl_dot_combinations!($lhs, $rhs, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
                 };
             }
         };
@@ -340,39 +367,75 @@ mod matmul_macros {
 
     macro_rules! generate_matmul_macros {
         () => {
+            macro_rules! impl_vecmul_scalar {
+                ($lhs:ty, $rhs:ty) => {
+                   impl_matmul_combinations!(scalar, $lhs, $rhs, Matrix<T, 1, 1>, const M: usize);
+                };
+            }
+
             macro_rules! impl_vecmul_scalar_view {
                 ($lhs:ty, $rhs:ty) => {
-                   impl_matmul_combinations!(scalar, $lhs, $rhs, Matrix<T, 1, 1>, const M: usize, const N: usize);
+                   impl_matmul_combinations!(scalar, $lhs, $rhs, Matrix<T, 1, 1>, V: Index<usize, Output = T>, const M: usize, const N: usize);
                 };
             }
 
             macro_rules! impl_vecmul_scalar_view_view {
                 ($lhs:ty, $rhs:ty) => {
-                    impl_matmul_combinations!(scalar, $lhs, $rhs, Matrix<T, 1, 1>, const A: usize, const B: usize, const M: usize);
+                    impl_matmul_combinations!(scalar, $lhs, $rhs, Matrix<T, 1, 1>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const B: usize, const M: usize);
+                };
+            }
+
+            macro_rules! impl_vecmul {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_matmul_combinations!(vecvec, $lhs, $rhs, Matrix<T, M, N>, const M: usize, const N: usize);
                 };
             }
 
             macro_rules! impl_vecmul_view {
                 ($lhs:ty, $rhs:ty) => {
-                    impl_matmul_combinations!(vecvec, $lhs, $rhs, Matrix<T, M, N>, const A: usize, const M: usize, const N: usize);
+                    impl_matmul_combinations!(vecvec, $lhs, $rhs, Matrix<T, M, N>, V: Index<usize, Output = T>, const A: usize, const M: usize, const N: usize);
                 };
             }
 
-            macro_rules! impl_vecmul_view_view {
+            macro_rules! impl_vecmul_mat_row_view {
                 ($lhs:ty, $rhs:ty) => {
                     impl_matmul_combinations!(vecvec, $lhs, $rhs, Matrix<T, M, N>, const A: usize, const B: usize, const M: usize, const N: usize);
                 };
             }
 
-            macro_rules! impl_vecmul_mat_view {
+            macro_rules! impl_vecmul_view_view {
                 ($lhs:ty, $rhs:ty) => {
-                    impl_matmul_combinations!(vecmat, $lhs, $rhs, Matrix<T, 1, M>, const A: usize, const M: usize, const N: usize);
+                    impl_matmul_combinations!(vecvec, $lhs, $rhs, Matrix<T, M, N>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const B: usize, const M: usize, const N: usize);
                 };
             }
 
-            macro_rules! impl_vecmul_mat_view_view {
+            macro_rules! impl_vecmul_mat_row_view_view {
                 ($lhs:ty, $rhs:ty) => {
-                    impl_matmul_combinations!(vecmat, $lhs, $rhs, Matrix<T, 1, M>, const A: usize, const B: usize, const C: usize, const M: usize, const N: usize);
+                    impl_matmul_combinations!(vecvec, $lhs, $rhs, Matrix<T, M, N>, V: Index<usize, Output = T>, const A: usize, const B: usize, const C: usize, const M: usize, const N: usize);
+                };
+            }
+
+            macro_rules! impl_vecmul_mat {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_matmul_combinations!(vecmat, $lhs, $rhs, Matrix<T, 1, M>, const M: usize, const N: usize);
+                };
+            }
+
+            macro_rules! impl_vecmul_mat_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_matmul_combinations!(vecmat, $lhs, $rhs, Matrix<T, 1, M>, V: Index<usize, Output = T>, const A: usize, const M: usize, const N: usize);
+                };
+            }
+
+            macro_rules! impl_vecmul_vecmat_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_matmul_combinations!(vecmat, $lhs, $rhs, Matrix<T, 1, M>, const A: usize, const B: usize, const M: usize, const N: usize);
+                };
+            }
+
+            macro_rules! impl_vecmul_vecmat_view_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_matmul_combinations!(vecmat, $lhs, $rhs, Matrix<T, 1, M>, V: Index<usize, Output = T>, const A: usize, const B: usize, const C: usize, const M: usize, const N: usize);
                 };
             }
 
@@ -384,7 +447,31 @@ mod matmul_macros {
 
             macro_rules! impl_matmul_vec_view {
                 ($lhs:ty, $rhs:ty) => {
-                    impl_matmul_combinations!(matvec, $lhs, $rhs, Matrix<T, M, 1>, const A: usize, const M: usize, const N: usize);
+                    impl_matmul_combinations!(matvec, $lhs, $rhs, Matrix<T, M, 1>, V: Index<usize, Output = T>, const A: usize, const M: usize, const N: usize);
+                };
+            }
+
+            macro_rules! impl_matmul_matvec {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_matmul_combinations!(vecvec, $lhs, $rhs, Matrix<T, M, N>, const M: usize, const N: usize);
+                };
+            }
+
+            macro_rules! impl_matmul_matvec_vec_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_matmul_combinations!(vecvec, $lhs, $rhs, Matrix<T, M, N>, V: Index<usize, Output = T>, const A: usize, const M: usize, const N: usize);
+                };
+            }
+
+            macro_rules! impl_matmul_matvec_mat_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_matmul_combinations!(vecvec, $lhs, $rhs, Matrix<T, M, N>, const A: usize, const B: usize, const M: usize, const N: usize);
+                };
+            }
+
+            macro_rules! impl_matmul_matvec_view_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_matmul_combinations!(vecvec, $lhs, $rhs, Matrix<T, M, N>, V: Index<usize, Output = T>, const A: usize, const B: usize, const C: usize, const M: usize, const N: usize);
                 };
             }
 
@@ -396,7 +483,7 @@ mod matmul_macros {
 
             macro_rules! impl_matmul_mat_view_view {
                 ($lhs:ty, $rhs:ty) => {
-                    impl_matmul_combinations!(matvec, $lhs, $rhs, Matrix<T, M, 1>, const A: usize, const B: usize, const C: usize, const M: usize, const N: usize);
+                    impl_matmul_combinations!(matvec, $lhs, $rhs, Matrix<T, M, 1>, V: Index<usize, Output = T>, const A: usize, const B: usize, const C: usize, const M: usize, const N: usize);
                 };
             }
 

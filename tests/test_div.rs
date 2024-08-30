@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, Matrix};
+    use ferrix::{Vector, RowVector, Matrix};
 
     #[test]
     fn test_vector_div() {
@@ -21,10 +21,22 @@ mod tests {
         let result = v1 / v2.view::<3>(0).unwrap();
         assert_eq!(result, Vector::new([2, 2, 3]));
 
+        // Vector / VectorView (transposed)
+        let v1 = Vector::<i32, 3>::new([4, 10, 18]);
+        let v2 = RowVector::<i32, 3>::new([2, 5, 6]);
+        let result = v1 / v2.t();
+        assert_eq!(result, Vector::new([2, 2, 3]));
+
         // Vector / VectorViewMut
         let v1 = Vector::<i32, 3>::new([4, 10, 18]);
         let mut v2 = Vector::<i32, 3>::new([2, 5, 6]);
         let result = v1 / v2.view_mut::<3>(0).unwrap();
+        assert_eq!(result, Vector::new([2, 2, 3]));
+
+        // Vector / VectorViewMut (transposed)
+        let v1 = Vector::<i32, 3>::new([4, 10, 18]);
+        let mut v2 = RowVector::<i32, 3>::new([2, 5, 6]);
+        let result = v1 / v2.t_mut();
         assert_eq!(result, Vector::new([2, 2, 3]));
     }
 
@@ -36,6 +48,12 @@ mod tests {
         let result = view1 / 2.0;
         assert_eq!(result, Vector::<f64, 3>::new([10.0, 15.0, 20.0]));
 
+        // Test VectorView / Vector
+        let v1 = Vector::<f64, 5>::new([10.0, 20.0, 30.0, 40.0, 50.0]);
+        let view1 = v1.view::<3>(1).unwrap();
+        let result = view1 / Vector::<f64, 3>::new([2.0, 4.0, 10.0]);
+        assert_eq!(result, Vector::<f64, 3>::new([10.0, 7.5, 4.0]));
+
         // Test VectorView / VectorView
         let v1 = Vector::<f64, 5>::new([10.0, 20.0, 30.0, 40.0, 50.0]);
         let v2 = Vector::<f64, 5>::new([2.0, 4.0, 6.0, 8.0, 10.0]);
@@ -44,11 +62,12 @@ mod tests {
         let result = view1 / view2;
         assert_eq!(result, Vector::<f64, 3>::new([5.0, 5.0, 5.0]));
 
-        // Test VectorView / Vector
-        let v1 = Vector::<f64, 5>::new([10.0, 20.0, 30.0, 40.0, 50.0]);
+        // Test VectorView / VectorView (transposed)
+        let v1 = Vector::<f64, 5>::new([10.0, 20.0, 30.0, 30.0, 50.0]);
+        let v2 = RowVector::<f64, 3>::new([2.0, 4.0, 6.0]);
         let view1 = v1.view::<3>(1).unwrap();
-        let result = view1 / Vector::<f64, 3>::new([2.0, 4.0, 10.0]);
-        assert_eq!(result, Vector::<f64, 3>::new([10.0, 7.5, 4.0]));
+        let result = view1 / v2.t();
+        assert_eq!(result, Vector::<f64, 3>::new([10.0, 7.5, 5.0]));
 
         // Test VectorView / VectorViewMut
         let v1 = Vector::<f64, 5>::new([10.0, 20.0, 30.0, 40.0, 50.0]);
@@ -57,6 +76,13 @@ mod tests {
         let view_mut = v2.view_mut::<3>(1).unwrap();
         let result = view1 / view_mut;
         assert_eq!(result, Vector::<f64, 3>::new([5.0, 5.0, 5.0]));
+
+        // Test VectorView / VectorViewMut (transposed)
+        let v1 = Vector::<f64, 5>::new([10.0, 20.0, 30.0, 30.0, 50.0]);
+        let mut v2 = RowVector::<f64, 3>::new([2.0, 4.0, 6.0]);
+        let view1 = v1.view::<3>(1).unwrap();
+        let result = view1 / v2.t_mut();
+        assert_eq!(result, Vector::<f64, 3>::new([10.0, 7.5, 5.0]));
     }
 
     #[test]
@@ -78,51 +104,144 @@ mod tests {
         let result = v1.view_mut::<3>(0).unwrap() / v2.view::<3>(0).unwrap();
         assert_eq!(result, Vector::<i32, 3>::new([2, 2, 3]));
 
+        // VectorViewMut / VectorView (transposed)
+        let mut v1 = Vector::<i32, 3>::new([4, 10, 18]);
+        let v2 = RowVector::<i32, 3>::new([2, 5, 6]);
+        let result = v1.view_mut::<3>(0).unwrap() / v2.t();
+        assert_eq!(result, Vector::<i32, 3>::new([2, 2, 3]));
+
         // VectorViewMut / VectorViewMut
         let mut v1 = Vector::<i32, 3>::new([4, 10, 18]);
         let mut v2 = Vector::<i32, 3>::new([2, 5, 6]);
         let result = v1.view_mut::<3>(0).unwrap() / v2.view_mut::<3>(0).unwrap();
         assert_eq!(result, Vector::<i32, 3>::new([2, 2, 3]));
+
+        // VectorViewMut / VectorViewMut (transposed)
+        let mut v1 = Vector::<i32, 3>::new([4, 10, 18]);
+        let mut v2 = RowVector::<i32, 3>::new([2, 5, 6]);
+        let result = v1.view_mut::<3>(0).unwrap() / v2.t_mut();
+        assert_eq!(result, Vector::<i32, 3>::new([2, 2, 3]));
     }
 
     #[test]
-    fn test_vector_transpose_view_div() {
-        // VectorTransposeView / Scalar
-        let v = Vector::<i32, 3>::new([2, 4, 6]);
-        let result = v.t() / 2;
-        assert_eq!(result, Vector::<i32, 3>::new([1, 2, 3]));
+    fn test_row_vector_div() {
+        // RowVector / Scalar
+        let v = RowVector::<i32, 3>::new([2, 4, 6]);
+        let result = v / 2;
+        assert_eq!(result, RowVector::new([1, 2, 3]));
 
-        // VectorTransposeView / VectorTransposeView
-        let v1 = Vector::<i32, 3>::new([2, 4, 6]);
-        let v2 = Vector::<i32, 3>::new([1, 2, 3]);
-        let result = v1.t() / v2.t();
-        assert_eq!(result, Vector::<i32, 3>::new([2, 2, 2]));
+        // RowVector / RowVector
+        let v1 = RowVector::<i32, 3>::new([4, 10, 18]);
+        let v2 = RowVector::<i32, 3>::new([2, 5, 6]);
+        let result = v1 / v2;
+        assert_eq!(result, RowVector::new([2, 2, 3]));
 
-        // VectorTransposeView / VectorTransposeViewMut
-        let v1 = Vector::<i32, 3>::new([2, 4, 6]);
-        let mut v2 = Vector::<i32, 3>::new([1, 2, 3]);
-        let result = v1.t() / v2.t_mut();
-        assert_eq!(result, Vector::<i32, 3>::new([2, 2, 2]));
+        // RowVector / RowVectorView
+        let v1 = RowVector::<i32, 3>::new([4, 10, 18]);
+        let v2 = RowVector::<i32, 3>::new([2, 5, 6]);
+        let result = v1 / v2.view::<3>(0).unwrap();
+        assert_eq!(result, RowVector::new([2, 2, 3]));
+
+        // RowVector / RowVectorView (transposed)
+        let v1 = RowVector::<i32, 3>::new([4, 10, 18]);
+        let v2 = Vector::<i32, 3>::new([2, 5, 6]);
+        let result = v1 / v2.t();
+        assert_eq!(result, RowVector::new([2, 2, 3]));
+
+        // RowVector / RowVectorViewMut
+        let v1 = RowVector::<i32, 3>::new([4, 10, 18]);
+        let mut v2 = RowVector::<i32, 3>::new([2, 5, 6]);
+        let result = v1 / v2.view_mut::<3>(0).unwrap();
+        assert_eq!(result, RowVector::new([2, 2, 3]));
+
+        // RowVector / RowVectorViewMut (transposed)
+        let v1 = RowVector::<i32, 3>::new([4, 10, 18]);
+        let mut v2 = Vector::<i32, 3>::new([2, 5, 6]);
+        let result = v1 / v2.t_mut();
+        assert_eq!(result, RowVector::new([2, 2, 3]));
     }
 
     #[test]
-    fn test_vector_transpose_view_mut_div() {
-        // VectorTransposeViewMut / Scalar
-        let mut v = Vector::<i32, 3>::new([2, 4, 6]);
-        let result = v.t_mut() / 2;
-        assert_eq!(result, Vector::<i32, 3>::new([1, 2, 3]));
+    fn test_row_vector_view_div() {
+        // RowVectorView / Scalar
+        let v1 = RowVector::<f64, 5>::new([10.0, 20.0, 30.0, 40.0, 50.0]);
+        let view1 = v1.view::<3>(1).unwrap();
+        let result = view1 / 2.0;
+        assert_eq!(result, RowVector::<f64, 3>::new([10.0, 15.0, 20.0]));
 
-        // VectorTransposeViewMut / VectorTransposeView
-        let mut v1 = Vector::<i32, 3>::new([2, 4, 6]);
-        let v2 = Vector::<i32, 3>::new([1, 2, 3]);
-        let result = v1.t_mut() / v2.t();
-        assert_eq!(result, Vector::<i32, 3>::new([2, 2, 2]));
+        // RowVectorView / RowVector
+        let v1 = RowVector::<f64, 5>::new([10.0, 20.0, 30.0, 40.0, 50.0]);
+        let view1 = v1.view::<3>(1).unwrap();
+        let result = view1 / RowVector::<f64, 3>::new([2.0, 5.0, 10.0]);
+        assert_eq!(result, RowVector::<f64, 3>::new([10.0, 6.0, 4.0]));
 
-        // VectorTransposeViewMut / VectorTransposeViewMut
-        let mut v1 = Vector::<i32, 3>::new([2, 4, 6]);
-        let mut v2 = Vector::<i32, 3>::new([1, 2, 3]);
-        let result = v1.t_mut() / v2.t_mut();
-        assert_eq!(result, Vector::<i32, 3>::new([2, 2, 2]));
+        // RowVectorView / RowVectorView
+        let v1 = RowVector::<f64, 5>::new([10.0, 20.0, 30.0, 40.0, 50.0]);
+        let v2 = RowVector::<f64, 5>::new([2.0, 4.0, 6.0, 8.0, 10.0]);
+        let view1 = v1.view::<3>(1).unwrap();
+        let view2 = v2.view::<3>(1).unwrap();
+        let result = view1 / view2;
+        assert_eq!(result, RowVector::<f64, 3>::new([5.0, 5.0, 5.0]));
+
+        // RowVectorView / RowVectorView (transposed)
+        let v1 = RowVector::<f64, 5>::new([10.0, 20.0, 30.0, 30.0, 50.0]);
+        let v2 = Vector::<f64, 3>::new([2.0, 4.0, 6.0]);
+        let view1 = v1.view::<3>(1).unwrap();
+        let result = view1 / v2.t();
+        assert_eq!(result, RowVector::<f64, 3>::new([10.0, 7.5, 5.0]));
+
+        // RowVectorView / RowVectorViewMut
+        let v1 = RowVector::<f64, 5>::new([10.0, 20.0, 30.0, 40.0, 50.0]);
+        let mut v2 = RowVector::<f64, 5>::new([2.0, 4.0, 6.0, 8.0, 10.0]);
+        let view1 = v1.view::<3>(1).unwrap();
+        let view_mut = v2.view_mut::<3>(1).unwrap();
+        let result = view1 / view_mut;
+        assert_eq!(result, RowVector::<f64, 3>::new([5.0, 5.0, 5.0]));
+
+        // RowVectorView / RowVectorViewMut (transposed)
+        let v1 = RowVector::<f64, 5>::new([10.0, 20.0, 30.0, 30.0, 50.0]);
+        let mut v2 = Vector::<f64, 3>::new([2.0, 4.0, 6.0]);
+        let view1 = v1.view::<3>(1).unwrap();
+        let result = view1 / v2.t_mut();
+        assert_eq!(result, RowVector::<f64, 3>::new([10.0, 7.5, 5.0]));
+    }
+
+    #[test]
+    fn test_row_vector_view_mut_div() {
+        // RowVectorViewMut / Scalar
+        let mut v = RowVector::<i32, 3>::new([2, 4, 6]);
+        let result = v.view_mut::<3>(0).unwrap() / 2;
+        assert_eq!(result, RowVector::<i32, 3>::new([1, 2, 3]));
+
+        // RowVectorViewMut / RowVector
+        let mut v1 = RowVector::<i32, 3>::new([4, 10, 18]);
+        let v2 = RowVector::<i32, 3>::new([2, 5, 6]);
+        let result = v1.view_mut::<3>(0).unwrap() / v2;
+        assert_eq!(result, RowVector::<i32, 3>::new([2, 2, 3]));
+
+        // RowVectorViewMut / RowVectorView
+        let mut v1 = RowVector::<i32, 3>::new([4, 10, 18]);
+        let v2 = RowVector::<i32, 3>::new([2, 5, 6]);
+        let result = v1.view_mut::<3>(0).unwrap() / v2.view::<3>(0).unwrap();
+        assert_eq!(result, RowVector::<i32, 3>::new([2, 2, 3]));
+
+        // RowVectorViewMut / RowVectorView (transposed)
+        let mut v1 = RowVector::<i32, 3>::new([4, 10, 18]);
+        let v2 = Vector::<i32, 3>::new([2, 5, 6]);
+        let result = v1.view_mut::<3>(0).unwrap() / v2.t();
+        assert_eq!(result, RowVector::<i32, 3>::new([2, 2, 3]));
+
+        // RowVectorViewMut / RowVectorViewMut
+        let mut v1 = RowVector::<i32, 3>::new([4, 10, 18]);
+        let mut v2 = RowVector::<i32, 3>::new([2, 5, 6]);
+        let result = v1.view_mut::<3>(0).unwrap() / v2.view_mut::<3>(0).unwrap();
+        assert_eq!(result, RowVector::<i32, 3>::new([2, 2, 3]));
+
+        // RowVectorViewMut / RowVectorViewMut (transposed)
+        let mut v1 = RowVector::<i32, 3>::new([4, 10, 18]);
+        let mut v2 = Vector::<i32, 3>::new([2, 5, 6]);
+        let result = v1.view_mut::<3>(0).unwrap() / v2.t_mut();
+        assert_eq!(result, RowVector::<i32, 3>::new([2, 2, 3]));
     }
 
     #[test]

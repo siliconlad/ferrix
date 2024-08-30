@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Matrix, Vector};
+    use ferrix::{Vector, RowVector, Matrix};
 
     #[test]
     fn test_default() {
@@ -239,19 +239,56 @@ mod tests {
     }
 
     #[test]
-    fn test_from_vector_transpose_view() {
+    fn test_from_array() {
+        let array = [[1, 2, 3], [4, 5, 6]];
+        let matrix: Matrix<_, 2, 3> = Matrix::from(array);
+        assert_eq!(matrix, Matrix::new([[1, 2, 3], [4, 5, 6]]));
+    }
+
+    #[test]
+    fn test_from_vector() {
         let vector = Vector::new([1, 2, 3, 4]);
-        let t_view = vector.t();
-        let matrix: Matrix<_, 1, 4> = Matrix::from(t_view);
+        let matrix: Matrix<_, 4, 1> = Matrix::from(vector);
+        assert_eq!(matrix, Matrix::new([[1], [2], [3], [4]]));
+    }
+
+    #[test]
+    fn test_from_row_vector() {
+        let vector = RowVector::new([1, 2, 3, 4]);
+        let matrix: Matrix<_, 1, 4> = Matrix::from(vector);
         assert_eq!(matrix, Matrix::new([[1, 2, 3, 4]]));
     }
 
     #[test]
-    fn test_from_vector_transpose_view_mut() {
+    fn test_from_vector_view() {
+        let vector = Vector::new([1, 2, 3, 4]);
+        let view = vector.view::<2>(1).unwrap();
+        let matrix: Matrix<_, 2, 1> = Matrix::from(view);
+        assert_eq!(matrix, Matrix::new([[2], [3]]));
+    }
+
+    #[test]
+    fn test_from_vector_view_mut() {
         let mut vector = Vector::new([1, 2, 3, 4]);
-        let t_view = vector.t_mut();
-        let matrix: Matrix<_, 1, 4> = Matrix::from(t_view);
-        assert_eq!(matrix, Matrix::new([[1, 2, 3, 4]]));
+        let view = vector.view_mut::<2>(1).unwrap();
+        let matrix: Matrix<_, 2, 1> = Matrix::from(view);
+        assert_eq!(matrix, Matrix::new([[2], [3]]));
+    }
+
+    #[test]
+    fn test_from_row_vector_view() {
+        let vector = RowVector::new([1, 2, 3, 4]);
+        let view = vector.view::<2>(1).unwrap();
+        let matrix: Matrix<_, 1, 2> = Matrix::from(view);
+        assert_eq!(matrix, Matrix::new([[2, 3]]));
+    }
+
+    #[test]
+    fn test_from_row_vector_view_mut() {
+        let mut vector = RowVector::new([1, 2, 3, 4]);
+        let view = vector.view_mut::<2>(1).unwrap();
+        let matrix: Matrix<_, 1, 2> = Matrix::from(view);
+        assert_eq!(matrix, Matrix::new([[2, 3]]));
     }
 
     #[test]

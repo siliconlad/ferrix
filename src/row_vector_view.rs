@@ -3,15 +3,15 @@ use std::ops::Index;
 use std::marker::PhantomData;
 
 use crate::traits::DotProduct;
-use crate::row_vector_view::RowVectorView;
+use crate::vector_view::VectorView;
 
-pub struct VectorView<'a, V, T: Numeric, const N: usize, const M: usize> {
+pub struct RowVectorView<'a, V, T: Numeric, const N: usize, const M: usize> {
     data: &'a V,
     start: usize,
     _phantom: PhantomData<T>,
 }
 
-impl<'a, V, T: Numeric, const N: usize, const M: usize> VectorView<'a, V, T, N, M> {
+impl<'a, V, T: Numeric, const N: usize, const M: usize> RowVectorView<'a, V, T, N, M> {
     pub(super) fn new(data: &'a V, start: usize) -> Self {
         Self { data, start, _phantom: PhantomData }
     }
@@ -26,18 +26,18 @@ impl<'a, V, T: Numeric, const N: usize, const M: usize> VectorView<'a, V, T, N, 
         M
     }
 
-    pub fn t(&'a self) -> RowVectorView<'a, V, T, N, M> {
-        RowVectorView::new(self.data, self.start)
+    pub fn t(&'a self) -> VectorView<'a, V, T, N, M> {
+        VectorView::new(self.data, self.start)
     }
 }
 
-impl<'a, V: Index<usize, Output = T>, T: Floating, const N: usize, const M: usize> VectorView<'a, V, T, N, M> {
+impl<'a, V: Index<usize, Output = T>, T: Floating, const N: usize, const M: usize> RowVectorView<'a, V, T, N, M> {
     pub fn magnitude(&self) -> T {
         self.dot(self).sqrt()
     }
 }
 
-impl<'a, V: Index<usize, Output = T>, T: Numeric, const N: usize, const M: usize> Index<usize> for VectorView<'a, V, T, N, M> {
+impl<'a, V: Index<usize, Output = T>, T: Numeric, const N: usize, const M: usize> Index<usize> for RowVectorView<'a, V, T, N, M> {
     type Output = T;
 
     fn index(&self, index: usize) -> &Self::Output {
@@ -46,13 +46,14 @@ impl<'a, V: Index<usize, Output = T>, T: Numeric, const N: usize, const M: usize
 }
 
 
-impl<V: Index<usize, Output = T>, T: Numeric, const N: usize, const M: usize> Index<(usize, usize)> for VectorView<'_, V, T, N, M> {
+impl<V: Index<usize, Output = T>, T: Numeric, const N: usize, const M: usize> Index<(usize, usize)> for RowVectorView<'_, V, T, N, M> {
     type Output = T;
 
     fn index(&self, index: (usize, usize)) -> &Self::Output {
-        if index.1 != 0 {
+        if index.0 != 0 {
             panic!("Index out of bounds");
         }
-        &self.data[self.start + index.0]
+        &self.data[self.start + index.1]
     }
 }
+

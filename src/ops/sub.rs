@@ -1,4 +1,4 @@
-use std::ops::Sub;
+use std::ops::{Sub, Index};
 use funty::Numeric;
 
 use crate::matrix::Matrix;
@@ -9,8 +9,9 @@ use crate::matrix_view_mut::MatrixViewMut;
 use crate::vector::Vector;
 use crate::vector_view::VectorView;
 use crate::vector_view_mut::VectorViewMut;
-use crate::vector_transpose_view::VectorTransposeView;
-use crate::vector_transpose_view_mut::VectorTransposeViewMut;
+use crate::row_vector::RowVector;
+use crate::row_vector_view::RowVectorView;
+use crate::row_vector_view_mut::RowVectorViewMut;
 
 // Generate the macros
 generate_op_macros!(Sub, sub, -);
@@ -21,42 +22,53 @@ generate_op_macros!(Sub, sub, -);
 
 impl_vv_op!(Vector<T, N>); // Scalar
 impl_vv_op!(Vector<T, N>, Vector<T, N>);
-impl_vv_op_view!(Vector<T, M>, VectorView<'_, T, N, M>);
-impl_vv_op_view!(Vector<T, M>, VectorViewMut<'_, T, N, M>);
+impl_vv_op_view!(Vector<T, M>, VectorView<'_, V, T, N, M>);
+impl_vv_op_view!(Vector<T, M>, VectorViewMut<'_, V, T, N, M>);
 
 //////////////////
 //  VectorView  //
 //////////////////
 
-impl_vv_op_view!(VectorView<'_, T, N, M>); // Scalar
-impl_vv_op_view!(VectorView<'_, T, N, M>, Vector<T, M>);
-impl_vv_op_view_view!(VectorView<'_, T, A, M>, VectorView<'_, T, N, M>);
-impl_vv_op_view_view!(VectorView<'_, T, A, M>, VectorViewMut<'_, T, N, M>);
+impl_vv_op_view!(VectorView<'_, V, T, N, M>); // Scalar
+impl_vv_op_view!(VectorView<'_, V, T, N, M>, Vector<T, M>);
+impl_vv_op_view_view!(VectorView<'_, V1, T, A, M>, VectorView<'_, V2, T, N, M>);
+impl_vv_op_view_view!(VectorView<'_, V1, T, A, M>, VectorViewMut<'_, V2, T, N, M>);
 
 /////////////////////
 //  VectorViewMut  //
 /////////////////////
 
-impl_vv_op_view!(VectorViewMut<'_, T, N, M>); // Scalar
-impl_vv_op_view!(VectorViewMut<'_, T, N, M>, Vector<T, M>);
-impl_vv_op_view_view!(VectorViewMut<'_, T, A, M>, VectorView<'_, T, N, M>);
-impl_vv_op_view_view!(VectorViewMut<'_, T, A, M>, VectorViewMut<'_, T, N, M>);
+impl_vv_op_view!(VectorViewMut<'_, V, T, N, M>); // Scalar
+impl_vv_op_view!(VectorViewMut<'_, V, T, N, M>, Vector<T, M>);
+impl_vv_op_view_view!(VectorViewMut<'_, V1, T, A, M>, VectorView<'_, V2, T, N, M>);
+impl_vv_op_view_view!(VectorViewMut<'_, V1, T, A, M>, VectorViewMut<'_, V2, T, N, M>);
 
-///////////////////////////
-//  VectorTransposeView  //
-///////////////////////////
+/////////////////
+//  RowVector  //
+/////////////////
 
-impl_vv_op_view!(VectorTransposeView<'_, T, N, M>);  // Scalar
-impl_vv_op_view_view!(VectorTransposeView<'_, T, A, M>, VectorTransposeView<'_, T, N, M>);
-impl_vv_op_view_view!(VectorTransposeView<'_, T, A, M>, VectorTransposeViewMut<'_, T, N, M>);
+impl_vv_op_row!(RowVector<T, N>); // Scalar
+impl_vv_op_row!(RowVector<T, N>, RowVector<T, N>);
+impl_vv_op_view_row!(RowVector<T, M>, RowVectorView<'_, V, T, N, M>);
+impl_vv_op_view_row!(RowVector<T, M>, RowVectorViewMut<'_, V, T, N, M>);
 
-//////////////////////////////
-//  VectorTransposeViewMut  //
-//////////////////////////////
+/////////////////////
+//  RowVectorView  //
+/////////////////////
 
-impl_vv_op_view!(VectorTransposeViewMut<'_, T, N, M>); // Scalar
-impl_vv_op_view_view!(VectorTransposeViewMut<'_, T, A, M>, VectorTransposeView<'_, T, N, M>);
-impl_vv_op_view_view!(VectorTransposeViewMut<'_, T, A, M>, VectorTransposeViewMut<'_, T, N, M>);
+impl_vv_op_view_row!(RowVectorView<'_, V, T, N, M>); // Scalar
+impl_vv_op_view_row!(RowVectorView<'_, V, T, N, M>, RowVector<T, M>);
+impl_vv_op_view_view_row!(RowVectorView<'_, V1, T, A, M>, RowVectorView<'_, V2, T, N, M>);
+impl_vv_op_view_view_row!(RowVectorView<'_, V1, T, A, M>, RowVectorViewMut<'_, V2, T, N, M>);
+
+////////////////////////
+//  RowVectorViewMut  //
+////////////////////////
+
+impl_vv_op_view_row!(RowVectorViewMut<'_, V, T, N, M>); // Scalar
+impl_vv_op_view_row!(RowVectorViewMut<'_, V, T, N, M>, RowVector<T, M>);
+impl_vv_op_view_view_row!(RowVectorViewMut<'_, V1, T, A, M>, RowVectorView<'_, V2, T, N, M>);
+impl_vv_op_view_view_row!(RowVectorViewMut<'_, V1, T, A, M>, RowVectorViewMut<'_, V2, T, N, M>);
 
 //////////////
 //  Matrix  //

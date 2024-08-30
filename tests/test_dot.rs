@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, DotProduct};
+    use ferrix::{Vector, RowVector, DotProduct};
 
     #[test]
     fn test_vector_dot() {
@@ -69,28 +69,68 @@ mod tests {
     }
 
     #[test]
-    fn test_vector_transpose_view_dot() {
-        // VectorTransposeView dot VectorTransposeView
-        let v1 = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
-        let v2 = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
-        assert!((v1.t().dot(v2.t()) - 14.0).abs() < f64::EPSILON);
+    fn test_row_vector_dot() {
+        // RowVector dot RowVector
+        let v1 = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let v2 = RowVector::<f64, 3>::new([4.0, 5.0, 6.0]);
+        assert!((v1.dot(v2) - 32.0).abs() < f64::EPSILON);
 
-        // VectorTransposeView dot VectorTransposeViewMut
-        let v1 = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
-        let mut v2 = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
-        assert!((v1.t().dot(v2.t_mut()) - 14.0).abs() < f64::EPSILON);
+        // RowVector dot RowVectorView
+        let v1 = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let v2 = RowVector::<f64, 5>::new([1.0, 2.0, 3.0, 4.0, 5.0]);
+        let view = v2.view::<3>(0).unwrap();
+        assert!((v1.dot(view) - 14.0).abs() < f64::EPSILON);
+
+        // RowVector dot RowVectorViewMut
+        let v1 = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let mut v2 = RowVector::<f64, 5>::new([1.0, 2.0, 3.0, 4.0, 5.0]);
+        let view_mut = v2.view_mut::<3>(0).unwrap();
+        assert!((v1.dot(view_mut) - 14.0).abs() < f64::EPSILON);
     }
 
     #[test]
-    fn test_vector_transpose_view_mut_dot() {
-        // VectorTransposeViewMut dot VectorTransposeView
-        let mut v1 = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
-        let v2 = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
-        assert!((v1.t_mut().dot(v2.t()) - 14.0).abs() < f64::EPSILON);
+    fn test_row_vector_view_dot() {
+        // RowVectorView dot RowVector
+        let v = RowVector::<f64, 5>::new([1.0, 2.0, 3.0, 4.0, 5.0]);
+        let v1 = v.view::<3>(0).unwrap();
+        let v2 = RowVector::<f64, 3>::new([4.0, 5.0, 6.0]);
+        assert!((v1.dot(v2) - 32.0).abs() < f64::EPSILON);
 
-        // VectorTransposeViewMut dot VectorTransposeViewMut
-        let mut v1 = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
-        let mut v2 = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
-        assert!((v1.t_mut().dot(v2.t_mut()) - 14.0).abs() < f64::EPSILON);
+        // RowVectorView dot RowVectorView
+        let v1 = RowVector::<f64, 5>::new([1.0, 2.0, 3.0, 4.0, 5.0]);
+        let v2 = RowVector::<f64, 5>::new([1.0, 2.0, 3.0, 4.0, 5.0]);
+        let view1 = v1.view::<3>(0).unwrap();
+        let view2 = v2.view::<3>(1).unwrap();
+        assert!((view1.dot(view2) - 20.0).abs() < f64::EPSILON);
+
+        // RowVectorView dot RowVectorViewMut
+        let v1 = RowVector::<f64, 5>::new([1.0, 2.0, 3.0, 4.0, 5.0]);
+        let mut v2 = RowVector::<f64, 5>::new([1.0, 2.0, 3.0, 4.0, 5.0]);
+        let view1 = v1.view::<3>(0).unwrap();
+        let view2 = v2.view_mut::<3>(1).unwrap();
+        assert!((view1.dot(view2) - 20.0).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn test_row_vector_view_mut_dot() {
+        // RowVectorViewMut dot RowVector
+        let mut v = RowVector::<f64, 5>::new([1.0, 2.0, 3.0, 4.0, 5.0]);
+        let v1 = v.view_mut::<3>(0).unwrap();
+        let v2 = RowVector::<f64, 3>::new([4.0, 5.0, 6.0]);
+        assert!((v1.dot(v2) - 32.0).abs() < f64::EPSILON);
+
+        // RowVectorViewMut dot RowVectorView
+        let mut v1 = RowVector::<f64, 5>::new([1.0, 2.0, 3.0, 4.0, 5.0]);
+        let v2 = RowVector::<f64, 5>::new([1.0, 2.0, 3.0, 4.0, 5.0]);
+        let view1 = v1.view_mut::<3>(0).unwrap();
+        let view2 = v2.view::<3>(1).unwrap();
+        assert!((view1.dot(view2) - 20.0).abs() < f64::EPSILON);
+
+        // RowVectorViewMut dot RowVectorViewMut
+        let mut v1 = RowVector::<f64, 5>::new([1.0, 2.0, 3.0, 4.0, 5.0]);
+        let mut v2 = RowVector::<f64, 5>::new([1.0, 2.0, 3.0, 4.0, 5.0]);
+        let view1 = v1.view_mut::<3>(0).unwrap();
+        let view2 = v2.view_mut::<3>(1).unwrap();
+        assert!((view1.dot(view2) - 20.0).abs() < f64::EPSILON);
     }
 }

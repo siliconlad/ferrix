@@ -5,8 +5,8 @@ use std::ops::{Index, IndexMut};
 use crate::traits::DotProduct;
 use crate::vector_view::VectorView;
 use crate::vector_view_mut::VectorViewMut;
-use crate::vector_transpose_view::VectorTransposeView;
-use crate::vector_transpose_view_mut::VectorTransposeViewMut;
+use crate::row_vector_view::RowVectorView;
+use crate::row_vector_view_mut::RowVectorViewMut;
 use crate::matrix::Matrix;
 use crate::matrix_view::MatrixView;
 use crate::matrix_view_mut::MatrixViewMut;
@@ -75,24 +75,24 @@ impl<T: Numeric> Vector<T, 1> {
 }
 
 impl<T: Numeric, const N: usize> Vector<T, N> {
-    pub fn t(&self) -> VectorTransposeView<'_, T, N, N> {
-        VectorTransposeView::new(self, 0)
+    pub fn t(&self) -> RowVectorView<'_, Vector<T, N>, T, N, N> {
+        RowVectorView::new(self, 0)
     }
 
-    pub fn t_mut(&mut self) -> VectorTransposeViewMut<'_, T, N, N> {
-        VectorTransposeViewMut::new(self, 0)
+    pub fn t_mut(&mut self) -> RowVectorViewMut<'_, Vector<T, N>, T, N, N> {
+        RowVectorViewMut::new(self, 0)
     }
 }
 
 impl<T: Numeric, const N: usize> Vector<T, N> {
-    pub fn view<const M: usize>(&self, start: usize) -> Option<VectorView<'_, T, N, M>> {
+    pub fn view<const M: usize>(&self, start: usize) -> Option<VectorView<'_, Vector<T, N>, T, N, M>> {
         if start + M > N || M == 0 {
             return None;
         }
         Some(VectorView::new(self, start))
     }
 
-    pub fn view_mut<const M: usize>(&mut self, start: usize) -> Option<VectorViewMut<'_, T, N, M>> {
+    pub fn view_mut<const M: usize>(&mut self, start: usize) -> Option<VectorViewMut<'_, Vector<T, N>, T, N, M>> {
         if start + M > N || M == 0 {
             return None;
         }
@@ -154,14 +154,14 @@ impl<T: Numeric, const N: usize> From<[[T; 1]; N]> for Vector<T, N> {
     }
 }
 
-impl<T: Numeric, const A: usize, const N: usize> From<VectorView<'_, T, A, N>> for Vector<T, N> {
-    fn from(vector: VectorView<'_, T, A, N>) -> Self {
+impl<V: Index<usize, Output = T>, T: Numeric, const A: usize, const N: usize> From<VectorView<'_, V, T, A, N>> for Vector<T, N> {
+    fn from(vector: VectorView<'_, V, T, A, N>) -> Self {
         Vector::new(std::array::from_fn(|i| vector[i]))
     }
 }
 
-impl<T: Numeric, const A: usize, const N: usize> From<VectorViewMut<'_, T, A, N>> for Vector<T, N> {
-    fn from(vector: VectorViewMut<'_, T, A, N>) -> Self {
+impl<V: IndexMut<usize, Output = T>, T: Numeric, const A: usize, const N: usize> From<VectorViewMut<'_, V, T, A, N>> for Vector<T, N> {
+    fn from(vector: VectorViewMut<'_, V, T, A, N>) -> Self {
         Vector::new(std::array::from_fn(|i| vector[i]))
     }
 }

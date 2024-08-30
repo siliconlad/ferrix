@@ -1,19 +1,20 @@
 use funty::{Floating, Numeric};
 use std::ops::{Index, IndexMut};
+use std::marker::PhantomData;
 
-use crate::vector::Vector;
 use crate::traits::DotProduct;
-use crate::vector_transpose_view::VectorTransposeView;
-use crate::vector_transpose_view_mut::VectorTransposeViewMut;
+use crate::row_vector_view::RowVectorView;
+use crate::row_vector_view_mut::RowVectorViewMut;
 
-pub struct VectorViewMut<'a, T: Numeric, const N: usize, const M: usize> {
-    data: &'a mut Vector<T, N>,
+pub struct VectorViewMut<'a, V, T: Numeric, const N: usize, const M: usize> {
+    data: &'a mut V,
     start: usize,
+    _phantom: PhantomData<T>,
 }
 
-impl<'a, T: Numeric, const N: usize, const M: usize> VectorViewMut<'a, T, N, M> {
-    pub(super) fn new(data: &'a mut Vector<T, N>, start: usize) -> Self {
-        Self { data, start }
+impl<'a, V, T: Numeric, const N: usize, const M: usize> VectorViewMut<'a, V, T, N, M> {
+    pub(super) fn new(data: &'a mut V, start: usize) -> Self {
+        Self { data, start, _phantom: PhantomData }
     }
 
     #[inline]
@@ -26,22 +27,22 @@ impl<'a, T: Numeric, const N: usize, const M: usize> VectorViewMut<'a, T, N, M> 
         M
     }
 
-    pub fn t(&'a self) -> VectorTransposeView<'a, T, N, M> {
-        VectorTransposeView::new(self.data, self.start)
+    pub fn t(&'a self) -> RowVectorView<'a, V, T, N, M> {
+        RowVectorView::new(self.data, self.start)
     }
 
-    pub fn t_mut(&'a mut self) -> VectorTransposeViewMut<'a, T, N, M> {
-        VectorTransposeViewMut::new(self.data, self.start)
+    pub fn t_mut(&'a mut self) -> RowVectorViewMut<'a, V, T, N, M> {
+        RowVectorViewMut::new(self.data, self.start)
     }
 }
 
-impl<'a, T: Floating, const N: usize, const M: usize> VectorViewMut<'a, T, N, M> {
+impl<'a, V: Index<usize, Output = T>, T: Floating, const N: usize, const M: usize> VectorViewMut<'a, V, T, N, M> {
     pub fn magnitude(&self) -> T {
         self.dot(self).sqrt()
     }
 }
 
-impl<'a, T: Numeric, const N: usize, const M: usize> Index<usize> for VectorViewMut<'a, T, N, M> {
+impl<'a, V: Index<usize, Output = T>, T: Numeric, const N: usize, const M: usize> Index<usize> for VectorViewMut<'a, V, T, N, M> {
     type Output = T;
 
     fn index(&self, index: usize) -> &Self::Output {
@@ -49,22 +50,28 @@ impl<'a, T: Numeric, const N: usize, const M: usize> Index<usize> for VectorView
     }
 }
 
-impl<'a, T: Numeric, const N: usize, const M: usize> IndexMut<usize> for VectorViewMut<'a, T, N, M> {
+impl<'a, V: IndexMut<usize, Output = T>, T: Numeric, const N: usize, const M: usize> IndexMut<usize> for VectorViewMut<'a, V, T, N, M> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.data[self.start + index]
     }
 }
 
-impl<T: Numeric, const N: usize, const M: usize> Index<(usize, usize)> for VectorViewMut<'_, T, N, M> {
+impl<V: Index<usize, Output = T>, T: Numeric, const N: usize, const M: usize> Index<(usize, usize)> for VectorViewMut<'_, V, T, N, M> {
     type Output = T;
 
     fn index(&self, index: (usize, usize)) -> &Self::Output {
+        if index.1 != 0 {
+            panic!("Index out of bounds");
+        }
         &self.data[self.start + index.0]
     }
 }
 
-impl<T: Numeric, const N: usize, const M: usize> IndexMut<(usize, usize)> for VectorViewMut<'_, T, N, M> {
+impl<V: IndexMut<usize, Output = T>, T: Numeric, const N: usize, const M: usize> IndexMut<(usize, usize)> for VectorViewMut<'_, V, T, N, M> {
     fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {
+        if index.1 != 0 {
+            panic!("Index out of bounds");
+        }
         &mut self.data[self.start + index.0]
     }
 }

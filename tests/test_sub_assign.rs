@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, Matrix};
+    use ferrix::{Vector, RowVector, Matrix};
 
     #[test]
     fn test_vector_sub_assign() {
@@ -9,7 +9,7 @@ mod tests {
         v -= 2;
         assert_eq!(v, Vector::<i32, 3>::new([3, 4, 5]));
 
-        // Vector -= Vector (i32)
+        // Vector -= Vector
         let mut v1 = Vector::<i32, 3>::new([1, 2, 3]);
         let v2 = Vector::<i32, 3>::new([0, 1, 2]);
         v1 -= v2;
@@ -27,10 +27,22 @@ mod tests {
         v1 -= v2.view::<3>(0).unwrap();
         assert_eq!(v1, Vector::<i32, 3>::new([3, 3, 3]));
 
+        // Vector -= VectorView (transposed)
+        let mut v1 = Vector::<i32, 3>::new([4, 5, 6]);
+        let v2 = RowVector::<i32, 3>::new([1, 2, 3]);
+        v1 -= v2.t();
+        assert_eq!(v1, Vector::<i32, 3>::new([3, 3, 3]));
+
         // Vector -= VectorViewMut
         let mut v1 = Vector::<i32, 3>::new([4, 5, 6]);
         let mut v2 = Vector::<i32, 3>::new([1, 2, 3]);
         v1 -= v2.view_mut::<3>(0).unwrap();
+        assert_eq!(v1, Vector::<i32, 3>::new([3, 3, 3]));
+
+        // Vector -= VectorViewMut (transposed)
+        let mut v1 = Vector::<i32, 3>::new([4, 5, 6]);
+        let mut v2 = RowVector::<i32, 3>::new([1, 2, 3]);
+        v1 -= v2.t_mut();
         assert_eq!(v1, Vector::<i32, 3>::new([3, 3, 3]));
     }
 
@@ -56,35 +68,114 @@ mod tests {
         view -= v2.view::<3>(0).unwrap();
         assert_eq!(v1, Vector::<i32, 3>::new([3, 3, 3]));
 
+        // VectorViewMut -= VectorView (transposed)
+        let mut v1 = Vector::<i32, 3>::new([4, 5, 6]);
+        let v2 = RowVector::<i32, 3>::new([1, 2, 3]);
+        let mut view = v1.view_mut::<3>(0).unwrap();
+        view -= v2.t();
+        assert_eq!(v1, Vector::<i32, 3>::new([3, 3, 3]));
+
         // VectorViewMut -= VectorViewMut
         let mut v1 = Vector::<i32, 3>::new([4, 5, 6]);
         let mut v2 = Vector::<i32, 3>::new([1, 2, 3]);
         let mut view = v1.view_mut::<3>(0).unwrap();
         view -= v2.view_mut::<3>(0).unwrap();
         assert_eq!(v1, Vector::<i32, 3>::new([3, 3, 3]));
+
+        // VectorViewMut -= VectorViewMut (transposed)
+        let mut v1 = Vector::<i32, 3>::new([4, 5, 6]);
+        let mut v2 = RowVector::<i32, 3>::new([1, 2, 3]);
+        let mut view = v1.view_mut::<3>(0).unwrap();
+        view -= v2.t_mut();
+        assert_eq!(v1, Vector::<i32, 3>::new([3, 3, 3]));
     }
 
     #[test]
-    fn test_vector_transpose_view_mut_sub_assign() {
-        // VectorTransposeViewMut -= Scalar
-        let mut v = Vector::<i32, 3>::new([1, 2, 3]);
-        let mut view = v.t_mut();
-        view -= 2;
-        assert_eq!(v, Vector::<i32, 3>::new([-1, 0, 1]));
+    fn test_row_vector_sub_assign() {
+        // RowVector -= Scalar
+        let mut v = RowVector::<i32, 3>::new([1, 2, 3]);
+        v -= 2;
+        assert_eq!(v, RowVector::<i32, 3>::new([-1, 0, 1]));
 
-        // VectorTransposeViewMut -= VectorTransposeView
-        let mut v1 = Vector::<i32, 3>::new([1, 2, 3]);
+        // RowVector -= RowVector
+        let mut v1 = RowVector::<i32, 3>::new([1, 2, 3]);
+        let v2 = RowVector::<i32, 3>::new([0, 1, 2]);
+        v1 -= v2;
+        assert_eq!(v1, RowVector::<i32, 3>::new([1, 1, 1]));
+
+        // RowVector -= RowVector
+        let mut v1 = RowVector::<i32, 3>::new([4, 5, 6]);
+        let v2 = RowVector::<i32, 3>::new([1, 2, 3]);
+        v1 -= v2;
+        assert_eq!(v1, RowVector::<i32, 3>::new([3, 3, 3]));
+
+        // RowVector -= RowVectorView
+        let mut v1 = RowVector::<i32, 3>::new([4, 5, 6]);
+        let v2 = RowVector::<i32, 3>::new([1, 2, 3]);
+        v1 -= v2.view::<3>(0).unwrap();
+        assert_eq!(v1, RowVector::<i32, 3>::new([3, 3, 3]));
+
+        // RowVector -= RowVectorView (transposed)
+        let mut v1 = RowVector::<i32, 3>::new([4, 5, 6]);
         let v2 = Vector::<i32, 3>::new([1, 2, 3]);
-        let mut view = v1.t_mut();
-        view -= v2.t();
-        assert_eq!(v1, Vector::<i32, 3>::new([0, 0, 0]));
+        v1 -= v2.t();
+        assert_eq!(v1, RowVector::<i32, 3>::new([3, 3, 3]));
 
-        // VectorTransposeViewMut -= VectorTransposeViewMut
-        let mut v1 = Vector::<i32, 3>::new([1, 2, 3]);
+        // RowVector -= RowVectorViewMut
+        let mut v1 = RowVector::<i32, 3>::new([4, 5, 6]);
+        let mut v2 = RowVector::<i32, 3>::new([1, 2, 3]);
+        v1 -= v2.view_mut::<3>(0).unwrap();
+        assert_eq!(v1, RowVector::<i32, 3>::new([3, 3, 3]));
+
+        // RowVector -= RowVectorViewMut (transposed)
+        let mut v1 = RowVector::<i32, 3>::new([4, 5, 6]);
         let mut v2 = Vector::<i32, 3>::new([1, 2, 3]);
-        let mut view = v1.t_mut();
+        v1 -= v2.t_mut();
+        assert_eq!(v1, RowVector::<i32, 3>::new([3, 3, 3]));
+    }
+
+    #[test]
+    fn test_row_vector_view_mut_sub_assign() {
+        // RowVectorViewMut -= Scalar
+        let mut v = RowVector::<i32, 3>::new([1, 2, 3]);
+        let mut view = v.view_mut::<3>(0).unwrap();
+        view -= 2;
+        assert_eq!(v, RowVector::<i32, 3>::new([-1, 0, 1]));
+        
+        // RowVectorViewMut -= RowVector
+        let mut v1 = RowVector::<i32, 3>::new([4, 5, 6]);
+        let v2 = RowVector::<i32, 3>::new([1, 2, 3]);
+        let mut view = v1.view_mut::<3>(0).unwrap();
+        view -= v2;
+        assert_eq!(v1, RowVector::<i32, 3>::new([3, 3, 3]));
+
+        // RowVectorViewMut -= RowVectorView
+        let mut v1 = RowVector::<i32, 3>::new([4, 5, 6]);
+        let v2 = RowVector::<i32, 3>::new([1, 2, 3]);
+        let mut view = v1.view_mut::<3>(0).unwrap();
+        view -= v2.view::<3>(0).unwrap();
+        assert_eq!(v1, RowVector::<i32, 3>::new([3, 3, 3]));
+
+        // RowVectorViewMut -= RowVectorView (transposed)
+        let mut v1 = RowVector::<i32, 3>::new([4, 5, 6]);
+        let v2 = Vector::<i32, 3>::new([1, 2, 3]);
+        let mut view = v1.view_mut::<3>(0).unwrap();
+        view -= v2.t();
+        assert_eq!(v1, RowVector::<i32, 3>::new([3, 3, 3]));
+
+        // RowVectorViewMut -= RowVectorViewMut
+        let mut v1 = RowVector::<i32, 3>::new([4, 5, 6]);
+        let mut v2 = RowVector::<i32, 3>::new([1, 2, 3]);
+        let mut view = v1.view_mut::<3>(0).unwrap();
+        view -= v2.view_mut::<3>(0).unwrap();
+        assert_eq!(v1, RowVector::<i32, 3>::new([3, 3, 3]));
+
+        // RowVectorViewMut -= RowVectorViewMut (transposed)
+        let mut v1 = RowVector::<i32, 3>::new([4, 5, 6]);
+        let mut v2 = Vector::<i32, 3>::new([1, 2, 3]);
+        let mut view = v1.view_mut::<3>(0).unwrap();
         view -= v2.t_mut();
-        assert_eq!(v1, Vector::<i32, 3>::new([0, 0, 0]));
+        assert_eq!(v1, RowVector::<i32, 3>::new([3, 3, 3]));
     }
 
     #[test]
