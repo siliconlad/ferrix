@@ -15,6 +15,4 @@ name = "donut"
 path = "example/donut.rs"
 
 [dependencies]
-conv = "0.3.3"
 funty = "2.0.0"
-num-traits = "0.2.19"
