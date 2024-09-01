@@ -10,11 +10,11 @@ use ferrix::*;
 
 fn main() {
     // Create a 3x3 matrix
-    let matrix = Matrix::<f64, 3, 3>::fill(1.0);
+    let matrix = Matrix3::fill(1.0);
     println!("Mat: {}", matrix);
 
     // Create a 3x1 vector
-    let vector = Vector::from_array([1.0, 2.0, 3.0]);
+    let vector = Vector3::new([1.0, 2.0, 3.0]);
     println!("Vec: {}", vector);
 
     // Perform matrix-vector multiplication
@@ -54,3 +54,4 @@ If you find any bugs or have any suggestions, please open an issue or submit a p
 - [ ] Add dynamic `Vector` and `Matrix` types
 - [ ] Add linear algebra library (e.g. `inv`, `det`, `eig`, etc.)
 - [ ] Performance optimizations (e.g. SIMD)
+- [ ] Add more examples
