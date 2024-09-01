@@ -268,6 +268,18 @@ mod dot_macros {
                     impl_dot_combinations!($lhs, $rhs, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
                 };
             }
+
+            macro_rules! impl_dot_mat_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_dot_combinations!($lhs, $rhs, const A: usize, const B: usize, const M: usize);
+                };
+            }
+
+            macro_rules! impl_dot_mat_view_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_dot_combinations!($lhs, $rhs, V: Index<usize, Output = T>, const A: usize, const B: usize, const N: usize, const M: usize);
+                };
+            }
         };
     }
 }
