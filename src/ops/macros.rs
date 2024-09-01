@@ -52,7 +52,7 @@ mod op_macros {
         };
     }
 
-    macro_rules! generate_op_macros {
+    macro_rules! generate_op_scalar_macros {
         ($trait:tt, $method:tt, $op:tt) => {
             macro_rules! impl_vv_op {
                 ($lhs:ty, $rhs:ty) => {
@@ -69,15 +69,6 @@ mod op_macros {
                 };
                 ($lhs:ty) => {
                     impl_combinations!(vec,$lhs, $trait, $method, $op, Vector<T, M>, V: Index<usize, Output = T>, const N: usize, const M: usize);
-                }
-            }
-
-            macro_rules! impl_vv_op_view_view {
-                ($lhs:ty, $rhs:ty) => {
-                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, Vector<T, M>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
-                };
-                ($lhs:ty) => {
-                    impl_combinations!(vec, $lhs, $trait, $method, $op, Vector<T, M>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
                 }
             }
 
@@ -99,15 +90,6 @@ mod op_macros {
                 }
             }
 
-            macro_rules! impl_vv_op_view_view_row {
-                ($lhs:ty, $rhs:ty) => {
-                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, RowVector<T, M>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
-                };
-                ($lhs:ty) => {
-                    impl_combinations!(vec, $lhs, $trait, $method, $op, RowVector<T, M>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
-                }
-            }
-
             macro_rules! impl_mm_op {
                 ($lhs:ty, $rhs:ty) => {
                     impl_combinations!(mat, $lhs, $rhs, $trait, $method, $op, Matrix<T, M, N>, const M: usize, const N: usize);
@@ -123,6 +105,30 @@ mod op_macros {
                 };
                 ($lhs:ty) => {
                     impl_combinations!(mat, $lhs, $trait, $method, $op, Matrix<T, M, N>, const A: usize, const B: usize, const M: usize, const N: usize);
+                }
+            }
+        };
+    }
+
+    macro_rules! generate_op_all_macros {
+        ($trait:tt, $method:tt, $op:tt) => {
+            generate_op_scalar_macros!($trait, $method, $op);
+
+            macro_rules! impl_vv_op_view_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, Vector<T, M>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, Vector<T, M>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
+                }
+            }
+
+            macro_rules! impl_vv_op_view_view_row {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, RowVector<T, M>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, RowVector<T, M>, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
                 }
             }
 
@@ -167,7 +173,7 @@ mod op_assign_macros {
         };
     }
 
-    macro_rules! generate_op_assign_macros {
+    macro_rules! generate_op_assign_scalar_macros {
         ($trait:tt, $method:tt, $op:tt) => {
             macro_rules! impl_vv_op_assign {
                 ($lhs:ty, $rhs:ty) => {
@@ -187,15 +193,6 @@ mod op_assign_macros {
                 }
             }
 
-            macro_rules! impl_vv_op_assign_view_view {
-                ($lhs:ty, $rhs:ty) => {
-                    impl_assign_combinations!($lhs, $rhs, $trait, $method, $op, Vector<T, M>, V1: IndexMut<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
-                };
-                ($lhs:ty) => {
-                    impl_assign_combinations!($lhs, $trait, $method, $op, Vector<T, M>, V1: IndexMut<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
-                }
-            }
-
             macro_rules! impl_mm_op_assign {
                 ($lhs:ty, $rhs:ty) => {
                     impl_assign_combinations!($lhs, $rhs, $trait, $method, $op, Matrix<T, M, N>, const M: usize, const N: usize);
@@ -211,6 +208,21 @@ mod op_assign_macros {
                 };
                 ($lhs:ty) => {
                     impl_assign_combinations!($lhs, $trait, $method, $op, Matrix<T, M, N>, const A: usize, const B: usize, const M: usize, const N: usize);
+                }
+            }
+        };
+    }
+
+    macro_rules! generate_op_assign_all_macros {
+        ($trait:tt, $method:tt, $op:tt) => {
+            generate_op_assign_scalar_macros!($trait, $method, $op);
+
+            macro_rules! impl_vv_op_assign_view_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_assign_combinations!($lhs, $rhs, $trait, $method, $op, Vector<T, M>, V1: IndexMut<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
+                };
+                ($lhs:ty) => {
+                    impl_assign_combinations!($lhs, $trait, $method, $op, Vector<T, M>, V1: IndexMut<usize, Output = T>, V2: Index<usize, Output = T>, const A: usize, const N: usize, const M: usize);
                 }
             }
 
@@ -288,11 +300,11 @@ mod dot_macros {
 mod matmul_macros {
     macro_rules! impl_matmul_inner {
         (scalar, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> MatMul<$rhs> for $lhs
+            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> Mul<$rhs> for $lhs
             {
                 type Output = $output;
 
-                fn matmul(self, other: $rhs) -> Self::Output {
+                fn mul(self, other: $rhs) -> Self::Output {
                     let mut result = T::from(0);
                     for i in 0..M {
                         result = result + (self[i] * other[i]);
@@ -302,11 +314,11 @@ mod matmul_macros {
             }
         };
         (vecvec, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> MatMul<$rhs> for $lhs
+            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> Mul<$rhs> for $lhs
             {
                 type Output = $output;
 
-                fn matmul(self, other: $rhs) -> Self::Output {
+                fn mul(self, other: $rhs) -> Self::Output {
                     let mut result = Self::Output::zeros();
                     for i in 0..M {
                         for j in 0..N {
@@ -319,11 +331,11 @@ mod matmul_macros {
         };
         (vecmat, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
 
-            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> MatMul<$rhs> for $lhs
+            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> Mul<$rhs> for $lhs
             {
                 type Output = $output;
 
-                fn matmul(self, other: $rhs) -> Self::Output {
+                fn mul(self, other: $rhs) -> Self::Output {
                     let mut result = Self::Output::zeros();
                     for i in 0..M {
                         for j in 0..N {
@@ -335,10 +347,10 @@ mod matmul_macros {
             }
         };
         (matvec, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> MatMul<$rhs> for $lhs {
+            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> Mul<$rhs> for $lhs {
                 type Output = $output;
 
-                fn matmul(self, other: $rhs) -> Self::Output {
+                fn mul(self, other: $rhs) -> Self::Output {
                     let mut result = Self::Output::zeros();
                     for i in 0..M {
                         for j in 0..N {
@@ -350,10 +362,10 @@ mod matmul_macros {
             }
         };
         (matmat, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> MatMul<$rhs> for $lhs {
+            impl<T: Copy + Mul<T, Output = T> + From<u8> + Add<T, Output = T> + From<u8>, $($generics)*> Mul<$rhs> for $lhs {
                 type Output = $output;
 
-                fn matmul(self, other: $rhs) -> Self::Output {
+                fn mul(self, other: $rhs) -> Self::Output {
                     let mut result = Self::Output::zeros();
                     for i in 0..M {
                         for j in 0..P {

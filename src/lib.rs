@@ -16,7 +16,6 @@ mod ops;
 mod traits;
 
 pub use self::traits::DotProduct;
-pub use self::traits::MatMul;
 
 pub use self::vector::Vector;
 pub use self::vector::Vector2;

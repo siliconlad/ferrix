@@ -13,7 +13,7 @@ use crate::row_vector_view::RowVectorView;
 use crate::row_vector_view_mut::RowVectorViewMut;
 
 // Generate macros
-generate_op_assign_macros!(SubAssign, sub_assign, -=);
+generate_op_assign_all_macros!(SubAssign, sub_assign, -=);
 
 //////////////
 //  Vector  //

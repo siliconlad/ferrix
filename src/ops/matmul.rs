@@ -3,7 +3,6 @@ use crate::matrix_view::MatrixView;
 use crate::matrix_view_mut::MatrixViewMut;
 use crate::matrix_transpose_view::MatrixTransposeView;
 use crate::matrix_transpose_view_mut::MatrixTransposeViewMut;
-use crate::traits::MatMul;
 use crate::vector::Vector;
 use crate::vector_view::VectorView;
 use crate::vector_view_mut::VectorViewMut;
