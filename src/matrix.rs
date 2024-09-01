@@ -1,4 +1,5 @@
-use std::ops::{Index, IndexMut};
+use std::ops::{Index, IndexMut, Neg};
+use funty::Floating;
 
 use crate::matrix_transpose_view::MatrixTransposeView;
 use crate::matrix_transpose_view_mut::MatrixTransposeViewMut;
@@ -107,6 +108,45 @@ impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
             return None;
         }
         Some(MatrixViewMut::new(self, start))
+    }
+}
+
+impl<T: Floating + Neg<Output = T>> Matrix<T, 2, 2> {
+    pub fn rot(angle: T) -> Self {
+        let data = [
+            [T::cos(angle), -T::sin(angle)],
+            [T::sin(angle),  T::cos(angle)],
+        ];
+        Self { data }
+    }
+}
+
+impl<T: Floating + Neg<Output = T> + From<u8>> Matrix<T, 3, 3> {
+    pub fn rotx(angle: T) -> Self {
+        let data = [
+            [T::from(1.0), T::from(0.0),   T::from(0.0) ],
+            [T::from(0.0), T::cos(angle), -T::sin(angle)],
+            [T::from(0.0), T::sin(angle),  T::cos(angle)],
+        ];
+        Self { data }
+    }
+
+    pub fn roty(angle: T) -> Self {
+        let data = [
+            [ T::cos(angle), T::from(0.0), T::sin(angle)],
+            [ T::from(0.0),  T::from(1.0), T::from(0.0) ],
+            [-T::sin(angle), T::from(0.0), T::cos(angle)],
+        ];
+        Self { data }
+    }
+
+    pub fn rotz(angle: T) -> Self {
+        let data = [
+            [T::cos(angle), -T::sin(angle), T::from(0.0)],
+            [T::sin(angle),  T::cos(angle), T::from(0.0)],
+            [T::from(0.0),   T::from(0.0),  T::from(1.0)],
+        ];
+        Self { data }
     }
 }
 

@@ -163,6 +163,77 @@ mod tests {
     }
 
     #[test]
+    fn test_rot() {
+        use std::f64::consts::PI;
+        let rot_matrix = Matrix::<f64, 2, 2>::rot(PI / 2.0);
+        let expected = Matrix::new([[0.0, -1.0], [1.0, 0.0]]);
+        assert!((rot_matrix[(0, 0)] - expected[(0, 0)]).abs() < f64::EPSILON);
+        assert!((rot_matrix[(0, 1)] - expected[(0, 1)]).abs() < f64::EPSILON);
+        assert!((rot_matrix[(1, 0)] - expected[(1, 0)]).abs() < f64::EPSILON);
+        assert!((rot_matrix[(1, 1)] - expected[(1, 1)]).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn test_rotx() {
+        use std::f64::consts::PI;
+        let rotx_matrix = Matrix::<f64, 3, 3>::rotx(PI / 2.0);
+        let expected = Matrix::new([
+            [1.0, 0.0, 0.0],
+            [0.0, 0.0, -1.0],
+            [0.0, 1.0, 0.0],
+        ]);
+        assert!((rotx_matrix[(0, 0)] - expected[(0, 0)]).abs() < f64::EPSILON);
+        assert!((rotx_matrix[(0, 1)] - expected[(0, 1)]).abs() < f64::EPSILON);
+        assert!((rotx_matrix[(0, 2)] - expected[(0, 2)]).abs() < f64::EPSILON);
+        assert!((rotx_matrix[(1, 0)] - expected[(1, 0)]).abs() < f64::EPSILON);
+        assert!((rotx_matrix[(1, 1)] - expected[(1, 1)]).abs() < f64::EPSILON);
+        assert!((rotx_matrix[(1, 2)] - expected[(1, 2)]).abs() < f64::EPSILON);
+        assert!((rotx_matrix[(2, 0)] - expected[(2, 0)]).abs() < f64::EPSILON);
+        assert!((rotx_matrix[(2, 1)] - expected[(2, 1)]).abs() < f64::EPSILON);
+        assert!((rotx_matrix[(2, 2)] - expected[(2, 2)]).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn test_roty() {
+        use std::f64::consts::PI;
+        let roty_matrix = Matrix::<f64, 3, 3>::roty(PI / 2.0);
+        let expected = Matrix::new([
+            [0.0, 0.0, 1.0],
+            [0.0, 1.0, 0.0],
+            [-1.0, 0.0, 0.0],
+        ]);
+        assert!((roty_matrix[(0, 0)] - expected[(0, 0)]).abs() < f64::EPSILON);
+        assert!((roty_matrix[(0, 1)] - expected[(0, 1)]).abs() < f64::EPSILON);
+        assert!((roty_matrix[(0, 2)] - expected[(0, 2)]).abs() < f64::EPSILON);
+        assert!((roty_matrix[(1, 0)] - expected[(1, 0)]).abs() < f64::EPSILON);
+        assert!((roty_matrix[(1, 1)] - expected[(1, 1)]).abs() < f64::EPSILON);
+        assert!((roty_matrix[(1, 2)] - expected[(1, 2)]).abs() < f64::EPSILON);
+        assert!((roty_matrix[(2, 0)] - expected[(2, 0)]).abs() < f64::EPSILON);
+        assert!((roty_matrix[(2, 1)] - expected[(2, 1)]).abs() < f64::EPSILON);
+        assert!((roty_matrix[(2, 2)] - expected[(2, 2)]).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn test_rotz() {
+        use std::f64::consts::PI;
+        let rotz_matrix = Matrix::<f64, 3, 3>::rotz(PI / 2.0);
+        let expected = Matrix::new([
+            [0.0, -1.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0],
+        ]);
+        assert!((rotz_matrix[(0, 0)] - expected[(0, 0)]).abs() < f64::EPSILON);
+        assert!((rotz_matrix[(0, 1)] - expected[(0, 1)]).abs() < f64::EPSILON);
+        assert!((rotz_matrix[(0, 2)] - expected[(0, 2)]).abs() < f64::EPSILON);
+        assert!((rotz_matrix[(1, 0)] - expected[(1, 0)]).abs() < f64::EPSILON);
+        assert!((rotz_matrix[(1, 1)] - expected[(1, 1)]).abs() < f64::EPSILON);
+        assert!((rotz_matrix[(1, 2)] - expected[(1, 2)]).abs() < f64::EPSILON);
+        assert!((rotz_matrix[(2, 0)] - expected[(2, 0)]).abs() < f64::EPSILON);
+        assert!((rotz_matrix[(2, 1)] - expected[(2, 1)]).abs() < f64::EPSILON);
+        assert!((rotz_matrix[(2, 2)] - expected[(2, 2)]).abs() < f64::EPSILON);
+    }
+
+    #[test]
     fn test_index_single() {
         let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
         assert_eq!(matrix[0], 1);
