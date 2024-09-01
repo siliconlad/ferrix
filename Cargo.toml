@@ -1,13 +1,14 @@
 [package]
 name = "ferrix"
 version = "0.1.0"
+authors = ["Angus Stewart <siliconlad@protonmail.com>"]
 edition = "2021"
 description = "A simple typed matrix library for Rust"
 license = "MIT"
 homepage = "https://github.com/siliconlad/ferrix"
 repository = "https://github.com/siliconlad/ferrix"
 readme = "README.md"
-categories = ["math", "linear-algebra"]
+categories = ["mathematics"]
 keywords = ["vector", "matrix", "linear-algebra", "math"]
 
 [[example]]
