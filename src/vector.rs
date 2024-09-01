@@ -17,6 +17,8 @@ use crate::matrix_transpose_view_mut::MatrixTransposeViewMut;
 pub struct Vector<T, const N: usize> {
     data: [T; N]
 }
+pub type Vector2<T> = Vector<T, 2>;
+pub type Vector3<T> = Vector<T, 3>;
 
 impl<T: Default, const N: usize> Default for Vector<T, N> {
     fn default() -> Self {

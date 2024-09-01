@@ -15,6 +15,8 @@ use crate::row_vector_view_mut::RowVectorViewMut;
 pub struct Matrix<T, const R: usize, const C: usize> {
     data: [[T; C]; R],
 }
+pub type Matrix2<T> = Matrix<T, 2, 2>;
+pub type Matrix3<T> = Matrix<T, 3, 3>;
 
 impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
     pub fn new(data: [[T; C]; R]) -> Self {

@@ -19,6 +19,8 @@ pub use self::traits::DotProduct;
 pub use self::traits::MatMul;
 
 pub use self::vector::Vector;
+pub use self::vector::Vector2;
+pub use self::vector::Vector3;
 pub use self::vector_view::VectorView;
 pub use self::vector_view_mut::VectorViewMut;
 
@@ -27,6 +29,8 @@ pub use self::row_vector_view::RowVectorView;
 pub use self::row_vector_view_mut::RowVectorViewMut;
 
 pub use self::matrix::Matrix;
+pub use self::matrix::Matrix2;
+pub use self::matrix::Matrix3;
 pub use self::matrix_view::MatrixView;
 pub use self::matrix_view_mut::MatrixViewMut;
 pub use self::matrix_transpose_view::MatrixTransposeView;
