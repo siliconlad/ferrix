@@ -1,9 +1,13 @@
-<div align="center">
-<p style="padding-top: 10px; margin-bottom: 0px; font-size: 40px;">Ferrix</p>
-<p style="padding-top: 0px;">A simple typed matrix library for Rust.</p>
+<div align="center" id="user-content-toc">
+  <ul style="list-style: none; padding-left: 0px;">
+    <summary>
+      <h1>Ferrix</h1>
+    </summary>
+  </ul>
+  <p style="padding-top: 0px;">A simple typed matrix library for Rust.</p>
 </div>
 
-# Example
+## Example
 
 ```rust
 use ferrix::*;
@@ -34,7 +38,7 @@ fn main() {
 
 For more comprehensive examples, check out the [examples](./examples).
 
-# Installation
+## Installation
 
 To add Ferrix to your project, install it via cargo:
 
@@ -44,7 +48,7 @@ cargo add ferrix
 
 > This will **not** work until I publish the crate.
 
-# Contributing
+## Contributing
 
 If you find any bugs or have any suggestions, please open an issue or submit a pull request.
 
