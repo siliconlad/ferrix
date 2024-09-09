@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, RowVector, Matrix};
+    use ferrix::{Vector, RowVector, Matrix, FloatRandom, IntRandom};
 
     #[test]
     fn test_default() {
@@ -64,6 +64,28 @@ mod tests {
         assert_eq!(matrix[(1, 0)], 1);
         assert_eq!(matrix[(1, 1)], 1);
         assert_eq!(matrix[(1, 2)], 1);
+    }
+
+    #[test]
+    fn test_random_float() {
+        let matrix = Matrix::<f64, 2, 3>::random();
+        assert!(-1.0 < matrix[(0, 0)] && matrix[(0, 0)] < 1.0);
+        assert!(-1.0 < matrix[(0, 1)] && matrix[(0, 1)] < 1.0);
+        assert!(-1.0 < matrix[(0, 2)] && matrix[(0, 2)] < 1.0);
+        assert!(-1.0 < matrix[(1, 0)] && matrix[(1, 0)] < 1.0);
+        assert!(-1.0 < matrix[(1, 1)] && matrix[(1, 1)] < 1.0);
+        assert!(-1.0 < matrix[(1, 2)] && matrix[(1, 2)] < 1.0);
+    }
+
+    #[test]
+    fn test_random_int() {
+        let matrix = Matrix::<i32, 2, 3>::random();
+        assert!(i32::MIN < matrix[(0, 0)] && matrix[(0, 0)] < i32::MAX);
+        assert!(i32::MIN < matrix[(0, 1)] && matrix[(0, 1)] < i32::MAX);
+        assert!(i32::MIN < matrix[(0, 2)] && matrix[(0, 2)] < i32::MAX);
+        assert!(i32::MIN < matrix[(1, 0)] && matrix[(1, 0)] < i32::MAX);
+        assert!(i32::MIN < matrix[(1, 1)] && matrix[(1, 1)] < i32::MAX);
+        assert!(i32::MIN < matrix[(1, 2)] && matrix[(1, 2)] < i32::MAX);
     }
 
     #[test]

@@ -16,6 +16,8 @@ mod ops;
 mod traits;
 
 pub use self::traits::DotProduct;
+pub use self::traits::FloatRandom;
+pub use self::traits::IntRandom;
 
 pub use self::vector::Vector;
 pub use self::vector::Vector2;

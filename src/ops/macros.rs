@@ -68,7 +68,7 @@ mod op_macros {
                     impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, Vector<T, M>, V: Index<usize, Output = T>, const N: usize, const M: usize);
                 };
                 ($lhs:ty) => {
-                    impl_combinations!(vec,$lhs, $trait, $method, $op, Vector<T, M>, V: Index<usize, Output = T>, const N: usize, const M: usize);
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, Vector<T, M>, V: Index<usize, Output = T>, const N: usize, const M: usize);
                 }
             }
 
@@ -86,7 +86,7 @@ mod op_macros {
                     impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, RowVector<T, M>, V: Index<usize, Output = T>, const N: usize, const M: usize);
                 };
                 ($lhs:ty) => {
-                    impl_combinations!(vec,$lhs, $trait, $method, $op, RowVector<T, M>, V: Index<usize, Output = T>, const N: usize, const M: usize);
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, RowVector<T, M>, V: Index<usize, Output = T>, const N: usize, const M: usize);
                 }
             }
 

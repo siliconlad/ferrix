@@ -15,5 +15,29 @@ keywords = ["vector", "matrix", "linear-algebra", "math"]
 name = "donut"
 path = "example/donut.rs"
 
+[[bench]]
+name = "add_benchmark"
+harness = false
+
+[[bench]]
+name = "sub_benchmark"
+harness = false
+
+[[bench]]
+name = "mul_benchmark"
+harness = false
+
+[[bench]]
+name = "div_benchmark"
+harness = false
+
+[[bench]]
+name = "dot_benchmark"
+harness = false
+
 [dependencies]
 funty = "2.0.0"
+rand = "0.8.5"
+
+[dev-dependencies]
+criterion = "0.5.1"
