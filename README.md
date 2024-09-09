@@ -18,7 +18,7 @@ fn main() {
     println!("Vec: {}", vector);
 
     // Perform matrix-vector multiplication
-    let result = matrix.matmul(vector);
+    let result = matrix * vector;
     println!("Result: {}", result);
 
     // Transpose the matrix
