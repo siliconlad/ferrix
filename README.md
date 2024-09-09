@@ -48,10 +48,9 @@ cargo add ferrix
 
 If you find any bugs or have any suggestions, please open an issue or submit a pull request.
 
-# Roadmap
-
-- [ ] Add more useful methods to `Vector` and `Matrix`
-- [ ] Add dynamic `Vector` and `Matrix` types
-- [ ] Add linear algebra library (e.g. `inv`, `det`, `eig`, etc.)
-- [ ] Performance optimizations (e.g. SIMD)
-- [ ] Add more examples
+Specifically, I'm looking for help with:
+- Creating more examples to illustrate the library's capabilities
+    - This would help identify missing features
+    - Opportunity for feedback on how to improve the library
+- Implementing a linear algebra crate on top of this one
+- Aggressively increasing the performance of the library
