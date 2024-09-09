@@ -1,8 +1,11 @@
-use funty::Floating;
+use funty::{Floating, Integral};
+use rand::Rng;
+use rand::distributions::{Distribution, Standard, Uniform};
+use rand::distributions::uniform::SampleUniform;
 use std::default::Default;
 use std::ops::{Index, IndexMut};
 
-use crate::traits::DotProduct;
+use crate::traits::{DotProduct, IntRandom, FloatRandom};
 use crate::vector_view::VectorView;
 use crate::vector_view_mut::VectorViewMut;
 use crate::row_vector_view::RowVectorView;
@@ -41,6 +44,27 @@ impl<T, const N: usize> Vector<T, N> {
     #[inline]
     pub fn capacity(&self) -> usize {
         N
+    }
+}
+
+impl<T: Integral, const N: usize> IntRandom for Vector<T, N>
+where
+    Standard: Distribution<T>,
+{
+    fn random() -> Self {
+        let mut rng = rand::thread_rng();
+        Self { data: std::array::from_fn(|_| rng.gen()) }
+    }
+}
+
+impl<T: Floating + SampleUniform, const N: usize> FloatRandom for Vector<T, N>
+where
+    Standard: Distribution<T>,
+{
+    fn random() -> Self {
+        let mut rng = rand::thread_rng();
+        let dist = Uniform::new_inclusive(T::from(-1.0), T::from(1.0));
+        Self { data: std::array::from_fn(|_| dist.sample(&mut rng)) }
     }
 }
 

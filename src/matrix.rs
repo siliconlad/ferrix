@@ -1,5 +1,8 @@
 use std::ops::{Index, IndexMut, Neg};
-use funty::Floating;
+use funty::{Floating, Integral};
+use rand::Rng;
+use rand::distributions::{Distribution, Standard, Uniform};
+use rand::distributions::uniform::SampleUniform;
 
 use crate::matrix_transpose_view::MatrixTransposeView;
 use crate::matrix_transpose_view_mut::MatrixTransposeViewMut;
@@ -11,6 +14,7 @@ use crate::vector_view_mut::VectorViewMut;
 use crate::row_vector::RowVector;
 use crate::row_vector_view::RowVectorView;
 use crate::row_vector_view_mut::RowVectorViewMut;
+use crate::traits::{IntRandom, FloatRandom};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Matrix<T, const R: usize, const C: usize> {
@@ -76,6 +80,27 @@ impl<T: Copy, const R: usize, const C: usize> Matrix<T, R, C> {
         Self {
             data: [[value; C]; R],
         }
+    }
+}
+
+impl<T: Integral, const R: usize, const C: usize> IntRandom for Matrix<T, R, C>
+where
+    Standard: Distribution<T>,
+{
+    fn random() -> Self {
+        let mut rng = rand::thread_rng();
+        Self { data: std::array::from_fn(|_| std::array::from_fn(|_| rng.gen())) }
+    }
+}
+
+impl<T: Floating + SampleUniform, const R: usize, const C: usize> FloatRandom for Matrix<T, R, C>
+where
+    Standard: Distribution<T>,
+{
+    fn random() -> Self {
+        let mut rng = rand::thread_rng();
+        let dist = Uniform::new_inclusive(T::from(-1.0), T::from(1.0));
+        Self { data: std::array::from_fn(|_| std::array::from_fn(|_| dist.sample(&mut rng))) }
     }
 }
 

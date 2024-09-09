@@ -7,8 +7,8 @@ fn mul_matrix_benchmark(c: &mut Criterion) {
     // RowVector * Vector
     group.bench_function("RowVector * Vector", |b| {
         b.iter(|| {
-            let v1 = RowVector::<i32, 100>::new([1; 100]);
-            let v2 = Vector::<i32, 100>::new([1; 100]);
+            let v1 = RowVector::<i32, 100>::random();
+            let v2 = Vector::<i32, 100>::random();
             v1 * v2
         });
     });
@@ -16,8 +16,8 @@ fn mul_matrix_benchmark(c: &mut Criterion) {
     // Vector * RowVector
     group.bench_function("Vector * RowVector", |b| {
         b.iter(|| {
-            let v1 = Vector::<i32, 100>::new([1; 100]);
-            let v2 = RowVector::<i32, 100>::new([1; 100]);
+            let v1 = Vector::<i32, 100>::random();
+            let v2 = RowVector::<i32, 100>::random();
             v1 * v2
         });
     });
@@ -25,8 +25,8 @@ fn mul_matrix_benchmark(c: &mut Criterion) {
     // RowVector * Matrix
     group.bench_function("RowVector * Matrix", |b| {
         b.iter(|| {
-            let v1 = RowVector::<i32, 100>::new([1; 100]);
-            let m1 = Matrix::<i32, 100, 100>::new([[1; 100]; 100]);
+            let v1 = RowVector::<i32, 100>::random();
+            let m1 = Matrix::<i32, 100, 100>::random();
             v1 * m1
         });
     });
@@ -34,8 +34,8 @@ fn mul_matrix_benchmark(c: &mut Criterion) {
     // Matrix * Vector
     group.bench_function("Matrix * Vector", |b| {
         b.iter(|| {
-            let m1 = Matrix::<i32, 100, 100>::new([[1; 100]; 100]);
-            let v1 = Vector::<i32, 100>::new([1; 100]);
+            let m1 = Matrix::<i32, 100, 100>::random();
+            let v1 = Vector::<i32, 100>::random();
             m1 * v1
         });
     });
@@ -43,8 +43,8 @@ fn mul_matrix_benchmark(c: &mut Criterion) {
     // Matrix * Matrix
     group.bench_function("Matrix * Matrix", |b| {
         b.iter(|| {
-            let m1 = Matrix::<i32, 100, 100>::new([[1; 100]; 100]);
-            let m2 = Matrix::<i32, 100, 100>::new([[1; 100]; 100]);
+            let m1 = Matrix::<i32, 100, 100>::random();
+            let m2 = Matrix::<i32, 100, 100>::random();
             m1 * m2
         });
     });
@@ -56,7 +56,7 @@ fn mul_scalar_benchmark(c: &mut Criterion) {
     // Vector * Scalar
     group.bench_function("Vector * Scalar", |b| {
         b.iter(|| {
-            let v1 = Vector::<i32, 100>::new([1; 100]);
+            let v1 = Vector::<i32, 100>::random();
             v1 * 1
         });
     });
@@ -64,7 +64,7 @@ fn mul_scalar_benchmark(c: &mut Criterion) {
     // Matrix * Scalar
     group.bench_function("Matrix * Scalar", |b| {
         b.iter(|| {
-            let m1 = Matrix::<i32, 100, 100>::new([[1; 100]; 100]);
+            let m1 = Matrix::<i32, 100, 100>::random();
             m1 * 1
         });
     });
@@ -76,7 +76,7 @@ fn mul_scalar_assign_benchmark(c: &mut Criterion) {
     // Vector *= Scalar
     group.bench_function("Vector *= Scalar", |b| {
         b.iter(|| {
-            let mut v1 = Vector::<i32, 100>::new([1; 100]);
+            let mut v1 = Vector::<i32, 100>::random();
             v1 *= black_box(1)
         });
     });
@@ -84,7 +84,7 @@ fn mul_scalar_assign_benchmark(c: &mut Criterion) {
     // Matrix *= Scalar
     group.bench_function("Matrix *= Scalar", |b| {
         b.iter(|| {
-            let mut m1 = Matrix::<i32, 100, 100>::new([[1; 100]; 100]);
+            let mut m1 = Matrix::<i32, 100, 100>::random();
             m1 *= black_box(1)
         });
     });

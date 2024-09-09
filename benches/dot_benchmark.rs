@@ -7,8 +7,8 @@ fn dot_product_benchmark(c: &mut Criterion) {
     // Vector dot Vector
     group.bench_function("Vector.Vector", |b| {
         b.iter(|| {
-            let v1 = Vector::<i32, 100>::new([1; 100]);
-            let v2 = Vector::<i32, 100>::new([1; 100]);
+            let v1 = Vector::<i32, 100>::random();
+            let v2 = Vector::<i32, 100>::random();
             v1.dot(v2)
         });
     });
@@ -16,8 +16,8 @@ fn dot_product_benchmark(c: &mut Criterion) {
     // Vector dot Matrix
     group.bench_function("Vector.Matrix", |b| {
         b.iter(|| {
-            let v1 = Vector::<i32, 100>::new([1; 100]);
-            let m1 = Matrix::<i32, 100, 1>::new([[1]; 100]);
+            let v1 = Vector::<i32, 100>::random();
+            let m1 = Matrix::<i32, 100, 1>::random();
             v1.dot(m1)
         });
     });
@@ -25,8 +25,8 @@ fn dot_product_benchmark(c: &mut Criterion) {
     // RowVector dot RowVector
     group.bench_function("RowVector.RowVector", |b| {
         b.iter(|| {
-            let v1 = RowVector::<i32, 100>::new([1; 100]);
-            let v2 = RowVector::<i32, 100>::new([1; 100]);
+            let v1 = RowVector::<i32, 100>::random();
+            let v2 = RowVector::<i32, 100>::random();
             v1.dot(v2)
         });
     });
@@ -34,8 +34,8 @@ fn dot_product_benchmark(c: &mut Criterion) {
     // RowVector dot Matrix
     group.bench_function("RowVector.Matrix", |b| {
         b.iter(|| {
-            let v1 = RowVector::<i32, 100>::new([1; 100]);
-            let m1 = Matrix::<i32, 1, 100>::new([[1; 100]]);
+            let v1 = RowVector::<i32, 100>::random();
+            let m1 = Matrix::<i32, 1, 100>::random();
             v1.dot(m1)
         });
     });

@@ -7,7 +7,7 @@ fn add_benchmark(c: &mut Criterion) {
     // Vector + Scalar
     group.bench_function("Vector + Scalar", |b| {
         b.iter(|| {
-            let v1 = Vector::<i32, 100>::new([1; 100]);
+            let v1 = Vector::<i32, 100>::random();
             v1 + black_box(1)
         });
     });
@@ -15,8 +15,8 @@ fn add_benchmark(c: &mut Criterion) {
     // Vector + Vector
     group.bench_function("Vector + Vector", |b| {
         b.iter(|| {
-            let v1 = Vector::<i32, 100>::new([1; 100]);
-            let v2 = Vector::<i32, 100>::new([1; 100]);
+            let v1 = Vector::<i32, 100>::random();
+            let v2 = Vector::<i32, 100>::random();
             v1 + v2
         });
     });
@@ -24,7 +24,7 @@ fn add_benchmark(c: &mut Criterion) {
     // Matrix + Scalar
     group.bench_function("Matrix + Scalar", |b| {
         b.iter(|| {
-            let m1 = Matrix::<i32, 100, 100>::new([[1; 100]; 100]);
+            let m1 = Matrix::<i32, 100, 100>::random();
             m1 + black_box(1)
         });
     });
@@ -32,8 +32,8 @@ fn add_benchmark(c: &mut Criterion) {
     // Matrix + Matrix
     group.bench_function("Matrix + Matrix", |b| {
         b.iter(|| {
-            let m1 = Matrix::<i32, 100, 100>::new([[1; 100]; 100]);
-            let m2 = Matrix::<i32, 100, 100>::new([[1; 100]; 100]);
+            let m1 = Matrix::<i32, 100, 100>::random();
+            let m2 = Matrix::<i32, 100, 100>::random();
             m1 + m2
         });
     });
@@ -45,7 +45,7 @@ fn add_assign_benchmark(c: &mut Criterion) {
     // Vector += Scalar
     group.bench_function("Vector += Scalar", |b| {
         b.iter(|| {
-            let mut v1 = Vector::<i32, 100>::new([1; 100]);
+            let mut v1 = Vector::<i32, 100>::random();
             v1 += black_box(1)
         });
     });
@@ -53,8 +53,8 @@ fn add_assign_benchmark(c: &mut Criterion) {
     // Vector += Vector
     group.bench_function("Vector += Vector", |b| {
         b.iter(|| {
-            let mut v1 = Vector::<i32, 100>::new([1; 100]);
-            let v2 = Vector::<i32, 100>::new([1; 100]);
+            let mut v1 = Vector::<i32, 100>::random();
+            let v2 = Vector::<i32, 100>::random();
             v1 += v2
         });
     });
@@ -62,7 +62,7 @@ fn add_assign_benchmark(c: &mut Criterion) {
     // Matrix += Scalar
     group.bench_function("Matrix += Scalar", |b| {
         b.iter(|| {
-            let mut m1 = Matrix::<i32, 100, 100>::new([[1; 100]; 100]);
+            let mut m1 = Matrix::<i32, 100, 100>::random();
             m1 += black_box(1)
         });
     });
@@ -70,8 +70,8 @@ fn add_assign_benchmark(c: &mut Criterion) {
     // Matrix += Matrix
     group.bench_function("Matrix += Matrix", |b| {
         b.iter(|| {
-            let mut m1 = Matrix::<i32, 100, 100>::new([[1; 100]; 100]);
-            let m2 = Matrix::<i32, 100, 100>::new([[1; 100]; 100]);
+            let mut m1 = Matrix::<i32, 100, 100>::random();
+            let m2 = Matrix::<i32, 100, 100>::random();
             m1 += m2
         });
     });
