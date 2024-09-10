@@ -50,6 +50,46 @@ mod tests {
         assert!((result[0] - 1.1).abs() < f64::EPSILON);
         assert!((result[1] - 2.2).abs() < f64::EPSILON);
         assert!((result[2] - 3.3).abs() < f64::EPSILON);
+
+        // Vector + Matrix
+        let v = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let m = Matrix::<f64, 3, 1>::new([[0.1], [0.2], [0.3]]);
+        let result = v + m;
+        assert!((result[0] - 1.1).abs() < f64::EPSILON);
+        assert!((result[1] - 2.2).abs() < f64::EPSILON);
+        assert!((result[2] - 3.3).abs() < f64::EPSILON);
+
+        // Vector + MatrixView
+        let v = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let m = Matrix::<f64, 4, 2>::new([[0.1, 0.5], [0.2, 0.6], [0.3, 0.7], [0.4, 0.8]]);
+        let result = v + m.view::<3, 1>((0, 0)).unwrap();
+        assert!((result[0] - 1.1).abs() < f64::EPSILON);
+        assert!((result[1] - 2.2).abs() < f64::EPSILON);
+        assert!((result[2] - 3.3).abs() < f64::EPSILON);
+
+        // Vector + MatrixViewMut
+        let v = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let mut m = Matrix::<f64, 4, 2>::new([[0.1, 0.5], [0.2, 0.6], [0.3, 0.7], [0.4, 0.8]]);
+        let result = v + m.view_mut::<3, 1>((0, 0)).unwrap();
+        assert!((result[0] - 1.1).abs() < f64::EPSILON);
+        assert!((result[1] - 2.2).abs() < f64::EPSILON);
+        assert!((result[2] - 3.3).abs() < f64::EPSILON);
+
+        // Vector + MatrixTransposeView
+        let v = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let m = Matrix::<f64, 1, 3>::new([[0.1, 0.2, 0.3]]);
+        let result = v + m.t();
+        assert!((result[0] - 1.1).abs() < f64::EPSILON);
+        assert!((result[1] - 2.2).abs() < f64::EPSILON);
+        assert!((result[2] - 3.3).abs() < f64::EPSILON);
+
+        // Vector + MatrixTransposeViewMut
+        let v = Vector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let mut m = Matrix::<f64, 1, 3>::new([[0.1, 0.2, 0.3]]);
+        let result = v + m.t_mut();
+        assert!((result[0] - 1.1).abs() < f64::EPSILON);
+        assert!((result[1] - 2.2).abs() < f64::EPSILON);
+        assert!((result[2] - 3.3).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -90,6 +130,51 @@ mod tests {
         let mut v3 = RowVector::<i32, 3>::new([10, 20, 30]);
         let result = view1 + v3.t_mut();
         assert_eq!(result, Vector::<i32, 3>::new([12, 23, 34]));
+
+        // VectorView + Matrix
+        let v = Vector::<f64, 4>::new([1.0, 2.0, 3.0, 4.0]);
+        let view = v.view::<3>(1).unwrap();
+        let m = Matrix::<f64, 3, 1>::new([[0.2], [0.3], [0.4]]);
+        let result = view + m;
+        assert!((result[0] - 2.2).abs() < f64::EPSILON);
+        assert!((result[1] - 3.3).abs() < f64::EPSILON);
+        assert!((result[2] - 4.4).abs() < f64::EPSILON);
+
+        // VectorView + MatrixView
+        let v = Vector::<f64, 4>::new([1.0, 2.0, 3.0, 4.0]);
+        let view = v.view::<3>(1).unwrap();
+        let m = Matrix::<f64, 4, 2>::new([[0.1, 0.5], [0.2, 0.6], [0.3, 0.7], [0.4, 0.8]]);
+        let result = view + m.view::<3, 1>((1, 0)).unwrap();
+        assert!((result[0] - 2.2).abs() < f64::EPSILON);
+        assert!((result[1] - 3.3).abs() < f64::EPSILON);
+        assert!((result[2] - 4.4).abs() < f64::EPSILON);
+
+        // VectorView + MatrixViewMut
+        let v = Vector::<f64, 4>::new([1.0, 2.0, 3.0, 4.0]);
+        let view = v.view::<3>(1).unwrap();
+        let mut m = Matrix::<f64, 4, 2>::new([[0.1, 0.5], [0.2, 0.6], [0.3, 0.7], [0.4, 0.8]]);
+        let result = view + m.view_mut::<3, 1>((1, 0)).unwrap();
+        assert!((result[0] - 2.2).abs() < f64::EPSILON);
+        assert!((result[1] - 3.3).abs() < f64::EPSILON);
+        assert!((result[2] - 4.4).abs() < f64::EPSILON);
+
+        // VectorView + MatrixTransposeView
+        let v = Vector::<f64, 4>::new([1.0, 2.0, 3.0, 4.0]);
+        let view = v.view::<3>(1).unwrap();
+        let m = Matrix::<f64, 1, 3>::new([[0.2, 0.3, 0.4]]);
+        let result = view + m.t();
+        assert!((result[0] - 2.2).abs() < f64::EPSILON);
+        assert!((result[1] - 3.3).abs() < f64::EPSILON);
+        assert!((result[2] - 4.4).abs() < f64::EPSILON);
+
+        // VectorView + MatrixTransposeViewMut
+        let v = Vector::<f64, 4>::new([1.0, 2.0, 3.0, 4.0]);
+        let view = v.view::<3>(1).unwrap();
+        let mut m = Matrix::<f64, 1, 3>::new([[0.2, 0.3, 0.4]]);
+        let result = view + m.t_mut();
+        assert!((result[0] - 2.2).abs() < f64::EPSILON);
+        assert!((result[1] - 3.3).abs() < f64::EPSILON);
+        assert!((result[2] - 4.4).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -140,6 +225,51 @@ mod tests {
         assert!((result[0] - 1.1).abs() < f64::EPSILON);
         assert!((result[1] - 2.2).abs() < f64::EPSILON);
         assert!((result[2] - 3.3).abs() < f64::EPSILON);
+
+        // VectorViewMut + Matrix
+        let mut v = Vector::<f64, 4>::new([1.0, 2.0, 3.0, 4.0]);
+        let view_mut = v.view_mut::<3>(1).unwrap();
+        let m = Matrix::<f64, 3, 1>::new([[0.2], [0.3], [0.4]]);
+        let result = view_mut + m;
+        assert!((result[0] - 2.2).abs() < f64::EPSILON);
+        assert!((result[1] - 3.3).abs() < f64::EPSILON);
+        assert!((result[2] - 4.4).abs() < f64::EPSILON);
+
+        // VectorViewMut + MatrixView
+        let mut v = Vector::<f64, 4>::new([1.0, 2.0, 3.0, 4.0]);
+        let view_mut = v.view_mut::<3>(1).unwrap();
+        let m = Matrix::<f64, 4, 2>::new([[0.1, 0.5], [0.2, 0.6], [0.3, 0.7], [0.4, 0.8]]);
+        let result = view_mut + m.view::<3, 1>((1, 0)).unwrap();
+        assert!((result[0] - 2.2).abs() < f64::EPSILON);
+        assert!((result[1] - 3.3).abs() < f64::EPSILON);
+        assert!((result[2] - 4.4).abs() < f64::EPSILON);
+
+        // VectorViewMut + MatrixViewMut
+        let mut v = Vector::<f64, 4>::new([1.0, 2.0, 3.0, 4.0]);
+        let view_mut = v.view_mut::<3>(1).unwrap();
+        let mut m = Matrix::<f64, 4, 2>::new([[0.1, 0.5], [0.2, 0.6], [0.3, 0.7], [0.4, 0.8]]);
+        let result = view_mut + m.view_mut::<3, 1>((1, 0)).unwrap();
+        assert!((result[0] - 2.2).abs() < f64::EPSILON);
+        assert!((result[1] - 3.3).abs() < f64::EPSILON);
+        assert!((result[2] - 4.4).abs() < f64::EPSILON);
+
+        // VectorViewMut + MatrixTransposeView
+        let mut v = Vector::<f64, 4>::new([1.0, 2.0, 3.0, 4.0]);
+        let view_mut = v.view_mut::<3>(1).unwrap();
+        let m = Matrix::<f64, 1, 3>::new([[0.2, 0.3, 0.4]]);
+        let result = view_mut + m.t();
+        assert!((result[0] - 2.2).abs() < f64::EPSILON);
+        assert!((result[1] - 3.3).abs() < f64::EPSILON);
+        assert!((result[2] - 4.4).abs() < f64::EPSILON);
+
+        // VectorViewMut + MatrixTransposeViewMut
+        let mut v = Vector::<f64, 4>::new([1.0, 2.0, 3.0, 4.0]);
+        let view_mut = v.view_mut::<3>(1).unwrap();
+        let mut m = Matrix::<f64, 1, 3>::new([[0.2, 0.3, 0.4]]);
+        let result = view_mut + m.t_mut();
+        assert!((result[0] - 2.2).abs() < f64::EPSILON);
+        assert!((result[1] - 3.3).abs() < f64::EPSILON);
+        assert!((result[2] - 4.4).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -190,6 +320,46 @@ mod tests {
         assert!((result[0] - 1.1).abs() < f64::EPSILON);
         assert!((result[1] - 2.2).abs() < f64::EPSILON);
         assert!((result[2] - 3.3).abs() < f64::EPSILON);
+
+        // RowVector + Matrix
+        let rv = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let m = Matrix::<f64, 1, 3>::new([[0.1, 0.2, 0.3]]);
+        let result = rv + m;
+        assert!((result[0] - 1.1).abs() < f64::EPSILON);
+        assert!((result[1] - 2.2).abs() < f64::EPSILON);
+        assert!((result[2] - 3.3).abs() < f64::EPSILON);
+
+        // RowVector + MatrixView
+        let rv = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let m = Matrix::<f64, 2, 4>::new([[0.1, 0.2, 0.3, 0.4], [0.5, 0.6, 0.7, 0.8]]);
+        let result = rv + m.view::<1, 3>((0, 0)).unwrap();
+        assert!((result[0] - 1.1).abs() < f64::EPSILON);
+        assert!((result[1] - 2.2).abs() < f64::EPSILON);
+        assert!((result[2] - 3.3).abs() < f64::EPSILON);
+
+        // RowVector + MatrixViewMut
+        let rv = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let mut m = Matrix::<f64, 2, 4>::new([[0.1, 0.2, 0.3, 0.4], [0.5, 0.6, 0.7, 0.8]]);
+        let result = rv + m.view_mut::<1, 3>((0, 0)).unwrap();
+        assert!((result[0] - 1.1).abs() < f64::EPSILON);
+        assert!((result[1] - 2.2).abs() < f64::EPSILON);
+        assert!((result[2] - 3.3).abs() < f64::EPSILON);
+
+        // RowVector + MatrixTransposeView
+        let rv = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let m = Matrix::<f64, 3, 1>::new([[0.1], [0.2], [0.3]]);
+        let result = rv + m.t();
+        assert!((result[0] - 1.1).abs() < f64::EPSILON);
+        assert!((result[1] - 2.2).abs() < f64::EPSILON);
+        assert!((result[2] - 3.3).abs() < f64::EPSILON);
+
+        // RowVector + MatrixTransposeViewMut
+        let rv = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let mut m = Matrix::<f64, 3, 1>::new([[0.1], [0.2], [0.3]]);
+        let result = rv + m.t_mut();
+        assert!((result[0] - 1.1).abs() < f64::EPSILON);
+        assert!((result[1] - 2.2).abs() < f64::EPSILON);
+        assert!((result[2] - 3.3).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -228,6 +398,36 @@ mod tests {
         let v1 = RowVector::<i32, 3>::new([1, 2, 3]);
         let mut v2 = Vector::<i32, 2>::new([1, 2]);
         let result = v1.view::<2>(1).unwrap() + v2.t_mut();
+        assert_eq!(result, RowVector::<i32, 2>::new([3, 5]));
+
+        // RowVectorView + Matrix
+        let v1 = RowVector::<i32, 3>::new([1, 2, 3]);
+        let m = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let result = v1.view::<2>(1).unwrap() + m;
+        assert_eq!(result, RowVector::<i32, 2>::new([3, 5]));
+
+        // RowVectorView + MatrixView
+        let v1 = RowVector::<i32, 3>::new([1, 2, 3]);
+        let m = Matrix::<i32, 2, 3>::new([[1, 2, 3], [4, 5, 6]]);
+        let result = v1.view::<2>(1).unwrap() + m.view::<1, 2>((0, 0)).unwrap();
+        assert_eq!(result, RowVector::<i32, 2>::new([3, 5]));
+
+        // RowVectorView + MatrixViewMut
+        let v1 = RowVector::<i32, 3>::new([1, 2, 3]);
+        let mut m = Matrix::<i32, 2, 3>::new([[1, 2, 3], [4, 5, 6]]);
+        let result = v1.view::<2>(1).unwrap() + m.view_mut::<1, 2>((0, 0)).unwrap();
+        assert_eq!(result, RowVector::<i32, 2>::new([3, 5]));
+
+        // RowVectorView + MatrixTransposeView
+        let v1 = RowVector::<i32, 3>::new([1, 2, 3]);
+        let m = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let result = v1.view::<2>(1).unwrap() + m.t();
+        assert_eq!(result, RowVector::<i32, 2>::new([3, 5]));
+
+        // RowVectorView + MatrixTransposeViewMut
+        let v1 = RowVector::<i32, 3>::new([1, 2, 3]);
+        let mut m = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let result = v1.view::<2>(1).unwrap() + m.t_mut();
         assert_eq!(result, RowVector::<i32, 2>::new([3, 5]));
     }
 
@@ -273,6 +473,41 @@ mod tests {
         let result = v1.view_mut::<2>(0).unwrap() + v2.t_mut();
         assert!((result[0] - 1.1).abs() < f64::EPSILON);
         assert!((result[1] - 2.2).abs() < f64::EPSILON);
+        
+        // RowVectorViewMut + Matrix
+        let mut v1 = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let m = Matrix::<f64, 1, 2>::new([[1.0, 2.0]]);
+        let result = v1.view_mut::<2>(0).unwrap() + m;
+        assert!((result[0] - 2.0).abs() < f64::EPSILON);
+        assert!((result[1] - 4.0).abs() < f64::EPSILON);
+
+        // RowVectorViewMut + MatrixView
+        let mut v1 = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let m = Matrix::<f64, 2, 3>::new([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]);
+        let result = v1.view_mut::<2>(0).unwrap() + m.view::<1, 2>((0, 0)).unwrap();
+        assert!((result[0] - 2.0).abs() < f64::EPSILON);
+        assert!((result[1] - 4.0).abs() < f64::EPSILON);
+
+        // RowVectorViewMut + MatrixViewMut
+        let mut v1 = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let mut m = Matrix::<f64, 2, 3>::new([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]);
+        let result = v1.view_mut::<2>(0).unwrap() + m.view_mut::<1, 2>((0, 0)).unwrap();
+        assert!((result[0] - 2.0).abs() < f64::EPSILON);
+        assert!((result[1] - 4.0).abs() < f64::EPSILON);
+
+        // RowVectorViewMut + MatrixTransposeView
+        let mut v1 = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let m = Matrix::<f64, 2, 1>::new([[1.0], [2.0]]);
+        let result = v1.view_mut::<2>(0).unwrap() + m.t();
+        assert!((result[0] - 2.0).abs() < f64::EPSILON);
+        assert!((result[1] - 4.0).abs() < f64::EPSILON);
+
+        // RowVectorViewMut + MatrixTransposeViewMut
+        let mut v1 = RowVector::<f64, 3>::new([1.0, 2.0, 3.0]);
+        let mut m = Matrix::<f64, 2, 1>::new([[1.0], [2.0]]);
+        let result = v1.view_mut::<2>(0).unwrap() + m.t_mut();
+        assert!((result[0] - 2.0).abs() < f64::EPSILON);
+        assert!((result[1] - 4.0).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -311,6 +546,42 @@ mod tests {
         let mut m2 = Matrix::<i32, 2, 3>::new([[5, 6, 7], [8, 9, 10]]);
         let result = m1 + m2.t_mut();
         assert_eq!(result, Matrix::new([[6, 10], [9, 13], [12, 16]]));
+
+        // Matrix + Vector
+        let m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1;
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // Matrix + VectorView
+        let m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // Matrix + VectorViewMut
+        let m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let mut v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view_mut::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // Matrix + RowVector
+        let m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1;
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
+
+        // Matrix + RowVectorView
+        let m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
+
+        // Matrix + RowVectorViewMut
+        let m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let mut v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view_mut::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
     }
 
     #[test]
@@ -353,6 +624,42 @@ mod tests {
         let mut m2 = Matrix::<i32, 2, 2>::new([[5, 6], [7, 8]]);
         let result = m1.view::<2, 2>((0, 0)).unwrap() + m2.t_mut();
         assert_eq!(result, Matrix::<i32, 2, 2>::new([[6, 9], [10, 13]]));
+
+        // MatrixView + Vector
+        let m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // MatrixView + VectorView
+        let m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // MatrixView + VectorViewMut
+        let m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let mut v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view_mut::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // MatrixView + RowVector
+        let m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
+
+        // MatrixView + RowVectorView
+        let m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
+
+        // MatrixView + RowVectorViewMut
+        let m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let mut v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view_mut::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
     }
 
     #[test]
@@ -397,6 +704,42 @@ mod tests {
         let mut m2 = Matrix::<i32, 3, 2>::new([[5, 7], [6, 8], [9, 10]]);
         let result = m1.view_mut::<2, 3>((0, 0)).unwrap() + m2.t_mut();
         assert_eq!(result, Matrix::new([[6, 8, 12], [11, 13, 16]]));
+
+        // MatrixViewMut + Vector
+        let m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // MatrixViewMut + VectorView
+        let m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // MatrixViewMut + VectorViewMut
+        let m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let mut v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view_mut::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // MatrixViewMut + RowVector
+        let m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
+
+        // MatrixViewMut + RowVectorView
+        let m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
+
+        // MatrixViewMut + RowVectorViewMut
+        let m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let mut v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1 + v1.view_mut::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
     }
 
     #[test]
@@ -435,6 +778,42 @@ mod tests {
         let mut m2 = Matrix::<i32, 2, 2>::new([[5, 7], [6, 8]]);
         let result = m1.t() + m2.t_mut();
         assert_eq!(result, Matrix::new([[6, 8], [10, 12]]));
+
+        // MatrixTransposeView + Vector
+        let m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1.t() + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // MatrixTransposeView + VectorView
+        let m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1.t() + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // MatrixTransposeView + VectorViewMut
+        let m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let mut v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1.t() + v1.view_mut::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // MatrixTransposeView + RowVector
+        let m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1.t() + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
+
+        // MatrixTransposeView + RowVectorView
+        let m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1.t() + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
+
+        // MatrixTransposeView + RowVectorViewMut
+        let m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let mut v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1.t() + v1.view_mut::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
     }
 
     #[test]
@@ -473,5 +852,41 @@ mod tests {
         let mut m2 = Matrix::<i32, 3, 2>::new([[5, 8], [6, 9], [7, 10]]);
         let result = m1.t_mut() + m2.t_mut();
         assert_eq!(result, Matrix::<i32, 2, 3>::new([[6, 8, 12], [11, 13, 16]]));
+
+        // MatrixTransposeViewMut + Vector
+        let mut m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1.t_mut() + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // MatrixTransposeViewMut + VectorView
+        let mut m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1.t_mut() + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // MatrixTransposeViewMut + VectorViewMut
+        let mut m1 = Matrix::<i32, 1, 2>::new([[1, 2]]);
+        let mut v1 = Vector::<i32, 2>::new([5, 6]);
+        let result = m1.t_mut() + v1.view_mut::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 2, 1>::new([[6], [8]]));
+
+        // MatrixTransposeViewMut + RowVector
+        let mut m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1.t_mut() + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
+
+        // MatrixTransposeViewMut + RowVectorView
+        let mut m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1.t_mut() + v1.view::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
+
+        // MatrixTransposeViewMut + RowVectorViewMut
+        let mut m1 = Matrix::<i32, 2, 1>::new([[1], [2]]);
+        let mut v1 = RowVector::<i32, 2>::new([5, 6]);
+        let result = m1.t_mut() + v1.view_mut::<2>(0).unwrap();
+        assert_eq!(result, Matrix::<i32, 1, 2>::new([[6, 8]]));
     }
 }
