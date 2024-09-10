@@ -234,6 +234,33 @@ mod op_assign_macros {
                     impl_assign_combinations!($lhs, $trait, $method, $op, Matrix<T, M, N>, const A: usize, const B: usize, const C: usize, const D: usize, const M: usize, const N: usize);
                 }
             }
+
+            macro_rules! impl_vm_op_assign_mat_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_assign_combinations!($lhs, $rhs, $trait, $method, $op, Vector<T, M>, const A: usize, const B: usize, const M: usize);
+                };
+                ($lhs:ty) => {
+                    impl_assign_combinations!($lhs, $trait, $method, $op, Vector<T, M>, const A: usize, const B: usize, const M: usize);
+                }
+            }
+
+            macro_rules! impl_vm_op_assign_vec_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_assign_combinations!($lhs, $rhs, $trait, $method, $op, Vector<T, M>, V: IndexMut<usize, Output = T>, const M: usize, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_assign_combinations!($lhs, $trait, $method, $op, Vector<T, M>, V: IndexMut<usize, Output = T>, const M: usize, const N: usize);
+                }
+            }
+
+            macro_rules! impl_vm_op_assign_view_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_assign_combinations!($lhs, $rhs, $trait, $method, $op, Vector<T, M>, V: IndexMut<usize, Output = T>, const A: usize, const B: usize, const M: usize, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_assign_combinations!($lhs, $trait, $method, $op, Vector<T, M>, V: IndexMut<usize, Output = T>, const A: usize, const B: usize, const M: usize, const N: usize);
+                }
+            }
         };
     }
 }
