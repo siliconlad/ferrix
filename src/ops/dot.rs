@@ -71,9 +71,9 @@ impl_dot_mat_view!(RowVector<T, M>, MatrixViewMut<'_, T, A, B, 1, M>);
 impl_dot_mat_view!(RowVector<T, M>, MatrixTransposeView<'_, T, A, B, 1, M>);
 impl_dot_mat_view!(RowVector<T, M>, MatrixTransposeViewMut<'_, T, A, B, 1, M>);
 
-///////////////////////////
-//  VectorTransposeView  //
-///////////////////////////
+/////////////////////
+//  RowVectorView  //
+/////////////////////
 
 impl_dot_view!(RowVectorView<'_, V, T, N, M>, RowVector<T, M>);
 impl_dot_view_view!(RowVectorView<'_, V1, T, A, M>, RowVectorView<'_, V2, T, N, M>);
@@ -85,9 +85,9 @@ impl_dot_mat_view_view!(RowVectorView<'_, V, T, N, M>, MatrixViewMut<'_, T, A, B
 impl_dot_mat_view_view!(RowVectorView<'_, V, T, N, M>, MatrixTransposeView<'_, T, A, B, 1, M>);
 impl_dot_mat_view_view!(RowVectorView<'_, V, T, N, M>, MatrixTransposeViewMut<'_, T, A, B, 1, M>);
 
-//////////////////////////////
-//  VectorTransposeViewMut  //
-//////////////////////////////
+////////////////////////
+//  RowVectorViewMut  //
+////////////////////////
 
 impl_dot_view!(RowVectorViewMut<'_, V, T, N, M>, RowVector<T, M>);
 impl_dot_view_view!(RowVectorViewMut<'_, V1, T, A, M>, RowVectorView<'_, V2, T, N, M>);
