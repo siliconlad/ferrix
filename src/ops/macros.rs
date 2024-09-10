@@ -140,6 +140,132 @@ mod op_macros {
                     impl_combinations!(mat, $lhs, $trait, $method, $op, Matrix<T, M, N>, const A: usize, const B: usize, const C: usize, const D: usize, const M: usize, const N: usize);
                 }
             }
+
+            macro_rules! impl_mv_op {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(mat, $lhs, $rhs, $trait, $method, $op, Matrix<T, N, 1>, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(mat, $lhs, $trait, $method, $op, Matrix<T, N, 1>, const N: usize);
+                }
+            }
+
+            macro_rules! impl_mv_op_row {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(mat, $lhs, $rhs, $trait, $method, $op, Matrix<T, 1, N>, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(mat, $lhs, $trait, $method, $op, Matrix<T, 1, N>, const N: usize);
+                }
+            }
+
+            macro_rules! impl_vm_op_mat_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, Vector<T, M>, const A: usize, const B: usize, const M: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, Vector<T, M>, const A: usize, const B: usize, const M: usize);
+                }
+            }
+
+            macro_rules! impl_vm_op_mat_view_row {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, RowVector<T, M>, const A: usize, const B: usize, const M: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, RowVector<T, M>, const A: usize, const B: usize, const M: usize);
+                }
+            }
+
+            macro_rules! impl_vm_op_vec_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, Vector<T, M>, V: Index<usize, Output = T>, const M: usize, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, Vector<T, M>, V: Index<usize, Output = T>, const M: usize, const N: usize);
+                }
+            }
+
+            macro_rules! impl_vm_op_vec_view_row {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, RowVector<T, M>, V: Index<usize, Output = T>, const M: usize, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, RowVector<T, M>, V: Index<usize, Output = T>, const M: usize, const N: usize);
+                }
+            }
+
+            macro_rules! impl_vm_op_view_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, Vector<T, M>, V: Index<usize, Output = T>, const A: usize, const B: usize, const M: usize, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, Vector<T, M>, V: Index<usize, Output = T>, const A: usize, const B: usize, const M: usize, const N: usize);
+                }
+            }
+
+            macro_rules! impl_vm_op_view_view_row {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(vec, $lhs, $rhs, $trait, $method, $op, RowVector<T, M>, V: Index<usize, Output = T>, const A: usize, const B: usize, const M: usize, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(vec, $lhs, $trait, $method, $op, RowVector<T, M>, V: Index<usize, Output = T>, const A: usize, const B: usize, const M: usize, const N: usize);
+                }
+            }
+
+            macro_rules! impl_mv_op_mat_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(mat, $lhs, $rhs, $trait, $method, $op, Matrix<T, M, 1>, const A: usize, const B: usize, const M: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(mat, $lhs, $trait, $method, $op, Matrix<T, M, 1>, const A: usize, const B: usize, const M: usize);
+                }
+            }
+
+            macro_rules! impl_mv_op_mat_view_row {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(mat, $lhs, $rhs, $trait, $method, $op, Matrix<T, 1, M>, const A: usize, const B: usize, const M: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(mat, $lhs, $trait, $method, $op, Matrix<T, 1, M>, const A: usize, const B: usize, const M: usize);
+                }
+            }
+
+            macro_rules! impl_mv_op_vec_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(mat, $lhs, $rhs, $trait, $method, $op, Matrix<T, M, 1>, V: Index<usize, Output = T>, const M: usize, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(mat, $lhs, $trait, $method, $op, Matrix<T, M, 1>, V: Index<usize, Output = T>, const M: usize, const N: usize);
+                }
+            }
+
+            macro_rules! impl_mv_op_vec_view_row {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(mat, $lhs, $rhs, $trait, $method, $op, Matrix<T, 1, M>, V: Index<usize, Output = T>, const M: usize, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(mat, $lhs, $trait, $method, $op, Matrix<T, 1, M>, V: Index<usize, Output = T>, const M: usize, const N: usize);
+                }
+            }
+
+            macro_rules! impl_mv_op_view_view {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(mat, $lhs, $rhs, $trait, $method, $op, Matrix<T, M, 1>, V: Index<usize, Output = T>, const A: usize, const B: usize, const M: usize, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(mat, $lhs, $trait, $method, $op, Matrix<T, M, 1>, V: Index<usize, Output = T>, const A: usize, const B: usize, const M: usize, const N: usize);
+                }
+            }
+
+            macro_rules! impl_mv_op_view_view_row {
+                ($lhs:ty, $rhs:ty) => {
+                    impl_combinations!(mat, $lhs, $rhs, $trait, $method, $op, Matrix<T, 1, M>, V: Index<usize, Output = T>, const A: usize, const B: usize, const M: usize, const N: usize);
+                };
+                ($lhs:ty) => {
+                    impl_combinations!(mat, $lhs, $trait, $method, $op, Matrix<T, 1, M>, V: Index<usize, Output = T>, const A: usize, const B: usize, const M: usize, const N: usize);
+                }
+            }
         };
     }
 }
