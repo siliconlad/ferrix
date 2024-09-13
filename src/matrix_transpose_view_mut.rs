@@ -39,6 +39,16 @@ impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
         V_R * V_C
     }
 
+    #[inline]
+    pub fn rows(&self) -> usize {
+        V_R
+    }
+
+    #[inline]
+    pub fn cols(&self) -> usize {
+        V_C
+    }
+
     pub fn t(&'a self) -> MatrixView<'a, T, R, C, V_C, V_R> {
         MatrixView::new(self.data, (self.start.1, self.start.0))
     }

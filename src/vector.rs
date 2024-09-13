@@ -45,6 +45,16 @@ impl<T, const N: usize> Vector<T, N> {
     pub fn capacity(&self) -> usize {
         N
     }
+
+    #[inline]
+    pub fn rows(&self) -> usize {
+        N
+    }
+
+    #[inline]
+    pub fn cols(&self) -> usize {
+        1
+    }
 }
 
 impl<T: Integral, const N: usize> IntRandom for Vector<T, N>

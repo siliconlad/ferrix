@@ -35,6 +35,16 @@ impl<T, const N: usize> RowVector<T, N> {
     pub fn capacity(&self) -> usize {
         N
     }
+
+    #[inline]
+    pub fn rows(&self) -> usize {
+        1
+    }
+
+    #[inline]
+    pub fn cols(&self) -> usize {
+        N
+    }
 }
 
 impl<T: Default, const N: usize> Default for RowVector<T, N> {
