@@ -65,7 +65,7 @@ impl<T: Copy, const N: usize> RowVector<T, N> {
     }
 }
 
-impl<T: Copy +From<u8>, const N: usize> RowVector<T, N> {
+impl<T: Copy + From<u8>, const N: usize> RowVector<T, N> {
     pub fn zeros() -> Self {
         Self::fill(T::from(0))
     }
@@ -96,7 +96,7 @@ where
     }
 }
 
-impl<T: Copy +From<u8>, const N: usize> RowVector<T, N> {
+impl<T: Copy + From<u8>, const N: usize> RowVector<T, N> {
     pub fn diag(&self) -> Matrix<T, N, N> {
         let mut m = Matrix::<T, N, N>::zeros();
         for i in 0..N {

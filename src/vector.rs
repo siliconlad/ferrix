@@ -90,7 +90,7 @@ impl<T: Copy, const N: usize> Vector<T, N> {
     }
 }
 
-impl<T: Copy + From<i8>, const N: usize> Vector<T, N> {
+impl<T: Copy + From<u8>, const N: usize> Vector<T, N> {
     pub fn zeros() -> Self {
         Self::fill(T::from(0))
     }
