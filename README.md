@@ -1,10 +1,9 @@
 <div align="center" id="user-content-toc">
-  <ul style="list-style: none; margin-left: 0px; padding-left: 0px;">
-    <summary>
-      <h1>Ferrix</h1>
-    </summary>
-  </ul>
-  <p style="padding-top: 0px;">A simple typed matrix library for Rust.</p>
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="./assets/ferrix-light.svg">
+    <img src="./assets/ferrix-dark.svg" alt="Ferrix Logo" width="300">
+  </picture>
+  <p style="padding-top: 5px;">A simple typed matrix library for Rust.</p>
 </div>
 
 ## Example
