@@ -34,8 +34,8 @@ fn render_frame(theta_a: f64, theta_b: f64) {
             let rot_phi = Matrix::roty(phi);
 
             // Calculate 3D point on donut
-            let circle = Vector3::new([cos_theta, sin_theta, 0.0]) * R1;
-            let circle = circle + Vector3::new([R2, 0.0, 0.0]);
+            let circle = Vector3::from([cos_theta, sin_theta, 0.0]) * R1;
+            let circle = circle + Vector3::from([R2, 0.0, 0.0]);
             let point = &rot_b * &rot_a * &rot_phi * &circle;
 
             let ooz = 1.0 / (point[2] + K2);  // One over z (larger = closer)
@@ -45,9 +45,9 @@ fn render_frame(theta_a: f64, theta_b: f64) {
             let yp: usize = ((HEIGHT as f64 / 2.0) - (point[1] * ooz * K1_Y)) as usize;
 
             // Calculate luminance
-            let n_point = Vector3::new([cos_theta, sin_theta, 0.0]);
+            let n_point = Vector3::from([cos_theta, sin_theta, 0.0]);
             let normal = &rot_b * &rot_a * &rot_phi * &n_point;
-            let luminance: f64 = Vector3::new([0.0, 1.0, -1.0]).dot(&normal);
+            let luminance: f64 = Vector3::from([0.0, 1.0, -1.0]).dot(&normal);
 
             if luminance > 0.0 {  // Only render points facing the viewer
                 if ooz > zbuffer[(yp, xp)] {

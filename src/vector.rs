@@ -31,11 +31,13 @@ impl<T: Default, const N: usize> Default for Vector<T, N> {
     }
 }
 
-impl<T, const N: usize> Vector<T, N> {
-    pub fn new(data: [T; N]) -> Self {
-        Self { data }
+impl<T: Default, const N: usize> Vector<T, N> {
+    pub fn new() -> Self {
+        Self::default()
     }
+}
 
+impl<T, const N: usize> Vector<T, N> {
     #[inline]
     pub fn shape(&self) -> usize {
         N
@@ -194,42 +196,42 @@ impl<T: Copy, const N: usize> From<[[T; 1]; N]> for Vector<T, N> {
 
 impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<VectorView<'_, V, T, A, N>> for Vector<T, N> {
     fn from(vector: VectorView<'_, V, T, A, N>) -> Self {
-        Vector::new(std::array::from_fn(|i| vector[i]))
+        Self { data: std::array::from_fn(|i| vector[i]) }
     }
 }
 
 impl<V: IndexMut<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<VectorViewMut<'_, V, T, A, N>> for Vector<T, N> {
     fn from(vector: VectorViewMut<'_, V, T, A, N>) -> Self {
-        Vector::new(std::array::from_fn(|i| vector[i]))
+        Self { data: std::array::from_fn(|i| vector[i]) }
     }
 }
 
 impl<T: Copy, const N: usize> From<Matrix<T, N, 1>> for Vector<T, N> {
     fn from(matrix: Matrix<T, N, 1>) -> Self {
-        Vector::new(std::array::from_fn(|i| matrix[(i, 0)]))
+        Self { data: std::array::from_fn(|i| matrix[(i, 0)]) }
     }
 }
 
 impl<T: Copy, const A: usize, const B: usize, const N: usize> From<MatrixView<'_, T, A, B, N, 1>> for Vector<T, N> {
     fn from(matrix: MatrixView<'_, T, A, B, N, 1>) -> Self {
-        Vector::new(std::array::from_fn(|i| matrix[(i, 0)]))
+        Self { data: std::array::from_fn(|i| matrix[(i, 0)]) }
     }
 }
 
 impl<T: Copy, const A: usize, const B: usize, const N: usize> From<MatrixViewMut<'_, T, A, B, N, 1>> for Vector<T, N> {
     fn from(matrix: MatrixViewMut<'_, T, A, B, N, 1>) -> Self {
-        Vector::new(std::array::from_fn(|i| matrix[(i, 0)]))
+        Self { data: std::array::from_fn(|i| matrix[(i, 0)]) }
     }
 }
 
 impl<T: Copy, const A: usize, const B: usize, const N: usize> From<MatrixTransposeView<'_, T, A, B, N, 1>> for Vector<T, N> {
     fn from(matrix: MatrixTransposeView<'_, T, A, B, N, 1>) -> Self {
-        Vector::new(std::array::from_fn(|i| matrix[(i, 0)]))
+        Self { data: std::array::from_fn(|i| matrix[(i, 0)]) }
     }
 }
 
 impl<T: Copy, const A: usize, const B: usize, const N: usize> From<MatrixTransposeViewMut<'_, T, A, B, N, 1>> for Vector<T, N> {
     fn from(matrix: MatrixTransposeViewMut<'_, T, A, B, N, 1>) -> Self {
-        Vector::new(std::array::from_fn(|i| matrix[(i, 0)]))
+        Self { data: std::array::from_fn(|i| matrix[(i, 0)]) }
     }
 }

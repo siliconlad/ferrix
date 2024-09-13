@@ -4,14 +4,14 @@ mod tests {
 
     #[test]
     fn test_matrix_transpose_view_shape() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let view = matrix.t();
         assert_eq!(view.shape(), (3, 2));
     }
 
     #[test]
     fn test_matrix_transpose_view_t() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let view = matrix.t();
         let view_t = view.t();
         assert_eq!(view_t.shape(), matrix.shape());
@@ -25,7 +25,7 @@ mod tests {
 
     #[test]
     fn test_matrix_transpose_view_index() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let view = matrix.t();
 
         assert_eq!(view[(0, 0)], matrix[(0, 0)]);
@@ -45,7 +45,7 @@ mod tests {
 
     #[test]
     fn test_matrix_transpose_view_index_offset() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
         let view_offset = matrix.view::<2, 2>((1, 1)).unwrap();
         let view = view_offset.t();
         assert_eq!(view[(0, 0)], matrix[(1, 1)]);
@@ -57,7 +57,7 @@ mod tests {
     #[test]
     #[should_panic(expected = "Index out of bounds")]
     fn test_matrix_transpose_view_index_out_of_bounds() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let view = matrix.t();
         let _ = view[(0, 2)];
     }

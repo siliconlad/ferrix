@@ -23,11 +23,21 @@ pub struct Matrix<T, const R: usize, const C: usize> {
 pub type Matrix2<T> = Matrix<T, 2, 2>;
 pub type Matrix3<T> = Matrix<T, 3, 3>;
 
-impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
-    pub fn new(data: [[T; C]; R]) -> Self {
-        Self { data }
+impl<T: Default, const R: usize, const C: usize> Default for Matrix<T, R, C> {
+    fn default() -> Self {
+        Self {
+            data: std::array::from_fn(|_| std::array::from_fn(|_| T::default())),
+        }
     }
+}
 
+impl<T: Default, const R: usize, const C: usize> Matrix<T, R, C> {
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
     #[inline]
     pub fn shape(&self) -> (usize, usize) {
         (R, C)
@@ -52,14 +62,6 @@ impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
 impl<T: Copy> Matrix<T, 1, 1> {
     pub fn into(self) -> T {
         self[(0, 0)]
-    }
-}
-
-impl<T: Default, const R: usize, const C: usize> Default for Matrix<T, R, C> {
-    fn default() -> Self {
-        Self {
-            data: std::array::from_fn(|_| std::array::from_fn(|_| T::default())),
-        }
     }
 }
 

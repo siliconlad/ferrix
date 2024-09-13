@@ -20,11 +20,13 @@ pub struct RowVector<T, const N: usize> {
     data: [T; N]
 }
 
-impl<T, const N: usize> RowVector<T, N> {
-    pub fn new(data: [T; N]) -> Self {
-        Self { data }
+impl<T: Default, const N: usize> RowVector<T, N> {
+    pub fn new() -> Self {
+        Self::default()
     }
+}
 
+impl<T, const N: usize> RowVector<T, N> {
     #[inline]
     pub fn shape(&self) -> usize {
         N
@@ -189,44 +191,42 @@ impl<T: Copy, const N: usize> From<[[T; N]; 1]> for RowVector<T, N> {
 
 impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<RowVectorView<'_, V, T, A, N>> for RowVector<T, N> {
     fn from(vector: RowVectorView<'_, V, T, A, N>) -> Self {
-        RowVector::new(std::array::from_fn(|i| vector[i]))
+        Self { data: std::array::from_fn(|i| vector[i]) }
     }
 }
 
 impl<V: IndexMut<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<RowVectorViewMut<'_, V, T, A, N>> for RowVector<T, N> {
     fn from(vector: RowVectorViewMut<'_, V, T, A, N>) -> Self {
-        RowVector::new(std::array::from_fn(|i| vector[i]))
+        Self { data: std::array::from_fn(|i| vector[i]) }
     }
 }
 
 impl<T: Copy, const N: usize> From<Matrix<T, 1, N>> for RowVector<T, N> {
     fn from(matrix: Matrix<T, 1, N>) -> Self {
-        RowVector::new(std::array::from_fn(|i| matrix[(0, i)]))
+        Self { data: std::array::from_fn(|i| matrix[(0, i)]) }
     }
 }
 
 impl<T: Copy, const A: usize, const B: usize, const N: usize> From<MatrixView<'_, T, A, B, 1, N>> for RowVector<T, N> {
     fn from(matrix: MatrixView<'_, T, A, B, 1, N>) -> Self {
-        RowVector::new(std::array::from_fn(|i| matrix[(0, i)]))
+        Self { data: std::array::from_fn(|i| matrix[(0, i)]) }
     }
 }
 
 impl<T: Copy, const A: usize, const B: usize, const N: usize> From<MatrixViewMut<'_, T, A, B, 1, N>> for RowVector<T, N> {
     fn from(matrix: MatrixViewMut<'_, T, A, B, 1, N>) -> Self {
-        RowVector::new(std::array::from_fn(|i| matrix[(0, i)]))
+        Self { data: std::array::from_fn(|i| matrix[(0, i)]) }
     }
 }
 
 impl<T: Copy, const A: usize, const B: usize, const N: usize> From<MatrixTransposeView<'_, T, A, B, 1, N>> for RowVector<T, N> {
     fn from(matrix: MatrixTransposeView<'_, T, A, B, 1, N>) -> Self {
-        RowVector::new(std::array::from_fn(|i| matrix[(0, i)]))
+        Self { data: std::array::from_fn(|i| matrix[(0, i)]) }
     }
 }
 
 impl<T: Copy, const A: usize, const B: usize, const N: usize> From<MatrixTransposeViewMut<'_, T, A, B, 1, N>> for RowVector<T, N> {
     fn from(matrix: MatrixTransposeViewMut<'_, T, A, B, 1, N>) -> Self {
-        RowVector::new(std::array::from_fn(|i| matrix[(0, i)]))
+        Self { data: std::array::from_fn(|i| matrix[(0, i)]) }
     }
 }
-
-    

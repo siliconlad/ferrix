@@ -466,7 +466,7 @@ mod matmul_macros {
                     for i in 0..M {
                         result = result + (self[i] * other[i]);
                     }
-                    Self::Output::new([[result]])
+                    Self::Output::from([[result]])
                 }
             }
         };

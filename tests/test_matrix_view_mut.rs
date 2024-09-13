@@ -4,14 +4,14 @@ mod tests {
 
     #[test]
     fn test_matrix_view_mut_shape() {
-        let mut matrix = Matrix::new([[1, 2, 3, 4], [5, 6, 7, 8]]);
+        let mut matrix = Matrix::from([[1, 2, 3, 4], [5, 6, 7, 8]]);
         let view = matrix.view_mut::<2, 3>((0, 1)).unwrap();
         assert_eq!(view.shape(), (2, 3));
     }
 
     #[test]
     fn test_matrix_view_mut_t() {
-        let mut matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let view = matrix.view_mut::<2, 3>((0, 0)).unwrap();
         let transposed = view.t();
         assert_eq!(transposed.shape(), (3, 2));
@@ -25,7 +25,7 @@ mod tests {
 
     #[test]
     fn test_matrix_view_mut_t_mut() {
-        let mut matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let mut view = matrix.view_mut::<2, 3>((0, 0)).unwrap();
         let mut transposed = view.t_mut();
         transposed[(0, 1)] = 10;
@@ -39,7 +39,7 @@ mod tests {
 
     #[test]
     fn test_matrix_view_mut_index() {
-        let mut matrix = Matrix::new([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
+        let mut matrix = Matrix::from([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
         let view = matrix.view_mut::<2, 3>((1, 1)).unwrap();
         
         // Test tuple indexing
@@ -62,7 +62,7 @@ mod tests {
     #[test]
     #[should_panic(expected = "Index out of bounds")]
     fn test_matrix_view_index_out_of_bounds() {
-        let mut matrix = Matrix::new([[1, 2], [3, 4]]);
+        let mut matrix = Matrix::from([[1, 2], [3, 4]]);
         let view = matrix.view_mut::<2, 2>((0, 0)).unwrap();
         let _ = view[(2, 2)]; // This should panic
     }
@@ -70,14 +70,14 @@ mod tests {
     #[test]
     #[should_panic(expected = "Index out of bounds")]
     fn test_matrix_view_mut_index_single_out_of_bounds() {
-        let mut matrix = Matrix::new([[1, 2], [3, 4]]);
+        let mut matrix = Matrix::from([[1, 2], [3, 4]]);
         let view = matrix.view_mut::<2, 2>((0, 0)).unwrap();
         let _ = view[4]; // This should panic
     }
 
     #[test]
     fn test_matrix_view_mut_index_mut() {
-        let mut matrix = Matrix::new([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
+        let mut matrix = Matrix::from([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
         let mut view = matrix.view_mut::<2, 3>((1, 1)).unwrap();
         
         view[(0, 0)] = 20;
@@ -90,14 +90,14 @@ mod tests {
     #[test]
     #[should_panic(expected = "Index out of bounds")]
     fn test_matrix_view_mut_index_mut_out_of_bounds() {
-        let mut matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let mut view = matrix.view_mut::<2, 3>((0, 0)).unwrap();
         view[(2, 2)] = 10; // This should panic
     }
 
     #[test]
     fn test_matrix_view_mut_index_mut_single() {
-        let mut matrix = Matrix::new([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
+        let mut matrix = Matrix::from([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
         let mut view = matrix.view_mut::<2, 3>((1, 1)).unwrap();
         
         view[1] = 40;
@@ -110,7 +110,7 @@ mod tests {
     #[test]
     #[should_panic(expected = "Index out of bounds")]
     fn test_matrix_view_mut_index_mut_single_out_of_bounds() {
-        let mut matrix = Matrix::new([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
+        let mut matrix = Matrix::from([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
         let mut view = matrix.view_mut::<2, 3>((1, 1)).unwrap();
         view[10] = 10; // This should panic
     }

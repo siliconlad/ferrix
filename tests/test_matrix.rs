@@ -46,7 +46,7 @@ mod tests {
 
     #[test]
     fn test_new() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         assert_eq!(matrix[(0, 0)], 1);
         assert_eq!(matrix[(0, 1)], 2);
         assert_eq!(matrix[(0, 2)], 3);
@@ -90,13 +90,13 @@ mod tests {
 
     #[test]
     fn test_shape() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         assert_eq!(matrix.shape(), (2, 3));
     }
 
     #[test]
     fn test_t() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let transposed = matrix.t();
 
         assert_eq!(transposed.shape(), (3, 2));
@@ -110,7 +110,7 @@ mod tests {
 
     #[test]
     fn test_t_mut() {
-        let mut matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let mut transposed = matrix.t_mut();
 
         transposed[(0, 1)] = 10;
@@ -127,7 +127,7 @@ mod tests {
 
     #[test]
     fn test_view() {
-        let matrix = Matrix::new([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
+        let matrix = Matrix::from([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
         let view = matrix.view::<2, 2>((1, 1)).unwrap();
 
         assert_eq!(view.shape(), (2, 2));
@@ -139,21 +139,21 @@ mod tests {
 
     #[test]
     fn test_view_out_of_bounds() {
-        let matrix = Matrix::new([[1, 2], [3, 4]]);
+        let matrix = Matrix::from([[1, 2], [3, 4]]);
         assert!(matrix.view::<2, 2>((1, 1)).is_none());
     }
 
     #[test]
     #[should_panic(expected = "Index out of bounds")]
     fn test_view_index_out_of_bounds() {
-        let matrix = Matrix::new([[1, 2, 3], [5, 6, 7], [9, 10, 11]]);
+        let matrix = Matrix::from([[1, 2, 3], [5, 6, 7], [9, 10, 11]]);
         let view = matrix.view::<2, 2>((1, 1)).unwrap();
         let _ = view[(2, 3)];
     }
 
     #[test]
     fn test_view_mut() {
-        let mut matrix = Matrix::new([[1, 2], [5, 6], [9, 10]]);
+        let mut matrix = Matrix::from([[1, 2], [5, 6], [9, 10]]);
 
         {
             let mut view = matrix.view_mut::<2, 2>((1, 0)).unwrap();
@@ -172,14 +172,14 @@ mod tests {
 
     #[test]
     fn test_view_mut_out_of_bounds() {
-        let mut matrix = Matrix::new([[1, 2], [3, 4]]);
+        let mut matrix = Matrix::from([[1, 2], [3, 4]]);
         assert!(matrix.view_mut::<2, 2>((1, 1)).is_none());
     }
 
     #[test]
     #[should_panic(expected = "Index out of bounds")]
     fn test_view_mut_index_out_of_bounds() {
-        let matrix = Matrix::new([[1, 2, 3], [5, 6, 7], [9, 10, 11]]);
+        let matrix = Matrix::from([[1, 2, 3], [5, 6, 7], [9, 10, 11]]);
         let view = matrix.view::<2, 2>((1, 1)).unwrap();
         let _ = view[(2, 3)];
     }
@@ -188,7 +188,7 @@ mod tests {
     fn test_rot() {
         use std::f64::consts::PI;
         let rot_matrix = Matrix::<f64, 2, 2>::rot(PI / 2.0);
-        let expected = Matrix::new([[0.0, -1.0], [1.0, 0.0]]);
+        let expected = Matrix::from([[0.0, -1.0], [1.0, 0.0]]);
         assert!((rot_matrix[(0, 0)] - expected[(0, 0)]).abs() < f64::EPSILON);
         assert!((rot_matrix[(0, 1)] - expected[(0, 1)]).abs() < f64::EPSILON);
         assert!((rot_matrix[(1, 0)] - expected[(1, 0)]).abs() < f64::EPSILON);
@@ -199,7 +199,7 @@ mod tests {
     fn test_rotx() {
         use std::f64::consts::PI;
         let rotx_matrix = Matrix::<f64, 3, 3>::rotx(PI / 2.0);
-        let expected = Matrix::new([
+        let expected = Matrix::from([
             [1.0, 0.0, 0.0],
             [0.0, 0.0, -1.0],
             [0.0, 1.0, 0.0],
@@ -219,7 +219,7 @@ mod tests {
     fn test_roty() {
         use std::f64::consts::PI;
         let roty_matrix = Matrix::<f64, 3, 3>::roty(PI / 2.0);
-        let expected = Matrix::new([
+        let expected = Matrix::from([
             [0.0, 0.0, 1.0],
             [0.0, 1.0, 0.0],
             [-1.0, 0.0, 0.0],
@@ -239,7 +239,7 @@ mod tests {
     fn test_rotz() {
         use std::f64::consts::PI;
         let rotz_matrix = Matrix::<f64, 3, 3>::rotz(PI / 2.0);
-        let expected = Matrix::new([
+        let expected = Matrix::from([
             [0.0, -1.0, 0.0],
             [1.0, 0.0, 0.0],
             [0.0, 0.0, 1.0],
@@ -257,7 +257,7 @@ mod tests {
 
     #[test]
     fn test_index_single() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         assert_eq!(matrix[0], 1);
         assert_eq!(matrix[1], 2);
         assert_eq!(matrix[2], 3);
@@ -269,13 +269,13 @@ mod tests {
     #[test]
     #[should_panic(expected = "Index out of bounds")]
     fn test_index_single_out_of_bounds() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let _ = matrix[6];
     }
 
     #[test]
     fn test_index_mut_single() {
-        let mut matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         matrix[1] = 10;
         matrix[4] = 20;
         assert_eq!(matrix[0], 1);
@@ -289,13 +289,13 @@ mod tests {
     #[test]
     #[should_panic(expected = "Index out of bounds")]
     fn test_index_mut_single_out_of_bounds() {
-        let mut matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         matrix[6] = 10;
     }
 
     #[test]
     fn test_index() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         assert_eq!(matrix[(0, 0)], 1);
         assert_eq!(matrix[(0, 1)], 2);
         assert_eq!(matrix[(0, 2)], 3);
@@ -307,13 +307,13 @@ mod tests {
     #[test]
     #[should_panic(expected = "Index out of bounds")]
     fn test_index_out_of_bounds() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let _ = matrix[(2, 0)];
     }
 
     #[test]
     fn test_index_mut() {
-        let mut matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         matrix[(0, 1)] = 10;
         matrix[(1, 2)] = 20;
         assert_eq!(matrix[(0, 0)], 1);
@@ -327,7 +327,7 @@ mod tests {
     #[test]
     #[should_panic(expected = "Index out of bounds")]
     fn test_index_mut_out_of_bounds() {
-        let mut matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         matrix[(0, 3)] = 10;
     }
 
@@ -335,84 +335,84 @@ mod tests {
     fn test_from_array() {
         let array = [[1, 2, 3], [4, 5, 6]];
         let matrix: Matrix<_, 2, 3> = Matrix::from(array);
-        assert_eq!(matrix, Matrix::new([[1, 2, 3], [4, 5, 6]]));
+        assert_eq!(matrix, Matrix::from([[1, 2, 3], [4, 5, 6]]));
     }
 
     #[test]
     fn test_from_vector() {
-        let vector = Vector::new([1, 2, 3, 4]);
+        let vector = Vector::from([1, 2, 3, 4]);
         let matrix: Matrix<_, 4, 1> = Matrix::from(vector);
-        assert_eq!(matrix, Matrix::new([[1], [2], [3], [4]]));
+        assert_eq!(matrix, Matrix::from([[1], [2], [3], [4]]));
     }
 
     #[test]
     fn test_from_row_vector() {
-        let vector = RowVector::new([1, 2, 3, 4]);
+        let vector = RowVector::from([1, 2, 3, 4]);
         let matrix: Matrix<_, 1, 4> = Matrix::from(vector);
-        assert_eq!(matrix, Matrix::new([[1, 2, 3, 4]]));
+        assert_eq!(matrix, Matrix::from([[1, 2, 3, 4]]));
     }
 
     #[test]
     fn test_from_vector_view() {
-        let vector = Vector::new([1, 2, 3, 4]);
+        let vector = Vector::from([1, 2, 3, 4]);
         let view = vector.view::<2>(1).unwrap();
         let matrix: Matrix<_, 2, 1> = Matrix::from(view);
-        assert_eq!(matrix, Matrix::new([[2], [3]]));
+        assert_eq!(matrix, Matrix::from([[2], [3]]));
     }
 
     #[test]
     fn test_from_vector_view_mut() {
-        let mut vector = Vector::new([1, 2, 3, 4]);
+        let mut vector = Vector::from([1, 2, 3, 4]);
         let view = vector.view_mut::<2>(1).unwrap();
         let matrix: Matrix<_, 2, 1> = Matrix::from(view);
-        assert_eq!(matrix, Matrix::new([[2], [3]]));
+        assert_eq!(matrix, Matrix::from([[2], [3]]));
     }
 
     #[test]
     fn test_from_row_vector_view() {
-        let vector = RowVector::new([1, 2, 3, 4]);
+        let vector = RowVector::from([1, 2, 3, 4]);
         let view = vector.view::<2>(1).unwrap();
         let matrix: Matrix<_, 1, 2> = Matrix::from(view);
-        assert_eq!(matrix, Matrix::new([[2, 3]]));
+        assert_eq!(matrix, Matrix::from([[2, 3]]));
     }
 
     #[test]
     fn test_from_row_vector_view_mut() {
-        let mut vector = RowVector::new([1, 2, 3, 4]);
+        let mut vector = RowVector::from([1, 2, 3, 4]);
         let view = vector.view_mut::<2>(1).unwrap();
         let matrix: Matrix<_, 1, 2> = Matrix::from(view);
-        assert_eq!(matrix, Matrix::new([[2, 3]]));
+        assert_eq!(matrix, Matrix::from([[2, 3]]));
     }
 
     #[test]
     fn test_from_matrix_view() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let view = matrix.view::<2, 2>((0, 1)).unwrap();
         let new_matrix: Matrix<_, 2, 2> = Matrix::from(view);
-        assert_eq!(new_matrix, Matrix::new([[2, 3], [5, 6]]));
+        assert_eq!(new_matrix, Matrix::from([[2, 3], [5, 6]]));
     }
 
     #[test]
     fn test_from_matrix_view_mut() {
-        let mut matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let view = matrix.view_mut::<2, 2>((0, 1)).unwrap();
         let new_matrix: Matrix<_, 2, 2> = Matrix::from(view);
-        assert_eq!(new_matrix, Matrix::new([[2, 3], [5, 6]]));
+        assert_eq!(new_matrix, Matrix::from([[2, 3], [5, 6]]));
     }
 
     #[test]
     fn test_from_matrix_transpose_view() {
-        let matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let t_view = matrix.t();
         let new_matrix: Matrix<_, 3, 2> = Matrix::from(t_view);
-        assert_eq!(new_matrix, Matrix::new([[1, 4], [2, 5], [3, 6]]));
+        assert_eq!(new_matrix, Matrix::from([[1, 4], [2, 5], [3, 6]]));
     }
 
     #[test]
     fn test_from_matrix_transpose_view_mut() {
-        let mut matrix = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let t_view = matrix.t_mut();
         let new_matrix: Matrix<_, 3, 2> = Matrix::from(t_view);
-        assert_eq!(new_matrix, Matrix::new([[1, 4], [2, 5], [3, 6]]));
+        assert_eq!(new_matrix, Matrix::from([[1, 4], [2, 5], [3, 6]]));
     }
 }
