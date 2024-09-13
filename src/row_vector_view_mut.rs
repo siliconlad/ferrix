@@ -27,6 +27,16 @@ impl<'a, V, T, const N: usize, const M: usize> RowVectorViewMut<'a, V, T, N, M> 
         M
     }
 
+    #[inline]
+    pub fn rows(&self) -> usize {
+        1
+    }
+
+    #[inline]
+    pub fn cols(&self) -> usize {
+        M
+    }
+
     pub fn t(&'a self) -> VectorView<'a, V, T, N, M> {
         VectorView::new(self.data, self.start)
     }

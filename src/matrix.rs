@@ -37,6 +37,16 @@ impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
     pub fn capacity(&self) -> usize {
         R * C
     }
+
+    #[inline]
+    pub fn rows(&self) -> usize {
+        R
+    }
+
+    #[inline]
+    pub fn cols(&self) -> usize {
+        C
+    }
 }
 
 impl<T: Copy> Matrix<T, 1, 1> {
