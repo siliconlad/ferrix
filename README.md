@@ -1,5 +1,5 @@
 <div align="center" id="user-content-toc">
-  <ul style="list-style: none; padding-left: 0px;">
+  <ul style="list-style: none; margin-left: 0px; padding-left: 0px;">
     <summary>
       <h1>Ferrix</h1>
     </summary>
