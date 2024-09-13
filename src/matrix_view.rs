@@ -2,6 +2,7 @@ use crate::matrix::Matrix;
 use crate::matrix_transpose_view::MatrixTransposeView;
 use std::ops::Index;
 
+#[derive(Debug)]
 pub struct MatrixView<
     'a,
     T,

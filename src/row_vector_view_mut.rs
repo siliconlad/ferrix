@@ -6,6 +6,7 @@ use crate::traits::DotProduct;
 use crate::vector_view::VectorView;
 use crate::vector_view_mut::VectorViewMut;
 
+#[derive(Debug)]
 pub struct RowVectorViewMut<'a, V, T, const N: usize, const M: usize> {
     data: &'a mut V,
     start: usize,

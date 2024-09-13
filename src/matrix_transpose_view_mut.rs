@@ -3,6 +3,7 @@ use crate::matrix_view::MatrixView;
 use crate::matrix_view_mut::MatrixViewMut;
 use std::ops::{Index, IndexMut};
 
+#[derive(Debug)]
 pub struct MatrixTransposeViewMut<
     'a,
     T,

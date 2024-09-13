@@ -5,6 +5,7 @@ use std::marker::PhantomData;
 use crate::traits::DotProduct;
 use crate::row_vector_view::RowVectorView;
 
+#[derive(Debug)]
 pub struct VectorView<'a, V, T, const N: usize, const M: usize> {
     data: &'a V,
     start: usize,
