@@ -12,7 +12,7 @@ keywords = ["vector", "matrix", "linear-algebra", "math"]
 
 [[example]]
 name = "donut"
-path = "example/donut.rs"
+path = "examples/donut.rs"
 
 [[bench]]
 name = "add_benchmark"
