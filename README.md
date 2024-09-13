@@ -49,7 +49,9 @@ cargo add ferrix
 
 ## Contributing
 
-If you find any bugs or have any suggestions, please open an issue or submit a pull request.
+If you find any bugs, please open an issue or submit a pull request.
+
+If you have any suggestions or questions, please open an issue.
 
 Specifically, I'm looking for help with:
 - Creating more examples to illustrate the library's capabilities
