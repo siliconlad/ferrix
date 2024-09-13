@@ -490,8 +490,8 @@ mod matmul_macros {
 
                 fn mul(self, other: $rhs) -> Self::Output {
                     let mut result = Self::Output::zeros();
-                    for i in 0..M {
-                        for j in 0..N {
+                    for j in 0..N {
+                        for i in 0..M {
                             result[i] = result[i] + (self[j] * other[(j, i)]);
                         }
                     }
@@ -521,8 +521,8 @@ mod matmul_macros {
                 fn mul(self, other: $rhs) -> Self::Output {
                     let mut result = Self::Output::zeros();
                     for i in 0..M {
-                        for j in 0..P {
-                            for k in 0..N {
+                        for k in 0..N {
+                            for j in 0..P {
                                 result[(i, j)] = result[(i, j)] + (self[(i, k)] * other[(k, j)]);
                             }
                         }
