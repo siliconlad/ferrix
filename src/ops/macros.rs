@@ -453,7 +453,7 @@ mod dot_macros {
 mod matmul_macros {
     macro_rules! impl_matmul_inner {
         (scalar, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T> + From<u8>, $($generics)*> Mul<$rhs> for $lhs
+            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs
             {
                 type Output = $output;
 
@@ -467,7 +467,7 @@ mod matmul_macros {
             }
         };
         (vecvec, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T> + From<u8>, $($generics)*> Mul<$rhs> for $lhs
+            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs
             {
                 type Output = $output;
 
@@ -484,7 +484,7 @@ mod matmul_macros {
         };
         (vecmat, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
 
-            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T> + From<u8>, $($generics)*> Mul<$rhs> for $lhs
+            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs
             {
                 type Output = $output;
 
@@ -500,7 +500,7 @@ mod matmul_macros {
             }
         };
         (matvec, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T> + From<u8>, $($generics)*> Mul<$rhs> for $lhs {
+            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs {
                 type Output = $output;
 
                 fn mul(self, other: $rhs) -> Self::Output {
@@ -515,7 +515,7 @@ mod matmul_macros {
             }
         };
         (matmat, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T> + From<u8>, $($generics)*> Mul<$rhs> for $lhs {
+            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs {
                 type Output = $output;
 
                 fn mul(self, other: $rhs) -> Self::Output {
