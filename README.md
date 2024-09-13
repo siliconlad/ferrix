@@ -1,7 +1,7 @@
 <div align="center" id="user-content-toc">
   <picture>
-    <source media="(prefers-color-scheme: light)" srcset="./assets/ferrix-light.svg">
-    <img src="./assets/ferrix-dark.svg" alt="Ferrix Logo" width="300">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/ferrix-dark.svg">
+    <img src="./assets/ferrix-light.svg" alt="Ferrix Logo" width="300">
   </picture>
   <p style="padding-top: 5px;">A simple typed matrix library for Rust.</p>
 </div>
