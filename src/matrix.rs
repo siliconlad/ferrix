@@ -1,5 +1,5 @@
 use std::ops::{Index, IndexMut, Neg};
-use funty::{Floating, Integral};
+use num_traits::{Float, PrimInt, Zero, One};
 use rand::Rng;
 use rand::distributions::{Distribution, Standard, Uniform};
 use rand::distributions::uniform::SampleUniform;
@@ -63,25 +63,29 @@ impl<T: Default, const R: usize, const C: usize> Default for Matrix<T, R, C> {
     }
 }
 
-impl<T: Copy + From<u8>, const R: usize, const C: usize> Matrix<T, R, C> {
-    pub fn eye() -> Self {
-        let mut data = [[T::from(0); C]; R];
-        for (i, row) in data.iter_mut().enumerate() {
-            row[i] = T::from(1);
-        }
-        Self { data }
-    }
-
+impl<T: Copy + Zero, const R: usize, const C: usize> Matrix<T, R, C> {
     pub fn zeros() -> Self {
         Self {
-            data: [[T::from(0); C]; R],
+            data: [[T::zero(); C]; R],
         }
     }
+}
 
+impl<T: Copy + One, const R: usize, const C: usize> Matrix<T, R, C> {
     pub fn ones() -> Self {
         Self {
-            data: [[T::from(1); C]; R],
+            data: [[T::one(); C]; R],
         }
+    }
+}
+
+impl<T: Copy + Zero + One, const R: usize, const C: usize> Matrix<T, R, C> {
+    pub fn eye() -> Self {
+        let mut data = [[T::zero(); C]; R];
+        for (i, row) in data.iter_mut().enumerate() {
+            row[i] = T::one();
+        }
+        Self { data }
     }
 }
 
@@ -93,7 +97,7 @@ impl<T: Copy, const R: usize, const C: usize> Matrix<T, R, C> {
     }
 }
 
-impl<T: Integral, const R: usize, const C: usize> IntRandom for Matrix<T, R, C>
+impl<T: PrimInt, const R: usize, const C: usize> IntRandom for Matrix<T, R, C>
 where
     Standard: Distribution<T>,
 {
@@ -103,13 +107,13 @@ where
     }
 }
 
-impl<T: Floating + SampleUniform, const R: usize, const C: usize> FloatRandom for Matrix<T, R, C>
+impl<T: Float + SampleUniform, const R: usize, const C: usize> FloatRandom for Matrix<T, R, C>
 where
     Standard: Distribution<T>,
 {
     fn random() -> Self {
         let mut rng = rand::thread_rng();
-        let dist = Uniform::new_inclusive(T::from(-1.0), T::from(1.0));
+        let dist = Uniform::new_inclusive(-T::one(), T::one());
         Self { data: std::array::from_fn(|_| std::array::from_fn(|_| dist.sample(&mut rng))) }
     }
 }
@@ -146,7 +150,7 @@ impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
     }
 }
 
-impl<T: Floating + Neg<Output = T>> Matrix<T, 2, 2> {
+impl<T: Float + Neg<Output = T>> Matrix<T, 2, 2> {
     pub fn rot(angle: T) -> Self {
         let data = [
             [T::cos(angle), -T::sin(angle)],
@@ -156,30 +160,30 @@ impl<T: Floating + Neg<Output = T>> Matrix<T, 2, 2> {
     }
 }
 
-impl<T: Floating + Neg<Output = T> + From<u8>> Matrix<T, 3, 3> {
+impl<T: Float + Neg<Output = T>> Matrix<T, 3, 3> {
     pub fn rotx(angle: T) -> Self {
         let data = [
-            [T::from(1.0), T::from(0.0),   T::from(0.0) ],
-            [T::from(0.0), T::cos(angle), -T::sin(angle)],
-            [T::from(0.0), T::sin(angle),  T::cos(angle)],
+            [T::one(),  T::zero(),      T::zero()],
+            [T::zero(), T::cos(angle), -T::sin(angle)],
+            [T::zero(), T::sin(angle),  T::cos(angle)],
         ];
         Self { data }
     }
 
     pub fn roty(angle: T) -> Self {
         let data = [
-            [ T::cos(angle), T::from(0.0), T::sin(angle)],
-            [ T::from(0.0),  T::from(1.0), T::from(0.0) ],
-            [-T::sin(angle), T::from(0.0), T::cos(angle)],
+            [ T::cos(angle), T::zero(), T::sin(angle)],
+            [ T::zero(),     T::one(),  T::zero()],
+            [-T::sin(angle), T::zero(), T::cos(angle)],
         ];
         Self { data }
     }
 
     pub fn rotz(angle: T) -> Self {
         let data = [
-            [T::cos(angle), -T::sin(angle), T::from(0.0)],
-            [T::sin(angle),  T::cos(angle), T::from(0.0)],
-            [T::from(0.0),   T::from(0.0),  T::from(1.0)],
+            [T::cos(angle), -T::sin(angle), T::zero()],
+            [T::sin(angle),  T::cos(angle), T::zero()],
+            [T::zero(),      T::zero(),     T::one()],
         ];
         Self { data }
     }

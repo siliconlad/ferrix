@@ -10,6 +10,7 @@ use crate::row_vector::RowVector;
 use crate::row_vector_view::RowVectorView;
 use crate::row_vector_view_mut::RowVectorViewMut;
 use std::ops::{Index, Mul, Add};
+use num_traits::Zero;
 
 // Generate macros
 generate_matmul_macros!();

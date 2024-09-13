@@ -1,4 +1,4 @@
-use funty::{Floating, Integral};
+use num_traits::{Float, PrimInt, Zero, One};
 use rand::Rng;
 use rand::distributions::{Distribution, Standard, Uniform};
 use rand::distributions::uniform::SampleUniform;
@@ -57,7 +57,7 @@ impl<T, const N: usize> Vector<T, N> {
     }
 }
 
-impl<T: Integral, const N: usize> IntRandom for Vector<T, N>
+impl<T: PrimInt, const N: usize> IntRandom for Vector<T, N>
 where
     Standard: Distribution<T>,
 {
@@ -67,13 +67,13 @@ where
     }
 }
 
-impl<T: Floating + SampleUniform, const N: usize> FloatRandom for Vector<T, N>
+impl<T: Float + SampleUniform, const N: usize> FloatRandom for Vector<T, N>
 where
     Standard: Distribution<T>,
 {
     fn random() -> Self {
         let mut rng = rand::thread_rng();
-        let dist = Uniform::new_inclusive(T::from(-1.0), T::from(1.0));
+        let dist = Uniform::new_inclusive(-T::one(), T::one());
         Self { data: std::array::from_fn(|_| dist.sample(&mut rng)) }
     }
 }
@@ -90,17 +90,19 @@ impl<T: Copy, const N: usize> Vector<T, N> {
     }
 }
 
-impl<T: Copy + From<u8>, const N: usize> Vector<T, N> {
+impl<T: Copy + Zero, const N: usize> Vector<T, N> {
     pub fn zeros() -> Self {
-        Self::fill(T::from(0))
-    }
-
-    pub fn ones() -> Self {
-        Self::fill(T::from(1))
+        Self::fill(T::zero())
     }
 }
 
-impl<T: Copy + From<u8>, const N: usize> Vector<T, N> {
+impl<T: Copy + One, const N: usize> Vector<T, N> {
+    pub fn ones() -> Self {
+        Self::fill(T::one())
+    }
+}
+
+impl<T: Copy + Zero, const N: usize> Vector<T, N> {
     pub fn diag(&self) -> Matrix<T, N, N> {
         let mut m = Matrix::<T, N, N>::zeros();
         for i in 0..N {
@@ -136,7 +138,7 @@ impl<T, const N: usize> Vector<T, N> {
     }
 }
 
-impl<T: Floating, const N: usize> Vector<T, N> {
+impl<T: Float, const N: usize> Vector<T, N> {
     pub fn magnitude(&self) -> T {
         self.dot(self).sqrt()
     }

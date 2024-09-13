@@ -1,4 +1,4 @@
-use funty::Floating;
+use num_traits::Float;
 use std::ops::{Index, IndexMut};
 use std::marker::PhantomData;
 
@@ -46,7 +46,7 @@ impl<'a, V, T, const N: usize, const M: usize> VectorViewMut<'a, V, T, N, M> {
     }
 }
 
-impl<'a, V: Index<usize, Output = T>, T: Floating, const N: usize, const M: usize> VectorViewMut<'a, V, T, N, M> {
+impl<'a, V: Index<usize, Output = T>, T: Float, const N: usize, const M: usize> VectorViewMut<'a, V, T, N, M> {
     pub fn magnitude(&self) -> T {
         self.dot(self).sqrt()
     }

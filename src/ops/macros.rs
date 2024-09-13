@@ -395,11 +395,15 @@ mod op_assign_macros {
 mod dot_macros {
     macro_rules! impl_dot_inner {
         ($lhs:ty, $rhs:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + std::iter::Sum<T>, $($generics)*> DotProduct<$rhs> for $lhs {
+            impl<T: Copy + Zero + Mul<T, Output = T> + Add<T, Output = T>, $($generics)*> DotProduct<$rhs> for $lhs {
                 type Output = T;
 
                 fn dot(self, other: $rhs) -> Self::Output {
-                    (0..M).map(|i| self[i] * other[i]).sum()
+                    let mut result = T::zero();
+                    for i in 0..M {
+                        result = result + (self[i] * other[i]);
+                    }
+                    result
                 }
             }
         };
@@ -453,12 +457,12 @@ mod dot_macros {
 mod matmul_macros {
     macro_rules! impl_matmul_inner {
         (scalar, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs
+            impl<T: Copy + Zero + Mul<T, Output = T> + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs
             {
                 type Output = $output;
 
                 fn mul(self, other: $rhs) -> Self::Output {
-                    let mut result = T::default();
+                    let mut result = T::zero();
                     for i in 0..M {
                         result = result + (self[i] * other[i]);
                     }
@@ -467,12 +471,12 @@ mod matmul_macros {
             }
         };
         (vecvec, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs
+            impl<T: Copy + Zero + Mul<T, Output = T> + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs
             {
                 type Output = $output;
 
                 fn mul(self, other: $rhs) -> Self::Output {
-                    let mut result = Self::Output::default();
+                    let mut result = Self::Output::zeros();
                     for i in 0..M {
                         for j in 0..N {
                             result[(i, j)] = result[(i, j)] + (self[i] * other[j]);
@@ -484,12 +488,12 @@ mod matmul_macros {
         };
         (vecmat, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
 
-            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs
+            impl<T: Copy + Zero + Mul<T, Output = T> + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs
             {
                 type Output = $output;
 
                 fn mul(self, other: $rhs) -> Self::Output {
-                    let mut result = Self::Output::default();
+                    let mut result = Self::Output::zeros();
                     for j in 0..N {
                         for i in 0..M {
                             result[i] = result[i] + (self[j] * other[(j, i)]);
@@ -500,11 +504,11 @@ mod matmul_macros {
             }
         };
         (matvec, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs {
+            impl<T: Copy + Zero + Mul<T, Output = T> + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs {
                 type Output = $output;
 
                 fn mul(self, other: $rhs) -> Self::Output {
-                    let mut result = Self::Output::default();
+                    let mut result = Self::Output::zeros();
                     for i in 0..M {
                         for j in 0..N {
                             result[(i, 0)] = result[(i, 0)] + (self[(i, j)] * other[j]);
@@ -515,11 +519,11 @@ mod matmul_macros {
             }
         };
         (matmat, $lhs:ty, $rhs:ty, $output:ty, $($generics:tt)*) => {
-            impl<T: Copy + Mul<T, Output = T> + Default + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs {
+            impl<T: Copy + Zero + Mul<T, Output = T> + Add<T, Output = T>, $($generics)*> Mul<$rhs> for $lhs {
                 type Output = $output;
 
                 fn mul(self, other: $rhs) -> Self::Output {
-                    let mut result = Self::Output::default();
+                    let mut result = Self::Output::zeros();
                     for i in 0..M {
                         for k in 0..N {
                             for j in 0..P {

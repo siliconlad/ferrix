@@ -45,17 +45,17 @@ mod tests {
     #[test]
     fn test_random_float() {
         let v = Vector::<f64, 3>::random();
-        assert!(-1.0 < v[0] && v[0] < 1.0);
-        assert!(-1.0 < v[1] && v[1] < 1.0);
-        assert!(-1.0 < v[2] && v[2] < 1.0);
+        assert!(-1.0 <= v[0] && v[0] <= 1.0);
+        assert!(-1.0 <= v[1] && v[1] <= 1.0);
+        assert!(-1.0 <= v[2] && v[2] <= 1.0);
     }
 
     #[test]
     fn test_random_int() {
         let v = Vector::<i32, 3>::random();
-        assert!(i32::MIN < v[0] && v[0] < i32::MAX);
-        assert!(i32::MIN < v[1] && v[1] < i32::MAX);
-        assert!(i32::MIN < v[2] && v[2] < i32::MAX);
+        assert!(i32::MIN <= v[0] && v[0] <= i32::MAX);
+        assert!(i32::MIN <= v[1] && v[1] <= i32::MAX);
+        assert!(i32::MIN <= v[2] && v[2] <= i32::MAX);
     }
 
     #[test]

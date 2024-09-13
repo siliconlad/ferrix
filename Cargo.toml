@@ -36,7 +36,7 @@ name = "dot_benchmark"
 harness = false
 
 [dependencies]
-funty = "2.0.0"
+num-traits = "0.2.19"
 rand = "0.8.5"
 
 [dev-dependencies]

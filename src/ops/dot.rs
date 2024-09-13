@@ -10,7 +10,8 @@ use crate::matrix_view::MatrixView;
 use crate::matrix_view_mut::MatrixViewMut;
 use crate::matrix_transpose_view::MatrixTransposeView;
 use crate::matrix_transpose_view_mut::MatrixTransposeViewMut;
-use std::ops::{Index, Mul};
+use std::ops::{Index, Mul, Add};
+use num_traits::Zero;
 
 // Generate macros
 generate_dot_macros!();
