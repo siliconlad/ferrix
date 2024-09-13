@@ -8,58 +8,58 @@ pub struct MatrixTransposeViewMut<
     T,
     const R: usize,
     const C: usize,
-    const V_R: usize,
-    const V_C: usize,
+    const VR: usize,
+    const VC: usize,
 > {
     data: &'a mut Matrix<T, R, C>,
     start: (usize, usize), // In terms of the transposed matrix
 }
 
-impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
-    MatrixTransposeViewMut<'a, T, R, C, V_R, V_C>
+impl<'a, T, const R: usize, const C: usize, const VR: usize, const VC: usize>
+    MatrixTransposeViewMut<'a, T, R, C, VR, VC>
 {
     pub(super) fn new(data: &'a mut Matrix<T, R, C>, start: (usize, usize)) -> Self {
-        if start.0 + V_R > C || start.1 + V_C > R {
+        if start.0 + VR > C || start.1 + VC > R {
             panic!("View size out of bounds");
         }
         Self { data, start }
     }
 }
 
-impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
-    MatrixTransposeViewMut<'a, T, R, C, V_R, V_C>
+impl<'a, T, const R: usize, const C: usize, const VR: usize, const VC: usize>
+    MatrixTransposeViewMut<'a, T, R, C, VR, VC>
 {
     #[inline]
     pub fn shape(&self) -> (usize, usize) {
-        (V_R, V_C)
+        (VR, VC)
     }
 
     #[inline]
     pub fn capacity(&self) -> usize {
-        V_R * V_C
+        VR * VC
     }
 
     #[inline]
     pub fn rows(&self) -> usize {
-        V_R
+        VR
     }
 
     #[inline]
     pub fn cols(&self) -> usize {
-        V_C
+        VC
     }
 
-    pub fn t(&'a self) -> MatrixView<'a, T, R, C, V_C, V_R> {
+    pub fn t(&'a self) -> MatrixView<'a, T, R, C, VC, VR> {
         MatrixView::new(self.data, (self.start.1, self.start.0))
     }
 
-    pub fn t_mut(&'a mut self) -> MatrixViewMut<'a, T, R, C, V_C, V_R> {
+    pub fn t_mut(&'a mut self) -> MatrixViewMut<'a, T, R, C, VC, VR> {
         MatrixViewMut::new(self.data, (self.start.1, self.start.0))
     }
 }
 
-impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
-    MatrixTransposeViewMut<'a, T, R, C, V_R, V_C>
+impl<'a, T, const R: usize, const C: usize, const VR: usize, const VC: usize>
+    MatrixTransposeViewMut<'a, T, R, C, VR, VC>
 {
     #[inline]
     fn flip(&self, index: (usize, usize)) -> (usize, usize) {
@@ -73,12 +73,12 @@ impl<'a, T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
 
     #[inline]
     fn validate_index(&self, index: (usize, usize)) -> bool {
-        index.0 < V_R && index.1 < V_C
+        index.0 < VR && index.1 < VC
     }
 }
 
-impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
-    Index<usize> for MatrixTransposeViewMut<'_, T, R, C, V_R, V_C>
+impl<T, const R: usize, const C: usize, const VR: usize, const VC: usize>
+    Index<usize> for MatrixTransposeViewMut<'_, T, R, C, VR, VC>
 {
     type Output = T;
     fn index(&self, index: usize) -> &Self::Output {
@@ -86,29 +86,29 @@ impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
             panic!("Index out of bounds");
         }
 
-        let row_idx = index / V_C;
-        let col_idx = index % V_C;
+        let row_idx = index / VC;
+        let col_idx = index % VC;
         &self.data[self.flip(self.offset((row_idx, col_idx)))]
     }
 }
 
-impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
-    IndexMut<usize> for MatrixTransposeViewMut<'_, T, R, C, V_R, V_C>
+impl<T, const R: usize, const C: usize, const VR: usize, const VC: usize>
+    IndexMut<usize> for MatrixTransposeViewMut<'_, T, R, C, VR, VC>
 {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         if index >= R * C {
             panic!("Index out of bounds");
         }
 
-        let row_idx = index / V_C;
-        let col_idx = index % V_C;
+        let row_idx = index / VC;
+        let col_idx = index % VC;
         let index = self.flip(self.offset((row_idx, col_idx)));
         &mut self.data[index]
     }
 }
 
-impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
-    Index<(usize, usize)> for MatrixTransposeViewMut<'_, T, R, C, V_R, V_C>
+impl<T, const R: usize, const C: usize, const VR: usize, const VC: usize>
+    Index<(usize, usize)> for MatrixTransposeViewMut<'_, T, R, C, VR, VC>
 {
     type Output = T;
     fn index(&self, index: (usize, usize)) -> &Self::Output {
@@ -119,8 +119,8 @@ impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
     }
 }
 
-impl<T, const R: usize, const C: usize, const V_R: usize, const V_C: usize>
-    IndexMut<(usize, usize)> for MatrixTransposeViewMut<'_, T, R, C, V_R, V_C>
+impl<T, const R: usize, const C: usize, const VR: usize, const VC: usize>
+    IndexMut<(usize, usize)> for MatrixTransposeViewMut<'_, T, R, C, VR, VC>
 {
     fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {
         if !self.validate_index(index) {
