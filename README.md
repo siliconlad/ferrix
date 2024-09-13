@@ -3,7 +3,7 @@
     <source media="(prefers-color-scheme: light)" srcset="./assets/ferrix-dark.svg">
     <img src="./assets/ferrix-light.svg" alt="Ferrix Logo" width="300">
   </picture>
-  <p style="padding-top: 5px;">A simple typed matrix library for Rust.</p>
+  <p style="padding-top: 5px;">A simple matrix library for Rust.</p>
 </div>
 
 ## Example
