@@ -3,6 +3,7 @@ use num_traits::{Float, PrimInt, Zero, One};
 use rand::Rng;
 use rand::distributions::{Distribution, Standard, Uniform};
 use rand::distributions::uniform::SampleUniform;
+use std::fmt;
 
 use crate::matrix_transpose_view::MatrixTransposeView;
 use crate::matrix_transpose_view_mut::MatrixTransposeViewMut;
@@ -16,7 +17,7 @@ use crate::row_vector_view::RowVectorView;
 use crate::row_vector_view_mut::RowVectorViewMut;
 use crate::traits::{IntRandom, FloatRandom};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct Matrix<T, const R: usize, const C: usize> {
     data: [[T; C]; R],
 }
@@ -188,6 +189,88 @@ impl<T: Float + Neg<Output = T>> Matrix<T, 3, 3> {
             [T::zero(),      T::zero(),     T::one()],
         ];
         Self { data }
+    }
+}
+
+//////////////////////////////////////
+//  Equality Trait Implementations  //
+//////////////////////////////////////
+
+// Matrix == Matrix
+impl<T: PartialEq, const R: usize, const C: usize> PartialEq for Matrix<T, R, C> {
+    fn eq(&self, other: &Self) -> bool {
+        (0..R).all(|i| (0..C).all(|j| self[(i, j)] == other[(i, j)]))
+    }
+}
+
+// Matrix == MatrixView
+impl<T: PartialEq, const R: usize, const C: usize, const VR: usize, const VC: usize> PartialEq<MatrixView<'_, T, R, C, VR, VC>> for Matrix<T, VR, VC> {
+    fn eq(&self, other: &MatrixView<'_, T, R, C, VR, VC>) -> bool {
+        (0..VR).all(|i| (0..VC).all(|j| self[(i, j)] == other[(i, j)]))
+    }
+}
+
+// Matrix == MatrixViewMut
+impl<T: PartialEq, const R: usize, const C: usize, const VR: usize, const VC: usize> PartialEq<MatrixViewMut<'_, T, R, C, VR, VC>> for Matrix<T, VR, VC> {
+    fn eq(&self, other: &MatrixViewMut<'_, T, R, C, VR, VC>) -> bool {
+        (0..VR).all(|i| (0..VC).all(|j| self[(i, j)] == other[(i, j)]))
+    }
+}
+
+// Matrix == MatrixTransposeView
+impl<T: PartialEq, const R: usize, const C: usize, const VR: usize, const VC: usize> PartialEq<MatrixTransposeView<'_, T, R, C, VR, VC>> for Matrix<T, VR, VC> {
+    fn eq(&self, other: &MatrixTransposeView<'_, T, R, C, VR, VC>) -> bool {
+        (0..VR).all(|i| (0..VC).all(|j| self[(i, j)] == other[(i, j)]))
+    }
+}
+
+// Matrix == MatrixTransposeViewMut
+impl<T: PartialEq, const R: usize, const C: usize, const VR: usize, const VC: usize> PartialEq<MatrixTransposeViewMut<'_, T, R, C, VR, VC>> for Matrix<T, VR, VC> {
+    fn eq(&self, other: &MatrixTransposeViewMut<'_, T, R, C, VR, VC>) -> bool {
+        (0..VR).all(|i| (0..VC).all(|j| self[(i, j)] == other[(i, j)]))
+    }
+}
+
+impl<T: Eq, const R: usize, const C: usize> Eq for Matrix<T, R, C> {}
+
+/////////////////////////////////////
+/////////////////////////////////////
+//  Display Trait Implementations  //
+/////////////////////////////////////
+
+impl<T: fmt::Display, const R: usize, const C: usize> fmt::Display for Matrix<T, R, C> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if f.alternate() {
+            write!(f, "Matrix(")?;
+        }
+
+        write!(f, "[")?;
+        for i in 0..R {
+            if i > 0 {
+                write!(f, " ")?;
+                if f.alternate() {
+                    write!(f, "       ")?;
+                }
+            }
+            write!(f, "[")?;
+            for j in 0..C {
+                write!(f, "{}", self[(i, j)])?;
+                if j < C - 1 {
+                    write!(f, ", ")?;
+                }
+            }
+            write!(f, "]")?;
+            if i < R - 1 {
+                writeln!(f)?;
+            }
+        }
+        write!(f, "]")?;
+
+        if f.alternate() {
+            write!(f, ", dtype={})", std::any::type_name::<T>())?;
+        }
+
+        Ok(())
     }
 }
 

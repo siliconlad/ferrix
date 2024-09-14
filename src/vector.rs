@@ -3,6 +3,7 @@ use rand::Rng;
 use rand::distributions::{Distribution, Standard, Uniform};
 use rand::distributions::uniform::SampleUniform;
 use std::default::Default;
+use std::fmt;
 use std::ops::{Index, IndexMut};
 
 use crate::traits::{DotProduct, IntRandom, FloatRandom};
@@ -16,7 +17,7 @@ use crate::matrix_view_mut::MatrixViewMut;
 use crate::matrix_transpose_view::MatrixTransposeView;
 use crate::matrix_transpose_view_mut::MatrixTransposeViewMut;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct Vector<T, const N: usize> {
     data: [T; N]
 }
@@ -143,6 +144,67 @@ impl<T, const N: usize> Vector<T, N> {
 impl<T: Float, const N: usize> Vector<T, N> {
     pub fn magnitude(&self) -> T {
         self.dot(self).sqrt()
+    }
+}
+
+////////////////////////////////
+//  Equality Implementations  //
+////////////////////////////////
+
+// Vector == Vector
+impl<T: PartialEq, const N: usize> PartialEq for Vector<T, N> {
+    fn eq(&self, other: &Self) -> bool {
+        self.data == other.data
+    }
+}
+
+// Vector == VectorView
+impl<T: PartialEq, const N: usize, V: Index<usize, Output = T>, const A: usize> PartialEq<VectorView<'_, V, T, A, N>> for Vector<T, N> {
+    fn eq(&self, other: &VectorView<'_, V, T, A, N>) -> bool {
+        (0..N).all(|i| self[i] == other[i])
+    }
+}
+
+// Vector == VectorViewMut
+impl<T: PartialEq, const N: usize, V: Index<usize, Output = T>, const A: usize> PartialEq<VectorViewMut<'_, V, T, A, N>> for Vector<T, N> {
+    fn eq(&self, other: &VectorViewMut<'_, V, T, A, N>) -> bool {
+        (0..N).all(|i| self[i] == other[i])
+    }
+}
+
+impl<T: Eq, const N: usize> Eq for Vector<T, N> {}
+
+/////////////////////////////////////
+//  Display Trait Implementations  //
+/////////////////////////////////////
+
+impl<T: fmt::Display, const N: usize> fmt::Display for Vector<T, N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if f.alternate() {
+            write!(f, "Vector(")?;
+        }
+
+        write!(f, "[")?;
+        for i in 0..N-1 {
+            if i > 0 {
+                write!(f, " ")?;
+                if f.alternate() {
+                    write!(f, "       ")?;
+                }
+            }
+            writeln!(f, "{}", self[i])?;
+        }
+        if f.alternate() {
+            write!(f, "       ")?;
+        }
+
+        write!(f, " {}]", self[N-1])?;
+
+        if f.alternate() {
+            write!(f, ", dtype={})", std::any::type_name::<T>())?;
+        }
+
+        Ok(())
     }
 }
 

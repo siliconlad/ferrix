@@ -36,6 +36,72 @@ mod tests {
     }
 
     #[test]
+    fn test_row_vector_view_eq() {
+        let v1 = RowVector::from([2.0, 3.0, 3.0]);
+        let v2 = RowVector::from([2.0, 3.0]);
+        let view1 = v1.view::<2>(0).unwrap();
+        assert_eq!(view1, v2);
+    }
+
+    #[test]
+    fn test_row_vector_view_ne() {
+        let v1 = RowVector::from([1, 2, 3]);
+        let v2 = RowVector::from([1, 2]);
+        let view1 = v1.view::<2>(1).unwrap();
+        assert_ne!(view1, v2);
+    }
+
+    #[test]
+    fn test_row_vector_view_eq_view() {
+        let v1 = RowVector::from([1, 2, 3]);
+        let v2 = RowVector::from([1, 2, 3, 4]);
+        let view1 = v1.view::<2>(1).unwrap();
+        let view2 = v2.view::<2>(1).unwrap();
+        assert_eq!(view1, view2);
+    }
+
+    #[test]
+    fn test_row_vector_view_ne_view() {
+        let v1 = RowVector::from([1, 2, 4]);
+        let v2 = RowVector::from([1, 2, 3, 4]);
+        let view1 = v1.view::<2>(1).unwrap();
+        let view2 = v2.view::<2>(1).unwrap();
+        assert_ne!(view1, view2);
+    }
+
+    #[test]
+    fn test_row_vector_view_eq_view_mut() {
+        let v1 = RowVector::from([1, 2, 3]);
+        let v2 = RowVector::from([1, 2, 3, 4]);
+        let view1 = v1.view::<2>(1).unwrap();
+        let view2 = v2.view::<2>(1).unwrap();
+        assert_eq!(view1, view2);
+    }
+    
+    #[test]
+    fn test_row_vector_view_ne_view_mut() {
+        let v1 = RowVector::from([1, 2, 4]);
+        let v2 = RowVector::from([1, 2, 3, 4]);
+        let view1 = v1.view::<2>(1).unwrap();
+        let view2 = v2.view::<2>(1).unwrap();
+        assert_ne!(view1, view2);
+    }
+
+    #[test]
+    fn test_row_vector_view_display() {
+        let v = RowVector::from([1.0, 2.0, 3.0, 4.0]);
+        let view = v.view::<3>(1).unwrap();
+        assert_eq!(format!("{}", view), "[2, 3, 4]");
+    }
+
+    #[test]
+    fn test_row_vector_view_display_alternate() {
+        let v = RowVector::from([1.0, 2.0, 3.0, 4.0]);
+        let view = v.view::<3>(1).unwrap();
+        assert_eq!(format!("{:#}", view), "RowVectorView([2, 3, 4], dtype=f64)");
+    }
+
+    #[test]
     fn test_row_vector_view_index_usize() {
         let v = RowVector::from([1, 2, 3, 4, 5]);
         let view = v.view::<3>(1).unwrap();
