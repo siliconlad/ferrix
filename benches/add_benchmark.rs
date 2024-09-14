@@ -5,11 +5,17 @@ fn add_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("Add");
 
     // Vector + Scalar
+    // group.bench_function("Vector + Scalar", |b| {
+    //     b.iter(|| {
+    //         let v1 = Vector::<i32, 100>::random();
+    //         v1 + black_box(1)
+    //     });
+    // });
     group.bench_function("Vector + Scalar", |b| {
-        b.iter(|| {
-            let v1 = Vector::<i32, 100>::random();
-            v1 + black_box(1)
-        });
+        b.iter_with_setup(
+            || Vector::<i32, 100>::random(),
+            |v| v + black_box(1)
+        );
     });
 
     // Vector + Vector

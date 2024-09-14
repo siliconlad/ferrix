@@ -1,8 +1,10 @@
 use num_traits::Float;
 use std::ops::{Index, IndexMut};
 use std::marker::PhantomData;
-
+use std::fmt;
 use crate::traits::DotProduct;
+use crate::row_vector::RowVector;
+use crate::row_vector_view::RowVectorView;
 use crate::vector_view::VectorView;
 use crate::vector_view_mut::VectorViewMut;
 
@@ -46,6 +48,63 @@ impl<'a, V, T, const N: usize, const M: usize> RowVectorViewMut<'a, V, T, N, M> 
         VectorViewMut::new(self.data, self.start)
     }
 }
+
+//////////////////////////////////////
+//  Equality Trait Implementations  //
+//////////////////////////////////////
+
+// RowVectorViewMut == RowVector
+impl<T: PartialEq, const N: usize, V: Index<usize, Output = T>, const A: usize> PartialEq<RowVector<T, N>> for RowVectorViewMut<'_, V, T, A, N> {
+    fn eq(&self, other: &RowVector<T, N>) -> bool {
+        (0..N).all(|i| self[i] == other[i])
+    }
+}
+
+// RowVectorViewMut == RowVectorView
+impl<T: PartialEq, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A1: usize, const A2: usize, const N: usize> 
+PartialEq<RowVectorView<'_, V2, T, A2, N>> for RowVectorViewMut<'_, V1, T, A1, N> {
+    fn eq(&self, other: &RowVectorView<'_, V2, T, A2, N>) -> bool {
+        (0..N).all(|i| self[i] == other[i])
+    }
+}
+
+// RowVectorViewMut == RowVectorViewMut
+impl<T: PartialEq, V1: Index<usize, Output = T>, V2: Index<usize, Output = T>, const A1: usize, const A2: usize, const N: usize> 
+PartialEq<RowVectorViewMut<'_, V2, T, A2, N>> for RowVectorViewMut<'_, V1, T, A1, N> {
+    fn eq(&self, other: &RowVectorViewMut<'_, V2, T, A2, N>) -> bool {
+        (0..N).all(|i| self[i] == other[i])
+    }
+}
+
+impl<'a, V: Index<usize, Output = T>, T: Eq, const N: usize, const M: usize> Eq for RowVectorViewMut<'a, V, T, N, M> {}
+
+/////////////////////////////////////
+//  Display Trait Implementations  //
+/////////////////////////////////////
+
+impl<'a, V: Index<usize, Output = T>, T: fmt::Display, const N: usize, const M: usize> fmt::Display for RowVectorViewMut<'a, V, T, N, M> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if f.alternate() {
+            write!(f, "RowVectorViewMut(")?;
+        }
+
+        write!(f, "[")?;
+        for i in 0..M-1 {
+            write!(f, "{}, ", self[i])?;
+        }
+        write!(f, "{}]", self[M-1])?;
+
+        if f.alternate() {
+            write!(f, ", dtype={})", std::any::type_name::<T>())?;
+        }
+
+        Ok(())
+    }
+}
+
+///////////////////////////////////
+//  Index Trait Implementations  //
+///////////////////////////////////
 
 impl<'a, V: Index<usize, Output = T>, T: Float, const N: usize, const M: usize> RowVectorViewMut<'a, V, T, N, M> {
     pub fn magnitude(&self) -> T {

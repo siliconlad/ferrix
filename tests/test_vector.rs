@@ -155,6 +155,64 @@ mod tests {
     }
 
     #[test]
+    fn test_eq() {
+        let v1 = Vector::from([1.0, 2.0, 3.0]);
+        let v2 = Vector::from([1.0, 2.0, 3.0]);
+        assert_eq!(v1, v2);
+    }
+
+    #[test]
+    fn test_ne() {
+        let v1 = Vector::from([1.0, 2.0, 3.0]);
+        let v2 = Vector::from([4.0, 5.0, 6.0]);
+        assert_ne!(v1, v2);
+    }
+
+    #[test]
+    fn test_eq_view() {
+        let v1 = Vector::from([1.0, 2.0, 3.0]);
+        let v2 = Vector::from([1.0, 2.0, 3.0, 4.0]);
+        let view2 = v2.view::<3>(0).unwrap();
+        assert_eq!(v1, view2);
+    }
+
+    #[test]
+    fn test_ne_view() {
+        let v1 = Vector::from([1.0, 2.0, 3.0]);
+        let v2 = Vector::from([1.0, 2.0, 3.0, 4.0]);
+        let view2 = v2.view::<3>(1).unwrap();
+        assert_ne!(v1, view2);
+    }
+
+    #[test]
+    fn test_eq_view_mut() {
+        let v1 = Vector::from([1.0, 2.0, 3.0]);
+        let mut v2 = Vector::from([1.0, 2.0, 3.0, 4.0]);
+        let view2 = v2.view_mut::<3>(0).unwrap();
+        assert_eq!(v1, view2);
+    }
+
+    #[test]
+    fn test_ne_view_mut() {
+        let v1 = Vector::from([1.0, 2.0, 3.0]);
+        let mut v2 = Vector::from([1.0, 2.0, 3.0, 4.0]);
+        let view2 = v2.view_mut::<3>(1).unwrap();
+        assert_ne!(v1, view2);
+    }
+
+    #[test]
+    fn test_display() {
+        let v = Vector::<f64, 3>::from([1.0, 2.0, 3.0]);
+        assert_eq!(format!("{}", v), "[1\n 2\n 3]");
+    }
+
+    #[test]
+    fn test_display_alternate() {
+        let v = Vector::<f64, 3>::from([1.0, 2.0, 3.0]);
+        assert_eq!(format!("{:#}", v), "Vector([1\n        2\n        3], dtype=f64)");
+    }
+
+    #[test]
     fn test_index() {
         let v = Vector::from([1.0, 2.0, 3.0]);
         assert_eq!(v[0], 1.0);

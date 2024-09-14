@@ -43,6 +43,72 @@ mod tests {
     }
 
     #[test]
+    fn test_vector_view_eq() {
+        let v1 = Vector::from([2.0, 3.0, 3.0]);
+        let v2 = Vector::from([2.0, 3.0]);
+        let view1 = v1.view::<2>(0).unwrap();
+        assert_eq!(view1, v2);
+    }
+
+    #[test]
+    fn test_vector_view_ne() {
+        let v1 = Vector::from([1, 2, 3]);
+        let v2 = Vector::from([1, 2]);
+        let view1 = v1.view::<2>(1).unwrap();
+        assert_ne!(view1, v2);
+    }
+
+    #[test]
+    fn test_vector_view_eq_view() {
+        let v1 = Vector::from([1, 2, 3]);
+        let v2 = Vector::from([1, 2, 3, 4]);
+        let view1 = v1.view::<2>(1).unwrap();
+        let view2 = v2.view::<2>(1).unwrap();
+        assert_eq!(view1, view2);
+    }
+
+    #[test]
+    fn test_vector_view_ne_view() {
+        let v1 = Vector::from([1, 2, 4]);
+        let v2 = Vector::from([1, 2, 3, 4]);
+        let view1 = v1.view::<2>(1).unwrap();
+        let view2 = v2.view::<2>(1).unwrap();
+        assert_ne!(view1, view2);
+    }
+
+    #[test]
+    fn test_vector_view_eq_view_mut() {
+        let v1 = Vector::from([1, 2, 3]);
+        let v2 = Vector::from([1, 2, 3, 4]);
+        let view1 = v1.view::<2>(1).unwrap();
+        let view2 = v2.view::<2>(1).unwrap();
+        assert_eq!(view1, view2);
+    }
+    
+    #[test]
+    fn test_vector_view_ne_view_mut() {
+        let v1 = Vector::from([1, 2, 4]);
+        let v2 = Vector::from([1, 2, 3, 4]);
+        let view1 = v1.view::<2>(1).unwrap();
+        let view2 = v2.view::<2>(1).unwrap();
+        assert_ne!(view1, view2);
+    }
+
+    #[test]
+    fn test_vector_view_display() {
+        let v = Vector::from([1.0, 2.0, 3.0]);
+        let view = v.view::<2>(1).unwrap();
+        assert_eq!(format!("{}", view), "[2\n 3]");
+    }
+
+    #[test]
+    fn test_vector_view_display_alternate() {
+        let v = Vector::from([1.0, 2.0, 3.0]);
+        let view = v.view::<2>(1).unwrap();
+        assert_eq!(format!("{:#}", view), "VectorView([2\n            3], dtype=f64)");
+    }
+
+    #[test]
     fn test_vector_view_indexing_usize() {
         let v = Vector::<i32, 5>::from([1, 2, 3, 4, 5]);
         let view = v.view::<3>(1).unwrap();

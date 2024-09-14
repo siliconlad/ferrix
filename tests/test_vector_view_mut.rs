@@ -72,6 +72,72 @@ mod tests {
     }
 
     #[test]
+    fn test_vector_view_mut_eq() {
+        let mut v1 = Vector::from([2.0, 3.0, 4.0]);
+        let v2 = Vector::from([2.0, 3.0]);
+        let view_mut1 = v1.view_mut::<2>(0).unwrap();
+        assert_eq!(view_mut1, v2);
+    }
+
+    #[test]
+    fn test_vector_view_mut_ne() {
+        let mut v1 = Vector::from([2.0, 3.0, 4.0]);
+        let v2 = Vector::from([2.0, 4.0]);
+        let view_mut1 = v1.view_mut::<2>(0).unwrap();
+        assert_ne!(view_mut1, v2);
+    }
+
+    #[test]
+    fn test_vector_view_mut_eq_view() {
+        let mut v1 = Vector::from([2.0, 3.0, 3.0, 4.0]);
+        let v2 = Vector::from([3.0, 2.0, 3.0]);
+        let view_mut1 = v1.view_mut::<2>(0).unwrap();
+        let view2 = v2.view::<2>(1).unwrap();
+        assert_eq!(view_mut1, view2);
+    }
+
+    #[test]
+    fn test_vector_view_mut_ne_view() {
+        let mut v1 = Vector::from([2.0, 3.0, 3.0, 4.0]);
+        let v2 = Vector::from([3.0, 2.0, 4.0]);
+        let view_mut1 = v1.view_mut::<2>(0).unwrap();
+        let view2 = v2.view::<2>(1).unwrap();
+        assert_ne!(view_mut1, view2);
+    }
+
+    #[test]
+    fn test_vector_view_mut_eq_view_mut() {
+        let mut v1 = Vector::from([2.0, 3.0, 3.0, 4.0]);
+        let mut v2 = Vector::from([3.0, 2.0, 3.0]);
+        let view_mut1 = v1.view_mut::<2>(0).unwrap();
+        let view_mut2 = v2.view_mut::<2>(1).unwrap();
+        assert_eq!(view_mut1, view_mut2);
+    }
+
+    #[test]
+    fn test_vector_view_mut_ne_view_mut() {
+        let mut v1 = Vector::from([1.0, 2.0, 3.0, 4.0]);
+        let mut v2 = Vector::from([3.0, 2.0, 1.0]);
+        let view_mut1 = v1.view_mut::<2>(1).unwrap();
+        let view_mut2 = v2.view_mut::<2>(1).unwrap();
+        assert_ne!(view_mut1, view_mut2);
+    }
+
+    #[test]
+    fn test_vector_view_mut_display() {
+        let mut v = Vector::from([1.0, 2.0, 3.0]);
+        let view_mut = v.view_mut::<2>(1).unwrap();
+        assert_eq!(format!("{}", view_mut), "[2\n 3]");
+    }
+
+    #[test]
+    fn test_vector_view_mut_display_alternate() {
+        let mut v = Vector::from([1.0, 2.0, 3.0]);
+        let view_mut = v.view_mut::<2>(1).unwrap();
+        assert_eq!(format!("{:#}", view_mut), "VectorViewMut([2\n               3], dtype=f64)");
+    }
+
+    #[test]
     fn test_vector_view_mut_index_usize() {
         let mut v = Vector::from([1, 2, 3, 4, 5]);
         let view_mut = v.view_mut::<3>(1).unwrap();

@@ -3,6 +3,7 @@ use std::ops::{Index, IndexMut};
 use rand::Rng;
 use rand::distributions::{Distribution, Standard, Uniform};
 use rand::distributions::uniform::SampleUniform;
+use std::fmt;
 
 use crate::vector_view::VectorView;
 use crate::vector_view_mut::VectorViewMut;
@@ -15,7 +16,7 @@ use crate::matrix_transpose_view::MatrixTransposeView;
 use crate::matrix_transpose_view_mut::MatrixTransposeViewMut;
 use crate::traits::{DotProduct, IntRandom, FloatRandom};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct RowVector<T, const N: usize> {
     data: [T; N]
 }
@@ -138,6 +139,57 @@ impl<T, const N: usize> RowVector<T, N> {
 impl<T: Float, const N: usize> RowVector<T, N> {
     pub fn magnitude(&self) -> T {
         self.dot(self).sqrt()
+    }
+}
+
+////////////////////////////////
+//  Equality Implementations  //
+////////////////////////////////
+
+// RowVector == RowVector
+impl<T: PartialEq, const N: usize> PartialEq for RowVector<T, N> {
+    fn eq(&self, other: &Self) -> bool {
+        self.data == other.data
+    }
+}
+
+// RowVector == RowVectorView
+impl<T: PartialEq, const N: usize, V: Index<usize, Output = T>, const A: usize> PartialEq<RowVectorView<'_, V, T, A, N>> for RowVector<T, N> {
+    fn eq(&self, other: &RowVectorView<'_, V, T, A, N>) -> bool {
+        (0..N).all(|i| self[i] == other[i])
+    }
+}
+
+// RowVector == RowVectorViewMut
+impl<T: PartialEq, const N: usize, V: Index<usize, Output = T>, const A: usize> PartialEq<RowVectorViewMut<'_, V, T, A, N>> for RowVector<T, N> {
+    fn eq(&self, other: &RowVectorViewMut<'_, V, T, A, N>) -> bool {
+        (0..N).all(|i| self[i] == other[i])
+    }
+}
+
+impl<T: Eq, const N: usize> Eq for RowVector<T, N> {}
+
+/////////////////////////////////////
+//  Display Trait Implementations  //
+/////////////////////////////////////
+
+impl<T: fmt::Display, const N: usize> fmt::Display for RowVector<T, N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if f.alternate() {
+            write!(f, "RowVector(")?;
+        }
+
+        write!(f, "[")?;
+        for i in 0..N-1 {
+            write!(f, "{}, ", self[i])?;
+        }
+        write!(f, "{}]", self[N-1])?;
+
+        if f.alternate() {
+            write!(f, ", dtype={})", std::any::type_name::<T>())?;
+        }
+
+        Ok(())
     }
 }
 

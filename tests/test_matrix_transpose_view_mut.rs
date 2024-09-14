@@ -39,6 +39,108 @@ mod tests {
     }
 
     #[test]
+    fn test_matrix_transpose_view_mut_eq() {
+        let mut matrix1 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let matrix2 = Matrix::from([[1, 4], [2, 5], [3, 6]]);
+        let view1 = matrix1.t_mut();
+        assert_eq!(view1, matrix2);
+    }
+
+    #[test]
+    fn test_matrix_transpose_view_mut_ne() {
+        let mut matrix1 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let matrix2 = Matrix::from([[1, 4], [2, 5], [3, 7]]);
+        let view1 = matrix1.t_mut();
+        assert_ne!(view1, matrix2);
+    }
+
+    #[test]
+    fn test_matrix_transpose_view_mut_eq_view() {
+        let mut matrix1 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let matrix2 = Matrix::from([[1, 4, 7], [2, 5, 8], [3, 6, 9]]);
+        let view1 = matrix1.t_mut();
+        let view2 = matrix2.view::<3, 2>((0, 0)).unwrap();
+        assert_eq!(view1, view2);
+    }
+        
+    #[test]
+    fn test_matrix_transpose_view_mut_ne_view() {
+        let mut matrix1 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let matrix2 = Matrix::from([[1, 4, 7], [2, 5, 8], [3, 7, 9]]);
+        let view1 = matrix1.t_mut();
+        let view2 = matrix2.view::<3, 2>((0, 0)).unwrap();
+        assert_ne!(view1, view2);
+    }
+
+    #[test]
+    fn test_matrix_transpose_view_mut_eq_view_mut() {
+        let mut matrix1 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix2 = Matrix::from([[1, 4, 7], [2, 5, 8], [3, 6, 9]]);
+        let view1 = matrix1.t_mut();
+        let view2 = matrix2.view_mut::<3, 2>((0, 0)).unwrap();
+        assert_eq!(view1, view2);
+    }
+    
+    #[test]
+    fn test_matrix_transpose_view_mut_ne_view_mut() {
+        let mut matrix1 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix2 = Matrix::from([[1, 4, 7], [2, 5, 8], [3, 7, 9]]);
+        let view1 = matrix1.t_mut();
+        let view2 = matrix2.view_mut::<3, 2>((0, 0)).unwrap();
+        assert_ne!(view1, view2);
+    }
+
+    #[test]
+    fn test_matrix_transpose_view_mut_eq_transpose_view() {
+        let mut matrix1 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let matrix2 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let view1 = matrix1.t_mut();
+        let view2 = matrix2.t();
+        assert_eq!(view1, view2);
+    }
+
+    #[test]
+    fn test_matrix_transpose_view_mut_ne_transpose_view() {
+        let mut matrix1 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let matrix2 = Matrix::from([[1, 2, 3], [4, 5, 7]]);
+        let view1 = matrix1.t_mut();
+        let view2 = matrix2.t();
+        assert_ne!(view1, view2);
+    }
+    
+    #[test]
+    fn test_matrix_transpose_view_mut_eq_transpose_view_mut() {
+        let mut matrix1 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix2 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let view1 = matrix1.t_mut();
+        let view2 = matrix2.t_mut();
+        assert_eq!(view1, view2);
+    }
+
+    #[test]
+    fn test_matrix_transpose_view_mut_ne_transpose_view_mut() {
+        let mut matrix1 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let mut matrix2 = Matrix::from([[1, 2, 3], [4, 5, 7]]);
+        let view1 = matrix1.t_mut();
+        let view2 = matrix2.t_mut();
+        assert_ne!(view1, view2);
+    }
+
+    #[test]
+    fn test_matrix_transpose_view_mut_display() {
+        let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let view = matrix.t_mut();
+        assert_eq!(format!("{}", view), "[[1, 4]\n [2, 5]\n [3, 6]]");
+    }
+
+    #[test]
+    fn test_matrix_transpose_view_mut_display_alternate() {
+        let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+        let view = matrix.t_mut();
+        assert_eq!(format!("{:#}", view), "MatrixTransposeViewMut([[1, 4]\n                        [2, 5]\n                        [3, 6]], dtype=i32)");
+    }
+
+    #[test]
     fn test_matrix_transpose_view_mut_index() {
         let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let view = matrix.t_mut();
