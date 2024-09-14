@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::Matrix;
+    use ferrix::{Matrix, MatrixTransposeViewMut};
 
     #[test]
     fn test_matrix_transpose_view_mut_shape() {
@@ -222,5 +222,17 @@ mod tests {
         let mut matrix = Matrix::from([[1, 2], [3, 4]]);
         let mut view = matrix.t_mut();
         view[4] = 10; // This should panic
+    }
+
+    #[test]
+    fn test_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<MatrixTransposeViewMut<'_, i32, 3, 3, 2, 2>>();
+    }
+
+    #[test]
+    fn test_not_sync() {
+        fn assert_not_sync<T: Sync>() {}
+        assert_not_sync::<MatrixTransposeViewMut<'_, i32, 3, 3, 2, 2>>();
     }
 }

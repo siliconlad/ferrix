@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::RowVector;
+    use ferrix::{RowVector, RowVectorView};
 
     #[test]
     fn test_row_vector_view_shape() {
@@ -141,5 +141,17 @@ mod tests {
         let v = RowVector::from([1, 2, 3, 4, 5]);
         let view = v.view::<3>(1).unwrap();
         assert_eq!(view[(0, 4)], 6);
+    }
+
+    #[test]
+    fn test_row_vector_view_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<RowVectorView<'_, RowVector<i32, 3>, i32, 3, 3>>();
+    }
+
+    #[test]
+    fn test_row_vector_view_sync() {
+        fn assert_sync<T: Sync>() {}
+        assert_sync::<RowVectorView<'_, RowVector<i32, 3>, i32, 3, 3>>();
     }
 }
