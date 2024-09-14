@@ -305,4 +305,16 @@ mod tests {
         let v: Vector<f64, 3> = Vector::from(m.t_mut());
         assert_eq!(v, Vector::from([1.0, 2.0, 3.0]));
     }
+
+    #[test]
+    fn test_vector_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<Vector<i32, 3>>();
+    }
+
+    #[test]
+    fn test_vector_sync() {
+        fn assert_sync<T: Sync>() {}
+        assert_sync::<Vector<i32, 3>>();
+    }
 }

@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, RowVector};
+    use ferrix::{Vector, RowVector, VectorViewMut};
 
     #[test]
     fn test_vector_view_mut_shape() {
@@ -215,5 +215,17 @@ mod tests {
         let mut view_mut = v.view_mut::<3>(1).unwrap();
         assert_eq!(view_mut[(0, 0)], 2);
         view_mut[(0, 1)] = 10;
+    }
+
+    #[test]
+    fn test_vector_view_mut_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<VectorViewMut<'_, Vector<i32, 3>, i32, 3, 3>>();
+    }
+
+    #[test]
+    fn test_vector_view_mut_not_sync() {
+        fn assert_not_sync<T: Sync>() {}
+        assert_not_sync::<VectorViewMut<'_, Vector<i32, 3>, i32, 3, 3>>();
     }
 }

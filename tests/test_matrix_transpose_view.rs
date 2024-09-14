@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::Matrix;
+    use ferrix::{Matrix, MatrixTransposeView};
 
     #[test]
     fn test_matrix_transpose_view_shape() {
@@ -162,5 +162,17 @@ mod tests {
         let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let view = matrix.t();
         let _ = view[(0, 2)];
+    }
+
+    #[test]
+    fn test_matrix_transpose_view_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<MatrixTransposeView<'_, i32, 3, 3, 3, 3>>();
+    }
+
+    #[test]
+    fn test_matrix_transpose_view_sync() {
+        fn assert_sync<T: Sync>() {}
+        assert_sync::<MatrixTransposeView<'_, i32, 3, 3, 3, 3>>();
     }
 }

@@ -303,5 +303,17 @@ mod tests {
         let v: RowVector<f64, 3> = RowVector::from(m.t_mut());
         assert_eq!(v, RowVector::from([1.0, 2.0, 3.0]));
     }
+
+    #[test]
+    fn test_row_vector_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<RowVector<i32, 3>>();
+    }
+
+    #[test]
+    fn test_row_vector_sync() {
+        fn assert_sync<T: Sync>() {}
+        assert_sync::<RowVector<i32, 3>>();
+    }
 }
 

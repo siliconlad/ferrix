@@ -505,4 +505,16 @@ mod tests {
         let new_matrix: Matrix<_, 3, 2> = Matrix::from(t_view);
         assert_eq!(new_matrix, Matrix::from([[1, 4], [2, 5], [3, 6]]));
     }
+
+    #[test]
+    fn test_matrix_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<Matrix<i32, 3, 3>>();
+    }
+
+    #[test]
+    fn test_matrix_sync() {
+        fn assert_sync<T: Sync>() {}
+        assert_sync::<Matrix<i32, 3, 3>>();
+    }
 }

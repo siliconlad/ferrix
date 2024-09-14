@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::Matrix;
+    use ferrix::{Matrix, MatrixView};
 
     #[test]
     fn test_matrix_view_shape() {
@@ -163,4 +163,15 @@ mod tests {
         let _ = view[4]; // This should panic
     }
 
+    #[test]
+    fn test_matrix_view_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<MatrixView<'_, i32, 3, 3, 3, 3>>();
+    }
+
+    #[test]
+    fn test_matrix_view_sync() {
+        fn assert_sync<T: Sync>() {}
+        assert_sync::<MatrixView<'_, i32, 3, 3, 3, 3>>();
+    }
 }
