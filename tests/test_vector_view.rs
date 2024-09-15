@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, RowVector, VectorView};
+    use ferrix::{RowVector, Vector, VectorView};
 
     #[test]
     fn test_vector_view_shape() {
@@ -84,7 +84,7 @@ mod tests {
         let view2 = v2.view::<2>(1).unwrap();
         assert_eq!(view1, view2);
     }
-    
+
     #[test]
     fn test_vector_view_ne_view_mut() {
         let v1 = Vector::from([1, 2, 4]);
@@ -105,7 +105,10 @@ mod tests {
     fn test_vector_view_display_alternate() {
         let v = Vector::from([1.0, 2.0, 3.0]);
         let view = v.view::<2>(1).unwrap();
-        assert_eq!(format!("{:#}", view), "VectorView([2\n            3], dtype=f64)");
+        assert_eq!(
+            format!("{:#}", view),
+            "VectorView([2\n            3], dtype=f64)"
+        );
     }
 
     #[test]

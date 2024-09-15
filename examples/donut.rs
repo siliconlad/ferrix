@@ -1,17 +1,17 @@
 // Based on https://www.a1k0n.net/2011/07/20/donut-math.html
+use ferrix::{DotProduct, Matrix, Vector3};
 use std::f64::consts::PI;
-use ferrix::{Vector3, Matrix, DotProduct};
 
 // Window size
 const WIDTH: usize = 80;
 const HEIGHT: usize = 30;
 
 // Torus parameters
-const R1: f64 = 1.0;  // Radius of inner hole
-const R2: f64 = 2.0;  // Radius of tube
+const R1: f64 = 1.0; // Radius of inner hole
+const R2: f64 = 2.0; // Radius of tube
 const K1_X: f64 = 37.5;
 const K1_Y: f64 = 18.75;
-const K2: f64 = 5.0;  // Distance to torus
+const K2: f64 = 5.0; // Distance to torus
 
 // Render spacing
 const THETA_SPACING: f64 = 0.07;
@@ -38,7 +38,7 @@ fn render_frame(theta_a: f64, theta_b: f64) {
             let circle = circle + Vector3::from([R2, 0.0, 0.0]);
             let point = &rot_b * &rot_a * &rot_phi * &circle;
 
-            let ooz = 1.0 / (point[2] + K2);  // One over z (larger = closer)
+            let ooz = 1.0 / (point[2] + K2); // One over z (larger = closer)
 
             // Project 3D point to 2D
             let xp: usize = ((WIDTH as f64 / 2.0) + (point[0] * ooz * K1_X)) as usize;
@@ -49,7 +49,8 @@ fn render_frame(theta_a: f64, theta_b: f64) {
             let normal = &rot_b * &rot_a * &rot_phi * &n_point;
             let luminance: f64 = Vector3::from([0.0, 1.0, -1.0]).dot(&normal);
 
-            if luminance > 0.0 {  // Only render points facing the viewer
+            // Only render points facing the viewer
+            if luminance > 0.0 {
                 if ooz > zbuffer[(yp, xp)] {
                     zbuffer[(yp, xp)] = ooz;
                     let l_index = (luminance * 8.0) as usize;

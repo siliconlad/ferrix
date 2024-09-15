@@ -113,7 +113,10 @@ mod tests {
     fn test_row_vector_view_display_alternate() {
         let mut v = RowVector::from([1.0, 2.0, 3.0, 4.0]);
         let view = v.view_mut::<3>(1).unwrap();
-        assert_eq!(format!("{:#}", view), "RowVectorViewMut([2, 3, 4], dtype=f64)");
+        assert_eq!(
+            format!("{:#}", view),
+            "RowVectorViewMut([2, 3, 4], dtype=f64)"
+        );
     }
 
     #[test]
@@ -166,7 +169,6 @@ mod tests {
         let mut v = RowVector::from([1, 2, 3, 4, 5]);
         let view_mut = v.view_mut::<3>(1).unwrap();
         assert_eq!(view_mut[(1, 0)], 2);
-
     }
 
     #[test]

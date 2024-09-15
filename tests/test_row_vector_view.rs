@@ -77,7 +77,7 @@ mod tests {
         let view2 = v2.view::<2>(1).unwrap();
         assert_eq!(view1, view2);
     }
-    
+
     #[test]
     fn test_row_vector_view_ne_view_mut() {
         let v1 = RowVector::from([1, 2, 4]);

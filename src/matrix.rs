@@ -1,21 +1,21 @@
-use std::ops::{Index, IndexMut, Neg};
-use num_traits::{Float, PrimInt, Zero, One};
-use rand::Rng;
-use rand::distributions::{Distribution, Standard, Uniform};
+use num_traits::{Float, One, PrimInt, Zero};
 use rand::distributions::uniform::SampleUniform;
+use rand::distributions::{Distribution, Standard, Uniform};
+use rand::Rng;
 use std::fmt;
+use std::ops::{Index, IndexMut, Neg};
 
 use crate::matrix_transpose_view::MatrixTransposeView;
 use crate::matrix_transpose_view_mut::MatrixTransposeViewMut;
 use crate::matrix_view::MatrixView;
 use crate::matrix_view_mut::MatrixViewMut;
-use crate::vector::Vector;
-use crate::vector_view::VectorView;
-use crate::vector_view_mut::VectorViewMut;
 use crate::row_vector::RowVector;
 use crate::row_vector_view::RowVectorView;
 use crate::row_vector_view_mut::RowVectorViewMut;
-use crate::traits::{IntRandom, FloatRandom};
+use crate::traits::{FloatRandom, IntRandom};
+use crate::vector::Vector;
+use crate::vector_view::VectorView;
+use crate::vector_view_mut::VectorViewMut;
 
 #[derive(Debug, Clone)]
 pub struct Matrix<T, const R: usize, const C: usize> {
@@ -106,7 +106,9 @@ where
 {
     fn random() -> Self {
         let mut rng = rand::thread_rng();
-        Self { data: std::array::from_fn(|_| std::array::from_fn(|_| rng.gen())) }
+        Self {
+            data: std::array::from_fn(|_| std::array::from_fn(|_| rng.gen())),
+        }
     }
 }
 
@@ -117,7 +119,9 @@ where
     fn random() -> Self {
         let mut rng = rand::thread_rng();
         let dist = Uniform::new_inclusive(-T::one(), T::one());
-        Self { data: std::array::from_fn(|_| std::array::from_fn(|_| dist.sample(&mut rng))) }
+        Self {
+            data: std::array::from_fn(|_| std::array::from_fn(|_| dist.sample(&mut rng))),
+        }
     }
 }
 
@@ -204,28 +208,36 @@ impl<T: PartialEq, const R: usize, const C: usize> PartialEq for Matrix<T, R, C>
 }
 
 // Matrix == MatrixView
-impl<T: PartialEq, const R: usize, const C: usize, const VR: usize, const VC: usize> PartialEq<MatrixView<'_, T, R, C, VR, VC>> for Matrix<T, VR, VC> {
+impl<T: PartialEq, const R: usize, const C: usize, const VR: usize, const VC: usize>
+    PartialEq<MatrixView<'_, T, R, C, VR, VC>> for Matrix<T, VR, VC>
+{
     fn eq(&self, other: &MatrixView<'_, T, R, C, VR, VC>) -> bool {
         (0..VR).all(|i| (0..VC).all(|j| self[(i, j)] == other[(i, j)]))
     }
 }
 
 // Matrix == MatrixViewMut
-impl<T: PartialEq, const R: usize, const C: usize, const VR: usize, const VC: usize> PartialEq<MatrixViewMut<'_, T, R, C, VR, VC>> for Matrix<T, VR, VC> {
+impl<T: PartialEq, const R: usize, const C: usize, const VR: usize, const VC: usize>
+    PartialEq<MatrixViewMut<'_, T, R, C, VR, VC>> for Matrix<T, VR, VC>
+{
     fn eq(&self, other: &MatrixViewMut<'_, T, R, C, VR, VC>) -> bool {
         (0..VR).all(|i| (0..VC).all(|j| self[(i, j)] == other[(i, j)]))
     }
 }
 
 // Matrix == MatrixTransposeView
-impl<T: PartialEq, const R: usize, const C: usize, const VR: usize, const VC: usize> PartialEq<MatrixTransposeView<'_, T, R, C, VR, VC>> for Matrix<T, VR, VC> {
+impl<T: PartialEq, const R: usize, const C: usize, const VR: usize, const VC: usize>
+    PartialEq<MatrixTransposeView<'_, T, R, C, VR, VC>> for Matrix<T, VR, VC>
+{
     fn eq(&self, other: &MatrixTransposeView<'_, T, R, C, VR, VC>) -> bool {
         (0..VR).all(|i| (0..VC).all(|j| self[(i, j)] == other[(i, j)]))
     }
 }
 
 // Matrix == MatrixTransposeViewMut
-impl<T: PartialEq, const R: usize, const C: usize, const VR: usize, const VC: usize> PartialEq<MatrixTransposeViewMut<'_, T, R, C, VR, VC>> for Matrix<T, VR, VC> {
+impl<T: PartialEq, const R: usize, const C: usize, const VR: usize, const VC: usize>
+    PartialEq<MatrixTransposeViewMut<'_, T, R, C, VR, VC>> for Matrix<T, VR, VC>
+{
     fn eq(&self, other: &MatrixTransposeViewMut<'_, T, R, C, VR, VC>) -> bool {
         (0..VR).all(|i| (0..VC).all(|j| self[(i, j)] == other[(i, j)]))
     }
@@ -348,7 +360,9 @@ impl<T: Copy, const C: usize> From<RowVector<T, C>> for Matrix<T, 1, C> {
     }
 }
 
-impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<VectorView<'_, V, T, A, N>> for Matrix<T, N, 1> {
+impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize>
+    From<VectorView<'_, V, T, A, N>> for Matrix<T, N, 1>
+{
     fn from(view: VectorView<'_, V, T, A, N>) -> Self {
         Self {
             data: std::array::from_fn(|i| [view[i]]),
@@ -356,7 +370,9 @@ impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<
     }
 }
 
-impl<V: IndexMut<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<VectorViewMut<'_, V, T, A, N>> for Matrix<T, N, 1> {
+impl<V: IndexMut<usize, Output = T>, T: Copy, const A: usize, const N: usize>
+    From<VectorViewMut<'_, V, T, A, N>> for Matrix<T, N, 1>
+{
     fn from(view: VectorViewMut<'_, V, T, A, N>) -> Self {
         Self {
             data: std::array::from_fn(|i| [view[i]]),
@@ -364,7 +380,9 @@ impl<V: IndexMut<usize, Output = T>, T: Copy, const A: usize, const N: usize> Fr
     }
 }
 
-impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<RowVectorView<'_, V, T, A, N>> for Matrix<T, 1, N> {
+impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize>
+    From<RowVectorView<'_, V, T, A, N>> for Matrix<T, 1, N>
+{
     fn from(view: RowVectorView<'_, V, T, A, N>) -> Self {
         Self {
             data: [std::array::from_fn(|i| view[i]); 1],
@@ -372,7 +390,9 @@ impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<
     }
 }
 
-impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<RowVectorViewMut<'_, V, T, A, N>> for Matrix<T, 1, N> {
+impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize>
+    From<RowVectorViewMut<'_, V, T, A, N>> for Matrix<T, 1, N>
+{
     fn from(view: RowVectorViewMut<'_, V, T, A, N>) -> Self {
         Self {
             data: [std::array::from_fn(|i| view[i]); 1],
@@ -380,7 +400,9 @@ impl<V: Index<usize, Output = T>, T: Copy, const A: usize, const N: usize> From<
     }
 }
 
-impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize> From<MatrixView<'_, T, A, B, R, C>> for Matrix<T, R, C> {
+impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize>
+    From<MatrixView<'_, T, A, B, R, C>> for Matrix<T, R, C>
+{
     fn from(view: MatrixView<'_, T, A, B, R, C>) -> Self {
         Self {
             data: std::array::from_fn(|i| std::array::from_fn(|j| view[(i, j)])),
@@ -388,7 +410,9 @@ impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize> Fr
     }
 }
 
-impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize> From<MatrixViewMut<'_, T, A, B, R, C>> for Matrix<T, R, C> {
+impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize>
+    From<MatrixViewMut<'_, T, A, B, R, C>> for Matrix<T, R, C>
+{
     fn from(view: MatrixViewMut<'_, T, A, B, R, C>) -> Self {
         Self {
             data: std::array::from_fn(|i| std::array::from_fn(|j| view[(i, j)])),
@@ -396,7 +420,9 @@ impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize> Fr
     }
 }
 
-impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize> From<MatrixTransposeView<'_, T, A, B, R, C>> for Matrix<T, R, C> {
+impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize>
+    From<MatrixTransposeView<'_, T, A, B, R, C>> for Matrix<T, R, C>
+{
     fn from(view: MatrixTransposeView<'_, T, A, B, R, C>) -> Self {
         Self {
             data: std::array::from_fn(|i| std::array::from_fn(|j| view[(i, j)])),
@@ -404,7 +430,9 @@ impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize> Fr
     }
 }
 
-impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize> From<MatrixTransposeViewMut<'_, T, A, B, R, C>> for Matrix<T, R, C> {
+impl<T: Copy, const A: usize, const B: usize, const R: usize, const C: usize>
+    From<MatrixTransposeViewMut<'_, T, A, B, R, C>> for Matrix<T, R, C>
+{
     fn from(view: MatrixTransposeViewMut<'_, T, A, B, R, C>) -> Self {
         Self {
             data: std::array::from_fn(|i| std::array::from_fn(|j| view[(i, j)])),

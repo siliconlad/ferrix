@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, RowVector, Matrix, FloatRandom, IntRandom};
+    use ferrix::{FloatRandom, IntRandom, Matrix, RowVector, Vector};
 
     #[test]
     fn test_default() {
@@ -292,7 +292,7 @@ mod tests {
         let view2 = m2.view_mut::<2, 3>((0, 0)).unwrap();
         assert_eq!(m1, view2);
     }
-    
+
     #[test]
     fn test_ne_view_mut() {
         let m1 = Matrix::from([[1, 2, 3], [4, 5, 6]]);
@@ -342,7 +342,10 @@ mod tests {
     #[test]
     fn test_display_alternate() {
         let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
-        assert_eq!(format!("{:#}", matrix), "Matrix([[1, 2, 3]\n        [4, 5, 6]], dtype=i32)");
+        assert_eq!(
+            format!("{:#}", matrix),
+            "Matrix([[1, 2, 3]\n        [4, 5, 6]], dtype=i32)"
+        );
     }
 
     #[test]
