@@ -1,16 +1,16 @@
-use std::ops::{Sub, Index};
+use std::ops::{Index, Sub};
 
 use crate::matrix::Matrix;
 use crate::matrix_transpose_view::MatrixTransposeView;
 use crate::matrix_transpose_view_mut::MatrixTransposeViewMut;
 use crate::matrix_view::MatrixView;
 use crate::matrix_view_mut::MatrixViewMut;
-use crate::vector::Vector;
-use crate::vector_view::VectorView;
-use crate::vector_view_mut::VectorViewMut;
 use crate::row_vector::RowVector;
 use crate::row_vector_view::RowVectorView;
 use crate::row_vector_view_mut::RowVectorViewMut;
+use crate::vector::Vector;
+use crate::vector_view::VectorView;
+use crate::vector_view_mut::VectorViewMut;
 
 // Generate the macros
 generate_op_all_macros!(Sub, sub, -);

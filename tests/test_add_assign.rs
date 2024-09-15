@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, RowVector, Matrix};
+    use ferrix::{Matrix, RowVector, Vector};
 
     #[test]
     fn test_vector_add_assign() {
@@ -77,7 +77,7 @@ mod tests {
         let mut view = v.view_mut::<3>(0).unwrap();
         view += 2;
         assert_eq!(v, Vector::<i32, 3>::from([3, 4, 5]));
-        
+
         // VectorViewMut += Vector
         let mut v1 = Vector::<i32, 3>::from([1, 2, 3]);
         let v2 = Vector::<i32, 3>::from([1, 2, 3]);
@@ -463,7 +463,7 @@ mod tests {
         let mut view = m.t_mut();
         view += 5;
         assert_eq!(m, Matrix::<i32, 2, 2>::from([[6, 7], [8, 9]]));
-        
+
         // MatrixTransposeViewMut += Matrix
         let mut m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
         let m2 = Matrix::<i32, 2, 3>::from([[5, 6, 7], [8, 9, 10]]);
@@ -484,7 +484,7 @@ mod tests {
         let mut view = m1.t_mut();
         view += m2.view_mut::<2, 3>((0, 0)).unwrap();
         assert_eq!(m1, Matrix::<i32, 3, 2>::from([[6, 10], [9, 13], [12, 16]]));
-        
+
         // MatrixTransposeViewMut += MatrixTransposeView
         let mut m1 = Matrix::<i32, 2, 2>::from([[1, 2], [3, 4]]);
         let m2 = Matrix::<i32, 2, 2>::from([[5, 6], [7, 8]]);

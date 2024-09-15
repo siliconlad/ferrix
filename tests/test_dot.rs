@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, RowVector, Matrix, DotProduct};
+    use ferrix::{DotProduct, Matrix, RowVector, Vector};
 
     #[test]
     fn test_vector_dot() {
@@ -295,7 +295,7 @@ mod tests {
         let view = v1.view_mut::<3>(0).unwrap();
         let view2 = m.view::<1, 3>((0, 0)).unwrap();
         assert!((view.dot(view2) - 14.0).abs() < f64::EPSILON);
-        
+
         // RowVectorViewMut dot MatrixViewMut
         let mut v1 = RowVector::<f64, 4>::from([1.0, 2.0, 3.0, 4.0]);
         let mut m = Matrix::<f64, 1, 4>::from([[1.0, 2.0, 3.0, 4.0]]);

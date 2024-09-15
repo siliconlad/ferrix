@@ -1,12 +1,12 @@
 use std::ops::{DivAssign, IndexMut};
 
 use crate::matrix::Matrix;
-use crate::matrix_view_mut::MatrixViewMut;
 use crate::matrix_transpose_view_mut::MatrixTransposeViewMut;
-use crate::vector::Vector;
-use crate::vector_view_mut::VectorViewMut;
+use crate::matrix_view_mut::MatrixViewMut;
 use crate::row_vector::RowVector;
 use crate::row_vector_view_mut::RowVectorViewMut;
+use crate::vector::Vector;
+use crate::vector_view_mut::VectorViewMut;
 
 // Generate macros
 generate_op_assign_scalar_macros!(DivAssign, div_assign, /=);
@@ -20,4 +20,3 @@ impl_vv_op_assign_view!(RowVectorViewMut<'_, V, T, N, M>);
 impl_mm_op_assign!(Matrix<T, M, N>);
 impl_mm_op_assign_view!(MatrixViewMut<'_, T, A, B, M, N>);
 impl_mm_op_assign_view!(MatrixTransposeViewMut<'_, T, A, B, M, N>);
-

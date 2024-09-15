@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, RowVector, Matrix};
+    use ferrix::{Matrix, RowVector, Vector};
 
     #[test]
     fn test_vector_mul() {

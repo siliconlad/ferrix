@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, RowVector, Matrix};
+    use ferrix::{Matrix, RowVector, Vector};
 
     #[test]
     fn test_vector_matmul() {
@@ -374,46 +374,67 @@ mod tests {
         let m1 = Matrix::<i32, 3, 1>::from([[1], [3], [5]]);
         let v2 = RowVector::<i32, 2>::from([4, 5]);
         let result = m1 * v2;
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[4, 5], [12, 15], [20, 25]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[4, 5], [12, 15], [20, 25]])
+        );
 
         // Matrix * RowVectorView
         let m1 = Matrix::<i32, 3, 1>::from([[1], [3], [5]]);
         let v2 = RowVector::<i32, 3>::from([4, 5, 6]);
         let result = m1 * v2.view::<2>(1).unwrap();
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[5, 6], [15, 18], [25, 30]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[5, 6], [15, 18], [25, 30]])
+        );
 
         // Matrix * RowVectorViewMut
         let m1 = Matrix::<i32, 3, 1>::from([[1], [3], [5]]);
         let mut v2 = RowVector::<i32, 3>::from([4, 5, 6]);
         let result = m1 * v2.view_mut::<2>(1).unwrap();
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[5, 6], [15, 18], [25, 30]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[5, 6], [15, 18], [25, 30]])
+        );
 
         // Matrix * Matrix
         let m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
         let m2 = Matrix::<i32, 2, 3>::from([[1, 2, 3], [4, 5, 6]]);
         let result = m1 * m2;
-        assert_eq!(result, Matrix::from([[9, 12, 15], [19, 26, 33], [29, 40, 51]]));
+        assert_eq!(
+            result,
+            Matrix::from([[9, 12, 15], [19, 26, 33], [29, 40, 51]])
+        );
 
         // Matrix * MatrixView
         let m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
         let m2 = Matrix::<i32, 2, 4>::from([[1, 2, 3, 4], [5, 6, 7, 8]]);
         let view = m2.view::<2, 4>((0, 0)).unwrap();
         let result = m1 * view;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // Matrix * MatrixViewMut
         let m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
         let mut m2 = Matrix::<i32, 2, 4>::from([[1, 2, 3, 4], [5, 6, 7, 8]]);
         let view_mut = m2.view_mut::<2, 4>((0, 0)).unwrap();
         let result = m1 * view_mut;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // Matrix * MatrixTransposeView
         let m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
         let m2 = Matrix::<i32, 4, 2>::from([[1, 5], [2, 6], [3, 7], [4, 8]]);
         let t_view = m2.t();
         let result = m1 * t_view;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
     }
 
     #[test]
@@ -446,28 +467,40 @@ mod tests {
         let v2 = RowVector::<i32, 2>::from([4, 5]);
         let view = m1.view::<3, 1>((0, 0)).unwrap();
         let result = view * v2;
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[4, 5], [12, 15], [20, 25]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[4, 5], [12, 15], [20, 25]])
+        );
 
         // MatrixView * RowVectorView
         let m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
         let v2 = RowVector::<i32, 3>::from([4, 5, 6]);
         let view = m1.view::<3, 1>((0, 0)).unwrap();
         let result = view * v2.view::<2>(1).unwrap();
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[5, 6], [15, 18], [25, 30]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[5, 6], [15, 18], [25, 30]])
+        );
 
         // MatrixView * RowVectorViewMut
         let m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
         let mut v2 = RowVector::<i32, 3>::from([4, 5, 6]);
         let view = m1.view::<3, 1>((0, 0)).unwrap();
         let result = view * v2.view_mut::<2>(1).unwrap();
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[5, 6], [15, 18], [25, 30]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[5, 6], [15, 18], [25, 30]])
+        );
 
         // MatrixView * Matrix
         let m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
         let m2 = Matrix::<i32, 2, 4>::from([[1, 2, 3, 4], [5, 6, 7, 8]]);
         let view = m1.view::<3, 2>((0, 0)).unwrap();
         let result = view * m2;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // MatrixView * MatrixView
         let m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
@@ -475,7 +508,10 @@ mod tests {
         let view1 = m1.view::<3, 2>((0, 0)).unwrap();
         let view2 = m2.view::<2, 4>((0, 0)).unwrap();
         let result = view1 * view2;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // MatrixView * MatrixViewMut
         let m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
@@ -483,7 +519,10 @@ mod tests {
         let view1 = m1.view::<3, 2>((0, 0)).unwrap();
         let view_mut = m2.view_mut::<2, 4>((0, 0)).unwrap();
         let result = view1 * view_mut;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // MatrixView * MatrixTransposeView
         let m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
@@ -491,7 +530,10 @@ mod tests {
         let view1 = m1.view::<3, 2>((0, 0)).unwrap();
         let t_view = m2.t();
         let result = view1 * t_view;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
     }
 
     #[test]
@@ -524,28 +566,40 @@ mod tests {
         let v2 = RowVector::<i32, 2>::from([4, 5]);
         let view = m1.view_mut::<3, 1>((0, 0)).unwrap();
         let result = view * v2;
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[4, 5], [12, 15], [20, 25]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[4, 5], [12, 15], [20, 25]])
+        );
 
         // MatrixViewMut * RowVectorView
         let mut m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
         let v2 = RowVector::<i32, 3>::from([4, 5, 6]);
         let view = m1.view_mut::<3, 1>((0, 0)).unwrap();
         let result = view * v2.view::<2>(1).unwrap();
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[5, 6], [15, 18], [25, 30]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[5, 6], [15, 18], [25, 30]])
+        );
 
         // MatrixViewMut * RowVectorViewMut
         let mut m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
         let mut v2 = RowVector::<i32, 3>::from([4, 5, 6]);
         let view = m1.view_mut::<3, 1>((0, 0)).unwrap();
         let result = view * v2.view_mut::<2>(1).unwrap();
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[5, 6], [15, 18], [25, 30]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[5, 6], [15, 18], [25, 30]])
+        );
 
         // MatrixViewMut * Matrix
         let mut m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
         let m2 = Matrix::<i32, 2, 4>::from([[1, 2, 3, 4], [5, 6, 7, 8]]);
         let view_mut = m1.view_mut::<3, 2>((0, 0)).unwrap();
         let result = view_mut * m2;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // MatrixViewMut * MatrixView
         let mut m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
@@ -553,7 +607,10 @@ mod tests {
         let view_mut = m1.view_mut::<3, 2>((0, 0)).unwrap();
         let view2 = m2.view::<2, 4>((0, 0)).unwrap();
         let result = view_mut * view2;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // MatrixViewMut * MatrixViewMut
         let mut m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
@@ -561,7 +618,10 @@ mod tests {
         let view_mut1 = m1.view_mut::<3, 2>((0, 0)).unwrap();
         let view_mut2 = m2.view_mut::<2, 4>((0, 0)).unwrap();
         let result = view_mut1 * view_mut2;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // MatrixViewMut * MatrixTransposeView
         let mut m1 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
@@ -569,7 +629,10 @@ mod tests {
         let view_mut = m1.view_mut::<3, 2>((0, 0)).unwrap();
         let t_view = m2.t();
         let result = view_mut * t_view;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
     }
 
     #[test]
@@ -596,43 +659,64 @@ mod tests {
         let m1 = Matrix::<i32, 1, 3>::from([[1, 2, 3]]);
         let v2 = RowVector::<i32, 2>::from([4, 5]);
         let result = m1.t() * v2;
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[4, 5], [8, 10], [12, 15]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[4, 5], [8, 10], [12, 15]])
+        );
 
         // MatrixTransposeView * RowVectorView
         let m1 = Matrix::<i32, 1, 3>::from([[1, 2, 3]]);
         let v2 = RowVector::<i32, 3>::from([4, 5, 6]);
         let result = m1.t() * v2.view::<2>(1).unwrap();
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[5, 6], [10, 12], [15, 18]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[5, 6], [10, 12], [15, 18]])
+        );
 
         // MatrixTransposeView * RowVectorViewMut
         let m1 = Matrix::<i32, 1, 3>::from([[1, 2, 3]]);
         let mut v2 = RowVector::<i32, 3>::from([4, 5, 6]);
         let result = m1.t() * v2.view_mut::<2>(1).unwrap();
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[5, 6], [10, 12], [15, 18]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[5, 6], [10, 12], [15, 18]])
+        );
 
         // MatrixTransposeView * Matrix
         let m1 = Matrix::<i32, 2, 3>::from([[1, 3, 5], [2, 4, 6]]);
         let m2 = Matrix::<i32, 2, 4>::from([[1, 2, 3, 4], [5, 6, 7, 8]]);
         let result = m1.t() * m2;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // MatrixTransposeView * MatrixView
         let m1 = Matrix::<i32, 2, 3>::from([[1, 3, 5], [2, 4, 6]]);
         let m2 = Matrix::<i32, 2, 4>::from([[1, 2, 3, 4], [5, 6, 7, 8]]);
         let result = m1.t() * m2.view::<2, 4>((0, 0)).unwrap();
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // MatrixTransposeView * MatrixViewMut
         let m1 = Matrix::<i32, 2, 3>::from([[1, 3, 5], [2, 4, 6]]);
         let mut m2 = Matrix::<i32, 2, 4>::from([[1, 2, 3, 4], [5, 6, 7, 8]]);
         let result = m1.t() * m2.view_mut::<2, 4>((0, 0)).unwrap();
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // MatrixTransposeView * MatrixTransposeView
         let m1 = Matrix::<i32, 2, 3>::from([[1, 3, 5], [2, 4, 6]]);
         let m2 = Matrix::<i32, 3, 2>::from([[1, 2], [3, 4], [5, 6]]);
         let result = m1.t() * m2.t();
-        assert_eq!(result, Matrix::from([[5, 11, 17], [11, 25, 39], [17, 39, 61]]));
+        assert_eq!(
+            result,
+            Matrix::from([[5, 11, 17], [11, 25, 39], [17, 39, 61]])
+        );
     }
 
     #[test]
@@ -660,40 +744,58 @@ mod tests {
         let mut m1 = Matrix::<i32, 1, 3>::from([[1, 2, 3]]);
         let v2 = RowVector::<i32, 2>::from([4, 5]);
         let result = m1.t_mut() * v2;
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[4, 5], [8, 10], [12, 15]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[4, 5], [8, 10], [12, 15]])
+        );
 
         // MatrixTransposeViewMut * RowVectorView
         let mut m1 = Matrix::<i32, 1, 3>::from([[1, 2, 3]]);
         let v2 = RowVector::<i32, 3>::from([4, 5, 6]);
         let result = m1.t_mut() * v2.view::<2>(1).unwrap();
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[5, 6], [10, 12], [15, 18]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[5, 6], [10, 12], [15, 18]])
+        );
 
         // MatrixTransposeViewMut * RowVectorViewMut
         let mut m1 = Matrix::<i32, 1, 3>::from([[1, 2, 3]]);
         let mut v2 = RowVector::<i32, 3>::from([4, 5, 6]);
         let result = m1.t_mut() * v2.view_mut::<2>(1).unwrap();
-        assert_eq!(result, Matrix::<i32, 3, 2>::from([[5, 6], [10, 12], [15, 18]]));
+        assert_eq!(
+            result,
+            Matrix::<i32, 3, 2>::from([[5, 6], [10, 12], [15, 18]])
+        );
 
         // MatrixTransposeViewMut * Matrix
         let mut m1 = Matrix::<i32, 2, 3>::from([[1, 3, 5], [2, 4, 6]]);
         let m2 = Matrix::<i32, 2, 4>::from([[1, 2, 3, 4], [5, 6, 7, 8]]);
         let t_view_mut = m1.t_mut();
         let result = t_view_mut * m2;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // MatrixTransposeViewMut * MatrixView
         let mut m1 = Matrix::<i32, 2, 3>::from([[1, 3, 5], [2, 4, 6]]);
         let m2 = Matrix::<i32, 2, 4>::from([[1, 2, 3, 4], [5, 6, 7, 8]]);
         let view2 = m2.view::<2, 4>((0, 0)).unwrap();
         let result = m1.t_mut() * view2;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // MatrixTransposeViewMut * MatrixViewMut
         let mut m1 = Matrix::<i32, 2, 3>::from([[1, 3, 5], [2, 4, 6]]);
         let mut m2 = Matrix::<i32, 2, 4>::from([[1, 2, 3, 4], [5, 6, 7, 8]]);
         let view_mut2 = m2.view_mut::<2, 4>((0, 0)).unwrap();
         let result = m1.t_mut() * view_mut2;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
 
         // MatrixTransposeViewMut * MatrixTransposeView
         let mut m1 = Matrix::<i32, 2, 3>::from([[1, 3, 5], [2, 4, 6]]);
@@ -701,6 +803,9 @@ mod tests {
         let t_view_mut1 = m1.t_mut();
         let t_view2 = m2.t();
         let result = t_view_mut1 * t_view2;
-        assert_eq!(result, Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]]));
+        assert_eq!(
+            result,
+            Matrix::from([[11, 14, 17, 20], [23, 30, 37, 44], [35, 46, 57, 68]])
+        );
     }
 }

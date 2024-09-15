@@ -79,7 +79,7 @@ mod tests {
         let view2 = matrix2.view_mut::<2, 2>((0, 0)).unwrap();
         assert_eq!(view1, view2);
     }
-    
+
     #[test]
     fn test_matrix_view_ne_view_mut() {
         let mut matrix1 = Matrix::from([[3, 2, 3, 4], [4, 5, 6, 7]]);
@@ -97,7 +97,7 @@ mod tests {
         let view2 = matrix2.t();
         assert_eq!(view1, view2);
     }
-    
+
     #[test]
     fn test_matrix_view_ne_transpose_view() {
         let mut matrix1 = Matrix::from([[3, 2, 3, 4], [4, 5, 6, 7]]);
@@ -115,7 +115,7 @@ mod tests {
         let view2 = matrix2.t_mut();
         assert_eq!(view1, view2);
     }
-    
+
     #[test]
     fn test_matrix_view_ne_transpose_view_mut() {
         let mut matrix1 = Matrix::from([[3, 2, 3, 4], [4, 5, 6, 7]]);
@@ -124,7 +124,6 @@ mod tests {
         let view2 = matrix2.t_mut();
         assert_ne!(view1, view2);
     }
-
 
     #[test]
     fn test_matrix_view_mut_display() {
@@ -137,14 +136,17 @@ mod tests {
     fn test_matrix_view_mut_display_alternate() {
         let mut matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let view = matrix.view_mut::<2, 2>((0, 0)).unwrap();
-        assert_eq!(format!("{:#}", view), "MatrixViewMut([[1, 2]\n               [4, 5]], dtype=i32)");
+        assert_eq!(
+            format!("{:#}", view),
+            "MatrixViewMut([[1, 2]\n               [4, 5]], dtype=i32)"
+        );
     }
 
     #[test]
     fn test_matrix_view_mut_index() {
         let mut matrix = Matrix::from([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
         let view = matrix.view_mut::<2, 3>((1, 1)).unwrap();
-        
+
         // Test tuple indexing
         assert_eq!(view[(0, 0)], 6);
         assert_eq!(view[(0, 1)], 7);
@@ -182,7 +184,7 @@ mod tests {
     fn test_matrix_view_mut_index_mut() {
         let mut matrix = Matrix::from([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
         let mut view = matrix.view_mut::<2, 3>((1, 1)).unwrap();
-        
+
         view[(0, 0)] = 20;
         view[(1, 2)] = 30;
 
@@ -202,7 +204,7 @@ mod tests {
     fn test_matrix_view_mut_index_mut_single() {
         let mut matrix = Matrix::from([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
         let mut view = matrix.view_mut::<2, 3>((1, 1)).unwrap();
-        
+
         view[1] = 40;
         view[4] = 50;
 

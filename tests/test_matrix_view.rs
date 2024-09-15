@@ -65,7 +65,7 @@ mod tests {
         let view2 = matrix2.view_mut::<2, 2>((0, 0)).unwrap();
         assert_eq!(view1, view2);
     }
-    
+
     #[test]
     fn test_matrix_view_ne_view_mut() {
         let matrix1 = Matrix::from([[3, 2, 3, 4], [4, 5, 6, 7]]);
@@ -83,7 +83,7 @@ mod tests {
         let view2 = matrix2.t();
         assert_eq!(view1, view2);
     }
-    
+
     #[test]
     fn test_matrix_view_ne_transpose_view() {
         let matrix1 = Matrix::from([[3, 2, 3, 4], [4, 5, 6, 7]]);
@@ -101,7 +101,7 @@ mod tests {
         let view2 = matrix2.t_mut();
         assert_eq!(view1, view2);
     }
-    
+
     #[test]
     fn test_matrix_view_ne_transpose_view_mut() {
         let matrix1 = Matrix::from([[3, 2, 3, 4], [4, 5, 6, 7]]);
@@ -122,14 +122,17 @@ mod tests {
     fn test_matrix_view_display_alternate() {
         let matrix = Matrix::from([[1, 2, 3], [4, 5, 6]]);
         let view = matrix.view::<2, 2>((0, 0)).unwrap();
-        assert_eq!(format!("{:#}", view), "MatrixView([[1, 2]\n            [4, 5]], dtype=i32)");
+        assert_eq!(
+            format!("{:#}", view),
+            "MatrixView([[1, 2]\n            [4, 5]], dtype=i32)"
+        );
     }
 
     #[test]
     fn test_matrix_view_index() {
         let matrix = Matrix::from([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
         let view = matrix.view::<2, 3>((1, 1)).unwrap();
-        
+
         // Test tuple indexing
         assert_eq!(view[(0, 0)], 6);
         assert_eq!(view[(0, 1)], 7);

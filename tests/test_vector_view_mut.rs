@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, RowVector, VectorViewMut};
+    use ferrix::{RowVector, Vector, VectorViewMut};
 
     #[test]
     fn test_vector_view_mut_shape() {
@@ -134,7 +134,10 @@ mod tests {
     fn test_vector_view_mut_display_alternate() {
         let mut v = Vector::from([1.0, 2.0, 3.0]);
         let view_mut = v.view_mut::<2>(1).unwrap();
-        assert_eq!(format!("{:#}", view_mut), "VectorViewMut([2\n               3], dtype=f64)");
+        assert_eq!(
+            format!("{:#}", view_mut),
+            "VectorViewMut([2\n               3], dtype=f64)"
+        );
     }
 
     #[test]

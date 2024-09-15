@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, RowVector, Matrix};
+    use ferrix::{Matrix, RowVector, Vector};
 
     #[test]
     fn test_vector_sub_assign() {
@@ -236,7 +236,7 @@ mod tests {
         let mut view = v.view_mut::<3>(0).unwrap();
         view -= 2;
         assert_eq!(v, RowVector::<i32, 3>::from([-1, 0, 1]));
-        
+
         // RowVectorViewMut -= RowVector
         let mut v1 = RowVector::<i32, 3>::from([4, 5, 6]);
         let v2 = RowVector::<i32, 3>::from([1, 2, 3]);

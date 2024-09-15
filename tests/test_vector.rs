@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ferrix::{Vector, RowVector, Matrix, FloatRandom, IntRandom};
+    use ferrix::{FloatRandom, IntRandom, Matrix, RowVector, Vector};
 
     #[test]
     fn test_default() {
@@ -73,7 +73,7 @@ mod tests {
         let empty_v = Vector::<f64, 0>::from([] as [f64; 0]);
         assert_eq!(empty_v.shape(), 0);
     }
-    
+
     #[test]
     fn test_capacity() {
         let v = Vector::from([1.0, 2.0, 3.0]);
@@ -104,7 +104,7 @@ mod tests {
     fn test_t_mut() {
         let mut v = Vector::from([1, 2, 3]);
         let mut transposed = v.t_mut();
-        
+
         assert_eq!(transposed.shape(), 3);
         assert_eq!(transposed[0], 1);
         assert_eq!(transposed[1], 2);
@@ -209,7 +209,10 @@ mod tests {
     #[test]
     fn test_display_alternate() {
         let v = Vector::<f64, 3>::from([1.0, 2.0, 3.0]);
-        assert_eq!(format!("{:#}", v), "Vector([1\n        2\n        3], dtype=f64)");
+        assert_eq!(
+            format!("{:#}", v),
+            "Vector([1\n        2\n        3], dtype=f64)"
+        );
     }
 
     #[test]
