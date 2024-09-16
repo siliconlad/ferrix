@@ -8,6 +8,7 @@ use std::fmt;
 use std::marker::PhantomData;
 use std::ops::{Index, IndexMut};
 
+/// A mutable column vector view of a [`Vector`] or a [`RowVector`](crate::row_vector::RowVector) (transposed view).
 #[derive(Debug)]
 pub struct VectorViewMut<'a, V, T, const N: usize, const M: usize> {
     data: &'a mut V,
@@ -24,32 +25,132 @@ impl<'a, V, T, const N: usize, const M: usize> VectorViewMut<'a, V, T, N, M> {
         }
     }
 
+    /// Returns the shape of the [`VectorViewMut`].
+    ///
+    /// The shape is always equal to `M`.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let mut vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let view = vec.view_mut::<3>(1).unwrap();
+    /// assert_eq!(view.shape(), 3);
+    /// ```
     #[inline]
     pub fn shape(&self) -> usize {
         M
     }
 
+    /// Returns the total number of elements in the [`VectorViewMut`].
+    /// 
+    /// The total number of elements is always equal to `M`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let mut vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let view = vec.view_mut::<3>(1).unwrap();
+    /// assert_eq!(view.capacity(), 3);
+    /// ```
     #[inline]
     pub fn capacity(&self) -> usize {
         M
     }
 
+    /// Returns the number of rows in the [`VectorViewMut`].
+    ///
+    /// The number of rows is always equal to `M`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let mut vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let view = vec.view_mut::<3>(1).unwrap();
+    /// assert_eq!(view.rows(), 3);
+    /// ```
     #[inline]
     pub fn rows(&self) -> usize {
         M
     }
 
+    /// Returns the number of columns in the [`VectorViewMut`].
+    ///
+    /// The number of columns is always `1`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let mut vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let view = vec.view_mut::<3>(1).unwrap();
+    /// assert_eq!(view.cols(), 1);
+    /// ```
     #[inline]
     pub fn cols(&self) -> usize {
         1
     }
 
+    /// Returns a transposed view of the [`VectorViewMut`].
+    ///
+    /// This method returns a [`RowVectorView`], which is a read-only view of the [`VectorViewMut`] as a row vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::{Vector, RowVector};
+    ///
+    /// let mut vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let view = vec.view_mut::<3>(1).unwrap();
+    /// let row_view = view.t();
+    /// assert_eq!(row_view, RowVector::from([2, 3, 4]));
+    /// ```
     pub fn t(&'a self) -> RowVectorView<'a, V, T, N, M> {
         RowVectorView::new(self.data, self.start)
     }
 
+    /// Returns a mutable transposed view of the [`VectorViewMut`].
+    ///
+    /// This method returns a [`RowVectorViewMut`], which is a mutable view of the [`VectorViewMut`] as a row vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let mut vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let mut view = vec.view_mut::<3>(1).unwrap();
+    /// let mut row_view = view.t_mut();
+    /// row_view[1] = 10;
+    /// assert_eq!(vec, Vector::from([1, 2, 10, 4, 5]));
+    /// ```
     pub fn t_mut(&'a mut self) -> RowVectorViewMut<'a, V, T, N, M> {
         RowVectorViewMut::new(self.data, self.start)
+    }
+}
+
+impl<'a, V: Index<usize, Output = T>, T: Float, const N: usize, const M: usize>
+    VectorViewMut<'a, V, T, N, M>
+{
+    /// Calculates the magnitude (Euclidean norm) of the [`VectorViewMut`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let mut vec = Vector::from([1.0, 2.0, 3.0, 4.0, 5.0]);
+    /// let view = vec.view_mut::<2>(2).unwrap();
+    /// assert_eq!(view.magnitude(), 5.0);
+    /// ```
+    pub fn magnitude(&self) -> T {
+        self.dot(self).sqrt()
     }
 }
 
@@ -140,14 +241,6 @@ impl<'a, V: Index<usize, Output = T>, T: fmt::Display, const N: usize, const M: 
 ///////////////////////////////////
 //  Index Trait Implementations  //
 ///////////////////////////////////
-
-impl<'a, V: Index<usize, Output = T>, T: Float, const N: usize, const M: usize>
-    VectorViewMut<'a, V, T, N, M>
-{
-    pub fn magnitude(&self) -> T {
-        self.dot(self).sqrt()
-    }
-}
 
 impl<'a, V: Index<usize, Output = T>, T, const N: usize, const M: usize> Index<usize>
     for VectorViewMut<'a, V, T, N, M>

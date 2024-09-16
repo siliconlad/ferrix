@@ -5,6 +5,7 @@ use crate::matrix_view_mut::MatrixViewMut;
 use std::fmt;
 use std::ops::Index;
 
+/// A static transposed view of matrix.
 #[derive(Debug)]
 pub struct MatrixTransposeView<
     'a,
@@ -32,26 +33,92 @@ impl<'a, T, const R: usize, const C: usize, const VR: usize, const VC: usize>
 impl<'a, T, const R: usize, const C: usize, const VR: usize, const VC: usize>
     MatrixTransposeView<'a, T, R, C, VR, VC>
 {
+    /// Returns the shape of the [`MatrixTransposeView`].
+    ///
+    /// The shape is always equal to `(VR, VC)`.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+    /// let transposed = mat.t();
+    /// assert_eq!(transposed.shape(), (3, 2));
+    /// ```
     #[inline]
     pub fn shape(&self) -> (usize, usize) {
         (VR, VC)
     }
 
+    /// Returns the total number of elements in the [`MatrixTransposeView`].
+    /// 
+    /// The total number of elements is always equal to `VR * VC`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+    /// let transposed = mat.t();
+    /// assert_eq!(transposed.capacity(), 6);
+    /// ```
     #[inline]
     pub fn capacity(&self) -> usize {
         VR * VC
     }
 
+    /// Returns the number of rows in the [`MatrixTransposeView`].
+    ///
+    /// The number of rows is always equal to `VR`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+    /// let transposed = mat.t();
+    /// assert_eq!(transposed.rows(), 3);
+    /// ```
     #[inline]
     pub fn rows(&self) -> usize {
         VR
     }
 
+    /// Returns the number of columns in the [`MatrixTransposeView`].
+    ///
+    /// The number of columns is always equal to `VC`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+    /// let transposed = mat.t();
+    /// assert_eq!(transposed.cols(), 2);
+    /// ```
     #[inline]
     pub fn cols(&self) -> usize {
         VC
     }
 
+    /// Returns a transposed view of the [`MatrixTransposeView`].
+    ///
+    /// This method returns a [`MatrixView`], which is a read-only view of the [`MatrixTransposeView`] transposed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat = Matrix::from([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+    /// let transposed = mat.t();
+    /// let original = transposed.t();
+    /// assert_eq!(original, mat);
+    /// ```
     pub fn t(&self) -> MatrixView<T, R, C, VC, VR> {
         MatrixView::new(self.data, (self.start.1, self.start.0))
     }

@@ -17,11 +17,16 @@ use crate::vector::Vector;
 use crate::vector_view::VectorView;
 use crate::vector_view_mut::VectorViewMut;
 
+/// A static matrix type.
 #[derive(Debug, Clone)]
 pub struct Matrix<T, const R: usize, const C: usize> {
     data: [[T; C]; R],
 }
+
+/// A static 2x2 matrix alias for [`Matrix<T, 2, 2>`].
 pub type Matrix2<T> = Matrix<T, 2, 2>;
+
+/// A static 3x3 matrix alias for [`Matrix<T, 3, 3>`].
 pub type Matrix3<T> = Matrix<T, 3, 3>;
 
 impl<T: Default, const R: usize, const C: usize> Default for Matrix<T, R, C> {
@@ -33,27 +38,87 @@ impl<T: Default, const R: usize, const C: usize> Default for Matrix<T, R, C> {
 }
 
 impl<T: Default, const R: usize, const C: usize> Matrix<T, R, C> {
+    /// Creates a new [`Matrix`] with default values.
+    ///
+    /// This method initializes a new [`Matrix`] of size RxC, where each element is set to its default value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat: Matrix<f64, 2, 3> = Matrix::new();
+    /// assert_eq!(mat, Matrix::from([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]));
+    /// ```
     pub fn new() -> Self {
         Self::default()
     }
 }
 
 impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
+    /// Returns the shape of the [`Matrix`].
+    ///
+    /// The shape is always equal to `(R, C)`.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat: Matrix<f64, 2, 3> = Matrix::new();
+    /// assert_eq!(mat.shape(), (2, 3));
+    /// ```
     #[inline]
     pub fn shape(&self) -> (usize, usize) {
         (R, C)
     }
 
+    /// Returns the total number of elements in the [`Matrix`].
+    /// 
+    /// The total number of elements is always equal to `R * C`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat: Matrix<f64, 2, 3> = Matrix::new();
+    /// assert_eq!(mat.capacity(), 6);
+    /// ```
     #[inline]
     pub fn capacity(&self) -> usize {
         R * C
     }
 
+    /// Returns the number of rows in the [`Matrix`].
+    ///
+    /// The number of rows is always equal to `R`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat: Matrix<f64, 2, 3> = Matrix::new();
+    /// assert_eq!(mat.rows(), 2);
+    /// ```
     #[inline]
     pub fn rows(&self) -> usize {
         R
     }
 
+    /// Returns the number of columns in the [`Matrix`].
+    ///
+    /// The number of columns is always equal to `C`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat: Matrix<f64, 2, 3> = Matrix::new();
+    /// assert_eq!(mat.cols(), 3);
+    /// ```
     #[inline]
     pub fn cols(&self) -> usize {
         C
@@ -61,12 +126,34 @@ impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
 }
 
 impl<T: Copy> Matrix<T, 1, 1> {
+    /// Converts a 1x1 [`Matrix`] into its scalar value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat = Matrix::from([[42]]);
+    /// assert_eq!(mat.into(), 42);
+    /// ```
     pub fn into(self) -> T {
         self[(0, 0)]
     }
 }
 
 impl<T: Copy + Zero, const R: usize, const C: usize> Matrix<T, R, C> {
+    /// Creates a new [`Matrix`] filled with zeros.
+    ///
+    /// This method initializes a new [`Matrix`] of size RxC, where each element is set to zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat = Matrix::<f64, 2, 3>::zeros();
+    /// assert_eq!(mat, Matrix::from([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]));
+    /// ```
     pub fn zeros() -> Self {
         Self {
             data: [[T::zero(); C]; R],
@@ -75,6 +162,18 @@ impl<T: Copy + Zero, const R: usize, const C: usize> Matrix<T, R, C> {
 }
 
 impl<T: Copy + One, const R: usize, const C: usize> Matrix<T, R, C> {
+    /// Creates a new [`Matrix`] filled with ones.
+    ///
+    /// This method initializes a new [`Matrix`] of size RxC, where each element is set to one.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat = Matrix::<f64, 2, 3>::ones();
+    /// assert_eq!(mat, Matrix::from([[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]));
+    /// ```
     pub fn ones() -> Self {
         Self {
             data: [[T::one(); C]; R],
@@ -83,6 +182,18 @@ impl<T: Copy + One, const R: usize, const C: usize> Matrix<T, R, C> {
 }
 
 impl<T: Copy + Zero + One, const R: usize, const C: usize> Matrix<T, R, C> {
+    /// Creates a new identity [`Matrix`].
+    ///
+    /// This method initializes a new [`Matrix`] of size RxC, where diagonal elements are set to one and all others to zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat = Matrix::<f64, 3, 3>::eye();
+    /// assert_eq!(mat, Matrix::from([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]));
+    /// ```
     pub fn eye() -> Self {
         let mut data = [[T::zero(); C]; R];
         for (i, row) in data.iter_mut().enumerate() {
@@ -93,6 +204,18 @@ impl<T: Copy + Zero + One, const R: usize, const C: usize> Matrix<T, R, C> {
 }
 
 impl<T: Copy, const R: usize, const C: usize> Matrix<T, R, C> {
+    /// Creates a new [`Matrix`] filled with a specified value.
+    ///
+    /// This method initializes a new [`Matrix`] of size RxC, where each element is set to the provided value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat = Matrix::<i32, 2, 3>::fill(42);
+    /// assert_eq!(mat, Matrix::from([[42, 42, 42], [42, 42, 42]]));
+    /// ```
     pub fn fill(value: T) -> Self {
         Self {
             data: [[value; C]; R],
@@ -126,31 +249,87 @@ where
 }
 
 impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
+    /// Returns a transposed view of the [`Matrix`].
+    ///
+    /// This method returns a [`MatrixTransposeView`], which is a read-only view of the [`Matrix`] transposed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+    /// let transposed = mat.t();
+    /// assert_eq!(transposed, Matrix::from([[1, 4], [2, 5], [3, 6]]));
+    /// ```
     pub fn t(&self) -> MatrixTransposeView<T, R, C, C, R> {
         MatrixTransposeView::new(self, (0, 0))
     }
 
+    /// Returns a mutable transposed view of the [`Matrix`].
+    ///
+    /// This method returns a [`MatrixTransposeViewMut`], which is a mutable view of the [`Matrix`] transposed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mut mat = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+    /// let mut transposed = mat.t_mut();
+    /// transposed[(1, 0)] = 10;
+    /// assert_eq!(mat, Matrix::from([[1, 10, 3], [4, 5, 6]]));
+    /// ```
     pub fn t_mut(&mut self) -> MatrixTransposeViewMut<T, R, C, C, R> {
         MatrixTransposeViewMut::new(self, (0, 0))
     }
 }
 
 impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
-    pub fn view<const V_R: usize, const V_C: usize>(
+    /// Returns a view of [`Matrix`].
+    ///
+    /// This method returns a [`MatrixView`] of size `VR x VC` starting from the given index.
+    /// Returns `None` if the requested view is out of bounds.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mat = Matrix::from([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+    /// let view = mat.view::<2, 2>((1, 1)).unwrap();
+    /// assert_eq!(view, Matrix::from([[5, 6], [8, 9]]));
+    /// ```
+    pub fn view<const VR: usize, const VC: usize>(
         &self,
         start: (usize, usize),
-    ) -> Option<MatrixView<T, R, C, V_R, V_C>> {
-        if start.0 + V_R > R || start.1 + V_C > C {
+    ) -> Option<MatrixView<T, R, C, VR, VC>> {
+        if start.0 + VR > R || start.1 + VC > C {
             return None;
         }
         Some(MatrixView::new(self, start))
     }
 
-    pub fn view_mut<const V_R: usize, const V_C: usize>(
+    /// Returns a mutable view of [`Matrix`].
+    ///
+    /// This method returns a [`MatrixViewMut`] of size `VR x VC` starting from the given index.
+    /// Returns `None` if the requested view is out of bounds.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mut mat = Matrix::from([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+    /// let mut view = mat.view_mut::<2, 2>((1, 1)).unwrap();
+    /// view[(0, 1)] = 10;
+    /// assert_eq!(mat, Matrix::from([[1, 2, 3], [4, 5, 10], [7, 8, 9]]));
+    /// ```
+    pub fn view_mut<const VR: usize, const VC: usize>(
         &mut self,
         start: (usize, usize),
-    ) -> Option<MatrixViewMut<T, R, C, V_R, V_C>> {
-        if start.0 + V_R > R || start.1 + V_C > C {
+    ) -> Option<MatrixViewMut<T, R, C, VR, VC>> {
+        if start.0 + VR > R || start.1 + VC > C {
             return None;
         }
         Some(MatrixViewMut::new(self, start))
@@ -158,6 +337,18 @@ impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
 }
 
 impl<T: Float + Neg<Output = T>> Matrix<T, 2, 2> {
+    /// Creates a 2D rotation [`Matrix`].
+    ///
+    /// This method initializes a new 2x2 [`Matrix`] representing a 2D rotation by the given angle (in radians).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    /// use std::f64::consts::PI;
+    ///
+    /// let rot = Matrix::<f64, 2, 2>::rot(PI / 2.0);
+    /// ```
     pub fn rot(angle: T) -> Self {
         let data = [
             [T::cos(angle), -T::sin(angle)],
@@ -168,6 +359,18 @@ impl<T: Float + Neg<Output = T>> Matrix<T, 2, 2> {
 }
 
 impl<T: Float + Neg<Output = T>> Matrix<T, 3, 3> {
+    /// Creates a 3D rotation [`Matrix`] around the X-axis.
+    ///
+    /// This method initializes a new 3x3 [`Matrix`] representing a 3D rotation around the X-axis by the given angle (in radians).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    /// use std::f64::consts::PI;
+    ///
+    /// let rot = Matrix::<f64, 3, 3>::rotx(PI / 2.0);
+    /// ```
     pub fn rotx(angle: T) -> Self {
         let data = [
             [T::one(),  T::zero(),      T::zero()],
@@ -177,6 +380,18 @@ impl<T: Float + Neg<Output = T>> Matrix<T, 3, 3> {
         Self { data }
     }
 
+    /// Creates a 3D rotation [`Matrix`] around the Y-axis.
+    ///
+    /// This method initializes a new 3x3 [`Matrix`] representing a 3D rotation around the Y-axis by the given angle (in radians).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    /// use std::f64::consts::PI;
+    ///
+    /// let rot = Matrix::<f64, 3, 3>::roty(PI / 2.0);
+    /// ```
     pub fn roty(angle: T) -> Self {
         let data = [
             [ T::cos(angle), T::zero(), T::sin(angle)],
@@ -186,6 +401,18 @@ impl<T: Float + Neg<Output = T>> Matrix<T, 3, 3> {
         Self { data }
     }
 
+    /// Creates a 3D rotation [`Matrix`] around the Z-axis.
+    ///
+    /// This method initializes a new 3x3 [`Matrix`] representing a 3D rotation around the Z-axis by the given angle (in radians).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    /// use std::f64::consts::PI;
+    ///
+    /// let rot = Matrix::<f64, 3, 3>::rotz(PI / 2.0);
+    /// ```
     pub fn rotz(angle: T) -> Self {
         let data = [
             [T::cos(angle), -T::sin(angle), T::zero()],
