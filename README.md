@@ -45,8 +45,6 @@ To add Ferrix to your project, install it via cargo:
 cargo add ferrix
 ```
 
-> This will **not** work until I publish the crate.
-
 ## Contributing
 
 If you find any bugs, please open an issue or submit a pull request.
