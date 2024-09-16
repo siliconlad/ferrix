@@ -17,14 +17,31 @@ use crate::traits::{DotProduct, FloatRandom, IntRandom};
 use crate::vector_view::VectorView;
 use crate::vector_view_mut::VectorViewMut;
 
+/// A static column vector type.
 #[derive(Debug, Clone)]
 pub struct Vector<T, const N: usize> {
     data: [T; N],
 }
+
+/// A static 2D vector alias for [`Vector<T, 2>`].
 pub type Vector2<T> = Vector<T, 2>;
+
+/// A static 3D vector alias for [`Vector<T, 3>`].
 pub type Vector3<T> = Vector<T, 3>;
 
 impl<T: Default, const N: usize> Default for Vector<T, N> {
+    /// Creates a new [`Vector`] with default values.
+    ///
+    /// This method initializes a new [`Vector`] of size N, where each element is set to its default value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec: Vector<f64, 3> = Vector::new();
+    /// assert_eq!(vec, Vector::from([0.0, 0.0, 0.0]));
+    /// ```
     fn default() -> Self {
         Self {
             data: std::array::from_fn(|_| T::default()),
@@ -33,27 +50,87 @@ impl<T: Default, const N: usize> Default for Vector<T, N> {
 }
 
 impl<T: Default, const N: usize> Vector<T, N> {
+    /// Creates a new [`Vector`] with default values.
+    ///
+    /// This method initializes a new [`Vector`] of size N, where each element is set to its default value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec: Vector<f64, 3> = Vector::new();
+    /// assert_eq!(vec, Vector::from([0.0, 0.0, 0.0]));
+    /// ```
     pub fn new() -> Self {
         Self::default()
     }
 }
 
 impl<T, const N: usize> Vector<T, N> {
+    /// Returns the shape (number of elements) of the [`Vector`].
+    ///
+    /// The shape is always equal to `N`.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec: Vector<f64, 5> = Vector::new();
+    /// assert_eq!(vec.shape(), 5);
+    /// ```
     #[inline]
     pub fn shape(&self) -> usize {
         N
     }
 
+    /// Returns the total number of elements in the [`Vector`].
+    /// 
+    /// The total number of elements is always equal to `N`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec: Vector<f64, 5> = Vector::new();
+    /// assert_eq!(vec.capacity(), 5);
+    /// ```
     #[inline]
     pub fn capacity(&self) -> usize {
         N
     }
 
+    /// Returns the number of rows in the [`Vector`].
+    ///
+    /// The number of rows is always equal to `N`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec: Vector<f64, 5> = Vector::new();
+    /// assert_eq!(vec.rows(), 5);
+    /// ```
     #[inline]
     pub fn rows(&self) -> usize {
         N
     }
 
+    /// Returns the number of columns in the [`Vector`].
+    ///
+    /// The number of columns is always `1`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec: Vector<f64, 5> = Vector::new();
+    /// assert_eq!(vec.cols(), 1);
+    /// ```
     #[inline]
     pub fn cols(&self) -> usize {
         1
@@ -86,12 +163,34 @@ where
 }
 
 impl<T: Copy> Vector<T, 1> {
+    /// Converts a 1-dimensional [`Vector`] into its scalar value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec = Vector::from([42]);
+    /// assert_eq!(vec.into(), 42);
+    /// ```
     pub fn into(self) -> T {
         self[0]
     }
 }
 
 impl<T: Copy, const N: usize> Vector<T, N> {
+    /// Creates a new [`Vector`] filled with a specified value.
+    ///
+    /// This method initializes a new [`Vector`] of size N, where each element is set to the provided value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec = Vector::<i32, 3>::fill(42);
+    /// assert_eq!(vec, Vector::from([42, 42, 42]));
+    /// ```
     pub fn fill(value: T) -> Self {
         Self {
             data: std::array::from_fn(|_| value),
@@ -100,18 +199,56 @@ impl<T: Copy, const N: usize> Vector<T, N> {
 }
 
 impl<T: Copy + Zero, const N: usize> Vector<T, N> {
+    /// Creates a new [`Vector`] filled with zeros.
+    ///
+    /// This method initializes a new [`Vector`] of size N, where each element is set to zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec = Vector::<f64, 3>::zeros();
+    /// assert_eq!(vec, Vector::from([0.0, 0.0, 0.0]));
+    /// ```
     pub fn zeros() -> Self {
         Self::fill(T::zero())
     }
 }
 
 impl<T: Copy + One, const N: usize> Vector<T, N> {
+    /// Creates a new Vector filled with ones.
+    ///
+    /// This method initializes a new [`Vector`] of size N, where each element is set to one.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec = Vector::<f64, 3>::ones();
+    /// assert_eq!(vec, Vector::from([1.0, 1.0, 1.0]));
+    /// ```
     pub fn ones() -> Self {
         Self::fill(T::one())
     }
 }
 
 impl<T: Copy + Zero, const N: usize> Vector<T, N> {
+    /// Creates a diagonal matrix from the [`Vector`].
+    ///
+    /// This method returns a new NxN [`Matrix`] where the diagonal elements are set to the values of the [`Vector`],
+    /// and all other elements are zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::{Vector, Matrix};
+    ///
+    /// let vec = Vector::from([1, 2, 3]);
+    /// let mat = vec.diag();
+    /// assert_eq!(mat, Matrix::from([[1, 0, 0], [0, 2, 0], [0, 0, 3]]));
+    /// ```
     pub fn diag(&self) -> Matrix<T, N, N> {
         let mut m = Matrix::<T, N, N>::zeros();
         for i in 0..N {
@@ -122,16 +259,57 @@ impl<T: Copy + Zero, const N: usize> Vector<T, N> {
 }
 
 impl<T, const N: usize> Vector<T, N> {
+    /// Returns a transposed view of the [`Vector`].
+    ///
+    /// This method returns a [`RowVectorView`], which is a read-only view of the [`Vector`] as a row vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::{Vector, RowVector};
+    ///
+    /// let vec = Vector::from([1, 2, 3]);
+    /// let row_view = vec.t();
+    /// assert_eq!(row_view, RowVector::from([1, 2, 3]));
+    /// ```
     pub fn t(&self) -> RowVectorView<'_, Vector<T, N>, T, N, N> {
         RowVectorView::new(self, 0)
     }
 
+    /// Returns a mutable transposed view of the [`Vector`].
+    ///
+    /// This method returns a [`RowVectorViewMut`], which is a mutable view of the [`Vector`] as a row vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let mut vec = Vector::from([1, 2, 3]);
+    /// let mut row_view = vec.t_mut();
+    /// row_view[1] = 5;
+    /// assert_eq!(vec, Vector::from([1, 5, 3]));
+    /// ```
     pub fn t_mut(&mut self) -> RowVectorViewMut<'_, Vector<T, N>, T, N, N> {
         RowVectorViewMut::new(self, 0)
     }
 }
 
 impl<T, const N: usize> Vector<T, N> {
+    /// Returns a view of [`Vector`].
+    ///
+    /// This method returns a [`VectorView`] of size `M`` starting from the given index.
+    /// Returns `None` if the requested view is out of bounds or if `M`` is zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let view = vec.view::<3>(1).unwrap();
+    /// assert_eq!(view, Vector::from([2, 3, 4]));
+    /// ```
     pub fn view<const M: usize>(
         &self,
         start: usize,
@@ -142,6 +320,21 @@ impl<T, const N: usize> Vector<T, N> {
         Some(VectorView::new(self, start))
     }
 
+    /// Returns a mutable view of [`Vector`].
+    ///
+    /// This method returns a [`VectorViewMut`] of size `M` starting from the given index.
+    /// Returns `None` if the requested view is out of bounds or if `M` is zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let mut vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let mut view = vec.view_mut::<3>(1).unwrap();
+    /// view[1] = 10;
+    /// assert_eq!(vec, Vector::from([1, 2, 10, 4, 5]));
+    /// ```
     pub fn view_mut<const M: usize>(
         &mut self,
         start: usize,
@@ -154,6 +347,16 @@ impl<T, const N: usize> Vector<T, N> {
 }
 
 impl<T: Float, const N: usize> Vector<T, N> {
+    /// Calculates the magnitude (Euclidean norm) of the [`Vector`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec = Vector::from([3.0, 4.0]);
+    /// assert_eq!(vec.magnitude(), 5.0);
+    /// ```
     pub fn magnitude(&self) -> T {
         self.dot(self).sqrt()
     }

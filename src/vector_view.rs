@@ -7,6 +7,7 @@ use std::fmt;
 use std::marker::PhantomData;
 use std::ops::Index;
 
+/// A column vector view of a [`Vector`] or a [`RowVector`](crate::row_vector::RowVector) (transposed view).
 #[derive(Debug, Clone)]
 pub struct VectorView<'a, V, T, const N: usize, const M: usize> {
     data: &'a V,
@@ -23,26 +24,92 @@ impl<'a, V, T, const N: usize, const M: usize> VectorView<'a, V, T, N, M> {
         }
     }
 
+    /// Returns the shape of the [`VectorView`].
+    ///
+    /// The shape is always equal to `M`.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let view = vec.view::<3>(1).unwrap();
+    /// assert_eq!(view.shape(), 3);
+    /// ```
     #[inline]
     pub fn shape(&self) -> usize {
         M
     }
 
+    /// Returns the total number of elements in the [`VectorView`].
+    /// 
+    /// The total number of elements is always equal to `M`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let view = vec.view::<3>(1).unwrap();
+    /// assert_eq!(view.capacity(), 3);
+    /// ```
     #[inline]
     pub fn capacity(&self) -> usize {
         M
     }
 
+    /// Returns the number of rows in the [`VectorView`].
+    ///
+    /// The number of rows is always equal to `M`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let view = vec.view::<3>(1).unwrap();
+    /// assert_eq!(view.rows(), 3);
+    /// ```
     #[inline]
     pub fn rows(&self) -> usize {
         M
     }
 
+    /// Returns the number of columns in the [`VectorView`].
+    ///
+    /// The number of columns is always `1`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let view = vec.view::<3>(1).unwrap();
+    /// assert_eq!(view.cols(), 1);
+    /// ```
     #[inline]
     pub fn cols(&self) -> usize {
         1
     }
 
+    /// Returns a transposed view of the [`VectorView`].
+    ///
+    /// This method returns a [`RowVectorView`], which is a read-only view of the [`VectorView`] as a row vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::{Vector, RowVector};
+    ///
+    /// let vec = Vector::from([1, 2, 3, 4, 5]);
+    /// let view = vec.view::<3>(1).unwrap();
+    /// let row_view = view.t();
+    /// assert_eq!(row_view, RowVector::from([2, 3, 4]));
+    /// ```
     pub fn t(&'a self) -> RowVectorView<'a, V, T, N, M> {
         RowVectorView::new(self.data, self.start)
     }
@@ -51,6 +118,17 @@ impl<'a, V, T, const N: usize, const M: usize> VectorView<'a, V, T, N, M> {
 impl<'a, V: Index<usize, Output = T>, T: Float, const N: usize, const M: usize>
     VectorView<'a, V, T, N, M>
 {
+    /// Calculates the magnitude (Euclidean norm) of the [`VectorView`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Vector;
+    ///
+    /// let vec = Vector::from([1.0, 2.0, 3.0, 4.0, 5.0]);
+    /// let view = vec.view::<2>(2).unwrap();
+    /// assert_eq!(view.magnitude(), 5.0);
+    /// ```
     pub fn magnitude(&self) -> T {
         self.dot(self).sqrt()
     }

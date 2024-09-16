@@ -5,6 +5,7 @@ use crate::matrix_view_mut::MatrixViewMut;
 use std::fmt;
 use std::ops::{Index, IndexMut};
 
+/// A static mutable transposed view of a matrix.
 #[derive(Debug)]
 pub struct MatrixTransposeViewMut<
     'a,
@@ -32,30 +33,111 @@ impl<'a, T, const R: usize, const C: usize, const VR: usize, const VC: usize>
 impl<'a, T, const R: usize, const C: usize, const VR: usize, const VC: usize>
     MatrixTransposeViewMut<'a, T, R, C, VR, VC>
 {
+    /// Returns the shape of the [`MatrixTransposeViewMut`].
+    ///
+    /// The shape is always equal to `(VR, VC)`.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mut mat = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+    /// let transposed = mat.t_mut();
+    /// assert_eq!(transposed.shape(), (3, 2));
+    /// ```
     #[inline]
     pub fn shape(&self) -> (usize, usize) {
         (VR, VC)
     }
 
+    /// Returns the total number of elements in the [`MatrixTransposeViewMut`].
+    /// 
+    /// The total number of elements is always equal to `VR * VC`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mut mat = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+    /// let transposed = mat.t_mut();
+    /// assert_eq!(transposed.capacity(), 6);
+    /// ```
     #[inline]
     pub fn capacity(&self) -> usize {
         VR * VC
     }
 
+    /// Returns the number of rows in the [`MatrixTransposeViewMut`].
+    ///
+    /// The number of rows is always equal to `VR`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mut mat = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+    /// let transposed = mat.t_mut();
+    /// assert_eq!(transposed.rows(), 3);
+    /// ```
     #[inline]
     pub fn rows(&self) -> usize {
         VR
     }
 
+    /// Returns the number of columns in the [`MatrixTransposeViewMut`].
+    ///
+    /// The number of columns is always equal to `VC`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mut mat = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+    /// let transposed = mat.t_mut();
+    /// assert_eq!(transposed.cols(), 2);
+    /// ```
     #[inline]
     pub fn cols(&self) -> usize {
         VC
     }
 
+    /// Returns a transposed view of the [`MatrixTransposeViewMut`].
+    ///
+    /// This method returns a [`MatrixView`], which is a read-only view of the [`MatrixTransposeViewMut`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mut mat = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+    /// let transposed = mat.t_mut();
+    /// let original = transposed.t();
+    /// assert_eq!(original, Matrix::from([[1, 2, 3], [4, 5, 6]]));
+    /// ```
     pub fn t(&'a self) -> MatrixView<'a, T, R, C, VC, VR> {
         MatrixView::new(self.data, (self.start.1, self.start.0))
     }
 
+    /// Returns a mutable transposed view of the [`MatrixTransposeViewMut`].
+    ///
+    /// This method returns a [`MatrixViewMut`], which is a mutable view of the [`MatrixTransposeViewMut`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::Matrix;
+    ///
+    /// let mut mat = Matrix::from([[1, 2, 3], [4, 5, 6]]);
+    /// let mut transposed = mat.t_mut();
+    /// let mut original = transposed.t_mut();
+    /// original[(0, 1)] = 10;
+    /// assert_eq!(mat, Matrix::from([[1, 10, 3], [4, 5, 6]]));
+    /// ```
     pub fn t_mut(&'a mut self) -> MatrixViewMut<'a, T, R, C, VC, VR> {
         MatrixViewMut::new(self.data, (self.start.1, self.start.0))
     }

@@ -16,33 +16,94 @@ use crate::traits::{DotProduct, FloatRandom, IntRandom};
 use crate::vector_view::VectorView;
 use crate::vector_view_mut::VectorViewMut;
 
+/// A static row vector type.
 #[derive(Debug, Clone)]
 pub struct RowVector<T, const N: usize> {
     data: [T; N],
 }
 
 impl<T: Default, const N: usize> RowVector<T, N> {
+    /// Creates a new [`RowVector`] with default values.
+    ///
+    /// This method initializes a new [`RowVector`] of size N, where each element is set to its default value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let vec: RowVector<f64, 3> = RowVector::new();
+    /// assert_eq!(vec, RowVector::from([0.0, 0.0, 0.0]));
+    /// ```
     pub fn new() -> Self {
         Self::default()
     }
 }
 
 impl<T, const N: usize> RowVector<T, N> {
+    /// Returns the shape of the [`RowVector`].
+    ///
+    /// The shape is always equal to `N`.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let vec: RowVector<f64, 5> = RowVector::new();
+    /// assert_eq!(vec.shape(), 5);
+    /// ```
     #[inline]
     pub fn shape(&self) -> usize {
         N
     }
 
+    /// Returns the total number of elements in the [`RowVector`].
+    /// 
+    /// The total number of elements is always equal to `N`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let vec: RowVector<f64, 5> = RowVector::new();
+    /// assert_eq!(vec.capacity(), 5);
+    /// ```
     #[inline]
     pub fn capacity(&self) -> usize {
         N
     }
 
+    /// Returns the number of rows in the [`RowVector`].
+    ///
+    /// The number of rows is always `1`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let vec: RowVector<f64, 5> = RowVector::new();
+    /// assert_eq!(vec.rows(), 1);
+    /// ```
     #[inline]
     pub fn rows(&self) -> usize {
         1
     }
 
+    /// Returns the number of columns in the [`RowVector`].
+    ///
+    /// The number of columns is always equal to `N`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let vec: RowVector<f64, 5> = RowVector::new();
+    /// assert_eq!(vec.cols(), 5);
+    /// ```
     #[inline]
     pub fn cols(&self) -> usize {
         N
@@ -58,24 +119,70 @@ impl<T: Default, const N: usize> Default for RowVector<T, N> {
 }
 
 impl<T: Copy> RowVector<T, 1> {
+    /// Converts a 1-dimensional [`RowVector`] into its scalar value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let vec = RowVector::from([42]);
+    /// assert_eq!(vec.into(), 42);
+    /// ```
     pub fn into(self) -> T {
         self[0]
     }
 }
 
 impl<T: Copy, const N: usize> RowVector<T, N> {
+    /// Creates a new [`RowVector`] filled with a specified value.
+    ///
+    /// This method initializes a new [`RowVector`] of size N, where each element is set to the provided value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let vec = RowVector::<i32, 3>::fill(42);
+    /// assert_eq!(vec, RowVector::from([42, 42, 42]));
+    /// ```
     pub fn fill(value: T) -> Self {
         Self { data: [value; N] }
     }
 }
 
 impl<T: Copy + Zero, const N: usize> RowVector<T, N> {
+    /// Creates a new [`RowVector`] filled with zeros.
+    ///
+    /// This method initializes a new [`RowVector`] of size N, where each element is set to zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let vec = RowVector::<f64, 3>::zeros();
+    /// assert_eq!(vec, RowVector::from([0.0, 0.0, 0.0]));
+    /// ```
     pub fn zeros() -> Self {
         Self::fill(T::zero())
     }
 }
 
 impl<T: Copy + One, const N: usize> RowVector<T, N> {
+    /// Creates a new [`RowVector`] filled with ones.
+    ///
+    /// This method initializes a new [`RowVector`] of size N, where each element is set to one.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let vec = RowVector::<f64, 3>::ones();
+    /// assert_eq!(vec, RowVector::from([1.0, 1.0, 1.0]));
+    /// ```
     pub fn ones() -> Self {
         Self::fill(T::one())
     }
@@ -107,6 +214,20 @@ where
 }
 
 impl<T: Copy + Zero, const N: usize> RowVector<T, N> {
+    /// Creates a diagonal matrix from the [`RowVector`].
+    ///
+    /// This method returns a new NxN [`Matrix`] where the diagonal elements are set to the values of the [`RowVector`],
+    /// and all other elements are zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::{RowVector, Matrix};
+    ///
+    /// let vec = RowVector::from([1, 2, 3]);
+    /// let mat = vec.diag();
+    /// assert_eq!(mat, Matrix::from([[1, 0, 0], [0, 2, 0], [0, 0, 3]]));
+    /// ```
     pub fn diag(&self) -> Matrix<T, N, N> {
         let mut m = Matrix::<T, N, N>::zeros();
         for i in 0..N {
@@ -117,16 +238,57 @@ impl<T: Copy + Zero, const N: usize> RowVector<T, N> {
 }
 
 impl<T, const N: usize> RowVector<T, N> {
+    /// Returns a transposed view of the [`RowVector`].
+    ///
+    /// This method returns a [`VectorView`], which is a read-only view of the [`RowVector`] as a column vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::{Vector, RowVector};
+    ///
+    /// let vec = RowVector::from([1, 2, 3]);
+    /// let col_view = vec.t();
+    /// assert_eq!(col_view, Vector::from([1, 2, 3]));
+    /// ```
     pub fn t(&self) -> VectorView<'_, RowVector<T, N>, T, N, N> {
         VectorView::new(self, 0)
     }
 
+    /// Returns a mutable transposed view of the [`RowVector`].
+    ///
+    /// This method returns a [`VectorViewMut`], which is a mutable view of the [`RowVector`] as a column vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let mut vec = RowVector::from([1, 2, 3]);
+    /// let mut col_view = vec.t_mut();
+    /// col_view[1] = 5;
+    /// assert_eq!(vec, RowVector::from([1, 5, 3]));
+    /// ```
     pub fn t_mut(&mut self) -> VectorViewMut<'_, RowVector<T, N>, T, N, N> {
         VectorViewMut::new(self, 0)
     }
 }
 
 impl<T, const N: usize> RowVector<T, N> {
+    /// Returns a view of [`RowVector`].
+    ///
+    /// This method returns a [`RowVectorView`] of size `M` starting from the given index.
+    /// Returns `None` if the requested view is out of bounds or if `M` is zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let vec = RowVector::from([1, 2, 3, 4, 5]);
+    /// let view = vec.view::<3>(1).unwrap();
+    /// assert_eq!(view, RowVector::from([2, 3, 4]));
+    /// ```
     pub fn view<const M: usize>(
         &self,
         start: usize,
@@ -137,6 +299,21 @@ impl<T, const N: usize> RowVector<T, N> {
         Some(RowVectorView::new(self, start))
     }
 
+    /// Returns a mutable view of [`RowVector`].
+    ///
+    /// This method returns a [`RowVectorViewMut`] of size `M` starting from the given index.
+    /// Returns `None` if the requested view is out of bounds or if `M` is zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let mut vec = RowVector::from([1, 2, 3, 4, 5]);
+    /// let mut view = vec.view_mut::<3>(1).unwrap();
+    /// view[1] = 10;
+    /// assert_eq!(vec, RowVector::from([1, 2, 10, 4, 5]));
+    /// ```
     pub fn view_mut<const M: usize>(
         &mut self,
         start: usize,
@@ -149,6 +326,16 @@ impl<T, const N: usize> RowVector<T, N> {
 }
 
 impl<T: Float, const N: usize> RowVector<T, N> {
+    /// Calculates the magnitude of the [`RowVector`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ferrix::RowVector;
+    ///
+    /// let vec = RowVector::from([3.0, 4.0]);
+    /// assert_eq!(vec.magnitude(), 5.0);
+    /// ```
     pub fn magnitude(&self) -> T {
         self.dot(self).sqrt()
     }
