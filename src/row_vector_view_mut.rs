@@ -28,7 +28,7 @@ impl<'a, V, T, const N: usize, const M: usize> RowVectorViewMut<'a, V, T, N, M> 
     /// Returns the shape of the [`RowVectorViewMut`].
     ///
     /// The shape is always equal to `M`.
-    /// 
+    ///
     /// # Examples
     ///
     /// ```
@@ -44,7 +44,7 @@ impl<'a, V, T, const N: usize, const M: usize> RowVectorViewMut<'a, V, T, N, M> 
     }
 
     /// Returns the total number of elements in the [`RowVectorViewMut`].
-    /// 
+    ///
     /// The total number of elements is always equal to `M`.
     ///
     /// # Examples

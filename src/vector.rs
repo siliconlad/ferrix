@@ -71,7 +71,7 @@ impl<T, const N: usize> Vector<T, N> {
     /// Returns the shape (number of elements) of the [`Vector`].
     ///
     /// The shape is always equal to `N`.
-    /// 
+    ///
     /// # Examples
     ///
     /// ```
@@ -86,7 +86,7 @@ impl<T, const N: usize> Vector<T, N> {
     }
 
     /// Returns the total number of elements in the [`Vector`].
-    /// 
+    ///
     /// The total number of elements is always equal to `N`.
     ///
     /// # Examples

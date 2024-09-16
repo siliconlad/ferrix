@@ -44,7 +44,7 @@ impl<T, const N: usize> RowVector<T, N> {
     /// Returns the shape of the [`RowVector`].
     ///
     /// The shape is always equal to `N`.
-    /// 
+    ///
     /// # Examples
     ///
     /// ```
@@ -59,7 +59,7 @@ impl<T, const N: usize> RowVector<T, N> {
     }
 
     /// Returns the total number of elements in the [`RowVector`].
-    /// 
+    ///
     /// The total number of elements is always equal to `N`.
     ///
     /// # Examples

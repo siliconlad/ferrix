@@ -29,7 +29,7 @@ impl<'a, T, const R: usize, const C: usize, const VR: usize, const VC: usize>
     /// Returns the shape of the [`MatrixViewMut`].
     ///
     /// The shape is always equal to `(VR, VC)`.
-    /// 
+    ///
     /// # Examples
     ///
     /// ```
@@ -45,7 +45,7 @@ impl<'a, T, const R: usize, const C: usize, const VR: usize, const VC: usize>
     }
 
     /// Returns the total number of elements in the [`MatrixViewMut`].
-    /// 
+    ///
     /// The total number of elements is always equal to `VR * VC`.
     ///
     /// # Examples

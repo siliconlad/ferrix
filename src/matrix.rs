@@ -59,7 +59,7 @@ impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
     /// Returns the shape of the [`Matrix`].
     ///
     /// The shape is always equal to `(R, C)`.
-    /// 
+    ///
     /// # Examples
     ///
     /// ```
@@ -74,7 +74,7 @@ impl<T, const R: usize, const C: usize> Matrix<T, R, C> {
     }
 
     /// Returns the total number of elements in the [`Matrix`].
-    /// 
+    ///
     /// The total number of elements is always equal to `R * C`.
     ///
     /// # Examples
