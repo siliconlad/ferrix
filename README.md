@@ -6,7 +6,7 @@
   <p style="padding-top: 5px;">A simple matrix library for Rust.</p>
 </div>
 
-Checkout the write up on how it was built [here](www.siliconlad.com/blog/ferrix).
+Checkout the write up on how it was built [here](https://www.siliconlad.com/blog/ferrix).
 
 ## Example
 
