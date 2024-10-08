@@ -19,7 +19,7 @@ fn main() {
     println!("Mat: {}", matrix);
 
     // Create a 3x1 vector
-    let vector = Vector3::new([1.0, 2.0, 3.0]);
+    let vector = Vector3::from([1.0, 2.0, 3.0]);
     println!("Vec: {}", vector);
 
     // Perform matrix-vector multiplication
